@@ -109,7 +109,7 @@ const setRandomNumber = ($event: any) => {
 ### Use custom input to create wrapper for other UI libraries
 We can easily create wrapper for different UI libraries just using `value` as `v-model` e.g. ElementPlus
 
-```tsx
+```vue
 <script setup lang="ts">
 import { ElCheckbox } from 'element-plus'
 import { useCreateInput } from '@/composable/useCreateInput';
