@@ -1,0 +1,66 @@
+{
+  "name": "vue-formify",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "description": "Create forms without pain and more ease",
+  "keywords": [
+	"vue",
+	"form",
+	"forms",
+	"formify",
+	"vue-formify"
+],
+  "files": [
+    "dist",
+	"dist/vue-formify.js",
+	"dist/vue-formify.mjs",
+	"dist/vue-formify.d.ts"
+  ],
+  "main": "./dist/vue-formify.umd.js",
+  "module": "./dist/vue-formify.es.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/vue-formify.es.js",
+      "require": "./dist/vue-formify.umd.js",
+	  "types": "./dist/index.d.ts"
+    },
+    "./dist/vue-formify.css": {
+      "import": "./dist/vue-formify.css",
+      "require": "./dist/vue-formify.css"
+    }
+  },
+  "scripts": {
+    "start": "vue-tsc && vite build --watch",
+    "build": "npm run lint && vue-tsc && vite build",
+	"dev": "vite",
+	"lint": "eslint 'src/**/*.{ts,js,vue}' '*.{ts,js}' --no-fix",
+	"lint:fix": "eslint 'src/**/*.{ts,js,vue}' '*.{ts,js}' --fix"
+  },
+  "dependencies": {
+    "vue": "^3.3.4",
+	"primevue": "^3.40",
+	"element-plus": "^2.4"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.2.3",
+	"@types/node": "^20.9",
+    "typescript": "^5.0.2",
+	"rollup-plugin-typescript2": "^0.36",
+	"vite-plugin-dts": "^3.6",
+    "vite": "^4.4.5",
+    "vue-tsc": "^1.8.5",
+	"path": "^0.12",
+	"@babel/types": "^7.23",
+	"unplugin-auto-import": "^0.16",
+
+	"eslint": "^8.53",
+	"eslint-plugin-vue": "^9.18",
+	"eslint-plugin-import": "^2.29",
+	"eslint-plugin-prefer-arrow": "^1.2",
+	"@typescript-eslint/parser": "^6.10",
+	"@typescript-eslint/eslint-plugin": "^6.10",
+	"@vue/eslint-config-typescript": "^12.0"
+  }
+}
