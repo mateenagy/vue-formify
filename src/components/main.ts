@@ -1,6 +1,6 @@
 import { App } from 'vue';
-import { useCreateInput } from '../composable/useCreateInput';
 import { Form, Input } from './index';
+import { createInput } from '@/composable/createInput';
 
 export default {
 	install: (app: App) => {
@@ -12,5 +12,5 @@ export default {
 export {
 	Form,
 	Input,
-	useCreateInput,
+	createInput,
 };

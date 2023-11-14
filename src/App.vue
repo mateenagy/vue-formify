@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { FormType } from './components';
-import Form from '@/components/FormElements/Form.vue';
-import Input from '@/components/FormElements/Input.vue';
+import { Form, Input } from './components';
+
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
@@ -28,28 +28,26 @@ const send = (data: any) => {
 /*---------------------------------------------
 /  HOOKS
 ---------------------------------------------*/
+const a = ref<string>();
 </script>
 <template>
 	<div>
 		<pre>{{ form?.formData }}</pre>
+		<pre>{{ a }}</pre>
 		<Form
 			ref="form"
 			@submit="send">
 			<Input
-				name="last_name"
-				label="Vezetéknév" />
-			<Input
-				name="first_name"
-				label="Keresztnév"
-				default-value="asd" />
-			<Input
-				required
-				name="email"
-				label="Email" />
+				name="foo"
+				label="foo" />
 			<button type="submit">
 				Küldés
 			</button>
 		</Form>
+		<Input
+			name="asd"
+			v-model="a"
+			label="Bar" />
 		<button @click="form?.resetForm()">
 			Reset
 		</button>

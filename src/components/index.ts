@@ -1,6 +1,9 @@
+import { default as InputComponent } from './FormElements/Input.vue';
+import { createInput } from '@/composable/createInput';
+
 export { default as Form } from './FormElements/Form.vue';
-export { default as Input } from './FormElements/Input.vue';
-export { useCreateInput } from '../composable/useCreateInput';
+
+export const Input = createInput(InputComponent);
 
 export type FormValue = string | number | boolean | Date;
 export type FormElement = Record<string, {

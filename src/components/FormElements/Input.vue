@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, inject } from 'vue';
+import { computed } from 'vue';
 import { FormValue, HTMLInputAttributeType } from '..';
 
 /*---------------------------------------------
@@ -30,7 +30,6 @@ const emit = defineEmits(['update:modelValue', 'blur']);
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
-const { updateFormData, formElements } = inject<any>('formModel');
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
@@ -39,11 +38,10 @@ const { updateFormData, formElements } = inject<any>('formModel');
 ---------------------------------------------*/
 const value = computed({
 	get: () => {
-		return props.modelValue || formElements.value[props.name]?.value;
+		return props.modelValue;
 	},
-	set: (value) => {
-		updateFormData(props.name, value);
-		emit('update:modelValue', formElements.value[props.name]?.value);
+	set: (value: any) => {
+		emit('update:modelValue', value);
 	},
 });
 /*---------------------------------------------
@@ -75,25 +73,17 @@ const value = computed({
 		<div class="position-relative">
 			<input
 				class="form-control"
-				v-model="value"
 				v-bind="$attrs"
+				v-model="value"
 				:name="name"
 				:type="type"
 				:id="id ? id : name"
-				:value="value"
 				:class="prefix && 'has-prefix'"
-				:data-has-error="formElements[name]?.error ? 'true' : 'false'"
 				:aria-labelledby="`label-${id ? id : name}`"
-				@blur="emit('blur')"
-				@focus="formElements[name].error = undefined">
+				@blur="emit('blur')">
 			<span
 				v-if="prefix"
 				class="prefix">{{ prefix }}</span>
 		</div>
-		<span
-			class="error-msg"
-			v-if="formElements[name]?.error">
-			<slot name="error">error</slot>
-		</span>
 	</div>
 </template>
