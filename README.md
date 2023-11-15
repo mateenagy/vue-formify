@@ -81,7 +81,7 @@ const value = computed({
 ```
 There is nothing special just casual Vue component stuff, but we only need one small step to make it work with the framework.
 
-We have a special composable called `createInput` where you can pass the custom component nad that's all! You can use your component now.
+We have a special composable called `createInput` where you can pass the custom component and that's all! You can use your component now.
 
 ```vue
 <script lang="ts" setup>
@@ -114,6 +114,7 @@ const send = (data: any) => {
 </template>
 ```
 This composable also help to create other UI frameworks compatible with this frameworks. Take a look at how we implement Element Plus checkbox:
+```vue
 <script lang="ts" setup>
 import { Form, Input, createInput } from 'vue-formify';
 import { ElCheckbox } from 'element-plus'
