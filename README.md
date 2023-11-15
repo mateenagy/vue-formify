@@ -1,43 +1,47 @@
-# Vue Formify
+# VueFormify
 
-## Say Hello to Effortless Form Creation in Vue 3!
+VueFormify is a form creating framework. This is **not a UI library**. There are some awesome libraries I tried, but most of them feels overcomplicated. They have their own UI elements and logic which not always works well together with other UI libraries (which not focused on forms). That is the reason I made this small framework which make form creations much more easier and faster without worrying about writing big objects for v-model or using other UI libraries form components.
 
-### 💡 Introduction
+## 📦 Install
+```
+npm i vue-formify
+```
+```ts
+import { VueFormify } from 'vue-formify'
 
-Vue Formify is your go-to solution for painless and efficient form creation in Vue 3. Tired of wrestling with complex form syntax? Experience the joy of crafting forms with simplicity, performance, and ease of use at the forefront.
+app.use(VueFormify);
+```
 
-### 🚀 Key Features
+## 💡 How it works
+My focus was to create something that feels like native and feels good to use. For that purppse we only have 3 components all together:
+- **Form**: As native forms we put our inputs inside a `<Form>` element.
+- **Input**: It's basically an input field with extra features like a11y and error messages
+- **Error**: The main usage of this component is when you create input from different UI libraries (e.g. Element Plus) you can show error messages without creating a wrapper component
 
-#### Easy to Use 🎉
-Craft forms effortlessly with Vue Formify's components. No more headaches just intuitive form creation for developers of all levels.
+When you define the **Input** element inside the **Form** the only thing you have to do is set the **name** attribute and the Form will automatically extract the value.
 
-#### Pain-Free Form Creation 🤕 ➡️ 😌
-Bid farewell to the pains and intricacies of form development. Vue Formify streamlines the process, making form creation an enjoyable task. <br />Enjoy form creation without big `objects refs` or multiple `v-models`, or **without any extra javascript** to extract data.
+It also works well with **HMR** without any issue! You can **add / remove / change** input and the data will be updated.
 
-#### Lightning-Fast 🚄
-Enjoy rapid form rendering and submission. Vue Formify accelerates your development workflow, ensuring a seamless user experience.
-
-#### Easy Custom Component Creation 🛠️
-Tailor your forms effortlessly with custom components. Extend functionality without sacrificing simplicity. It's easy to create wrapper for popular UI libraries (e.g. Element Plus, PrimeVue) or create more advenced input if you want.
-
-#### Lightweight 🕊️
-Keep your project lean with Vue Formify's feather-light design. Zero unnecessary dependencies (except for Vue.js) for a nimble application.
-
-#### Zero Dependencies (Except Vue.js) 📦
-Embrace simplicity and minimalism. Vue Formify has zero external dependencies—just Vue.js for a streamlined development experience.
-
-### 🎉 Conclusion
-
-Elevate your Vue.js development with Vue Formify—a modern, easy-to-use, and lightweight form library that puts simplicity and efficiency first. Say goodbye to form creation woes and hello to a delightful development experience!
+**But enough talking let's see some code!**
 
 ## 💻 Usage
 
-## Simple form
+### Simple form
+With this simple example you can see how easy to make a simple form. You don't need any pre defined object or anything (you can use it with v-model if you want).
+When you send the form the data will be extracted.
 ```tsx
 import { Form, Input } from 'vue-formify';
 
 const sendForm = (data) => {
 	console.log(data)
+	/* 
+		output:
+		{
+			first_name: ...
+			last_name: ..
+			email: ...
+		}
+	*/
 }
 
 <template>
@@ -45,87 +49,98 @@ const sendForm = (data) => {
 		<Input name="first_name" label="First name" />
 		<Input name="last_name" label="Last name" />
 		<Input name="email" label="email" type="email" />
-		<Input name="born_date" label="Born date" type="date" />
 	</Form>
 <template>
 ```
 ## Create custom input
-For custom input we need to use this boilerplate code. We need to define the `name` prop which is essential for the `Form` component to extract data automatically and we need the modelValue for `v-model` implementation. After that we have the `value` from `useCreateInput` composable. We can update this value as we want and this will be our final value
-```ts
-import { useCreateInput } from '@/composable/useCreateInput';
+To create custom input you can create a `.vue` file where you make a component just like you will do if you want a custom input.
+
+**ColorPickerComponent.vue**
+```vue
+<script lang="ts" setup>
+import { computed } from 'vue';
 
 const props = defineProps<{
-	name: string;
-	modelValue?: any[];
+	modelValue?: string;
 }>();
-const emit = defineEmits(['update:modelValue']);
-const { value } = useCreateInput(props, emit);
-```
-
-### Advance usage with custom component
-To understand what we can do with the code above let's create a custom input which is just a plain color type input. The twist is that we want the value contain the hex and the rgb code at the same time in an object.
-
-- First we start with the template part becuase it is really easy:
-```html
+const emits = defineEmits(['update:modelValue']);
+const value = computed({
+	get: () => {
+		return props.modelValue;
+	},
+	set: (value: any) => {
+		emits('update:modelValue', value);
+	},
+});
+</script>
 <template>
-	<input type="color" @input="setColor">
+	<input
+		type="color"
+		v-model="value" />
 </template>
 ```
+There is nothing special just casual Vue component stuff, but we only need one small step to make it work with the framework.
 
-- Then we add the boiler plate code and the logic.
-```ts
-// The boilerplate for the custom input
-import { useCreateInput } from '@/composable/useCreateInput';
-
-const props = defineProps<{
-	name: string;
-	modelValue?: any[];
-}>();
-const emit = defineEmits(['update:modelValue']);
-const { value } = useCreateInput(props, emit);
-
-// The custom logic
-const hexToRgb = (hex: string) => {
-	hex = hex.replace(/^#/, '');
-	const bigint = parseInt(hex, 16);
-	const r = (bigint >> 16) & 255;
-	const g = (bigint >> 8) & 255;
-	const b = bigint & 255;
-
-	return { r, g, b };
-};
-
-const setRandomNumber = ($event: any) => {
-	const hex = $event.target.value;
-
-	// We change the value here and it gives us an object with the color data
-	value.value = {
-		hex,
-		rgb: hexToRgb(hex),
-	};
-};
-```
-
-### Use custom input to create wrapper for other UI libraries
-We can easily create wrapper for different UI libraries just using `value` as `v-model` e.g. ElementPlus
+We have a special composable called `createInput` where you can pass the custom component nad that's all! You can use your component now.
 
 ```vue
-<script setup lang="ts">
-import { ElCheckbox } from 'element-plus'
-import { useCreateInput } from '@/composable/useCreateInput';
+<script lang="ts" setup>
+import { Form, Input, createInput } from 'vue-formify';
+import ColorPickerComponent from './components/ColorPickerComponent.vue';
+import { FormType, ComponentProps } from 'vue-formify/dist/components';
 
-const props = defineProps<{
-	name: string;
-	label: string;
-	modelValue?: any[];
-}>();
-const emit = defineEmits(['update:modelValue']);
-const { value } = useCreateInput(props, emit);
+const ColorPicker = createInput<ComponentProps<typeof ColorPickerComponent>>(ColorPickerComponent);
+
+const send = (data: any) => {
+	console.log(data);
+	/* 
+		output:
+		{
+			color: ...
+		}
+	*/
+};
 </script>
-
 <template>
-	<ElCheckbox v-model="value" :label="label" />
+	<div>
+		<Form
+			@submit="send">
+			<ColorPicker name="color" />
+			<button type="submit">
+				Send
+			</button>
+		</Form>
+	</div>
 </template>
 ```
+This composable also help to create other UI frameworks compatible with this frameworks. Take a look at how we implement Element Plus checkbox:
+<script lang="ts" setup>
+import { Form, Input, createInput } from 'vue-formify';
+import { ElCheckbox } from 'element-plus'
+import { FormType, ComponentProps } from 'vue-formify/dist/components';
 
+const Checkbox = createInput<ComponentProps<typeof ElCheckbox>>(ElCheckbox);
+
+const send = (data: any) => {
+	console.log(data);
+	/* 
+		output:
+		{
+			check_this: ...
+		}
+	*/
+};
+</script>
+<template>
+	<div>
+		<Form
+			@submit="send">
+			<Checkbox name="check_this" />
+			<button type="submit">
+				Send
+			</button>
+		</Form>
+	</div>
+</template>
+```
 **Happy Coding!** 🚀

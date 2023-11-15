@@ -11,6 +11,7 @@ export default defineConfig({
 	plugins: [
 		vue(),
 		dts({
+			strictOutput: false,
 			insertTypesEntry: true,
 			outDir: 'dist',
 		}),

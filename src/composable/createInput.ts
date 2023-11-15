@@ -1,24 +1,44 @@
-import { Component, h } from 'vue';
+import { Component, h, inject } from 'vue';
+import type { FunctionalComponent } from 'vue';
 import { formCore } from '@/core/formCore';
 
-export const createInput = (component: Component) => {
-	const cmp = {
-		props: ['modelValue', 'name'],
-		emits: ['update:modelValue'],
-		setup: (props: any, { emit }: any) => {
-			const { updateFormData, formElements } = formCore(emit);
+type Events = {
+	'update:modelValue'(message: string): void;
+	'change'(cb: () => void): void;
+	update(value: any): void;
+}
 
-			return () =>
-				h(component, {
-					name: '',
-					modelValue: props.modelValue || formElements.value[props.name]?.value,
-					'onUpdate:modelValue': (value: any) => {
-						updateFormData(props.name, value);
-						emit('update:modelValue', formElements.value[props.name]?.value || value);
-					},
-				});
+export const createInput = <T>(component: Component) => {
+	const FComponent: FunctionalComponent<T & { name: string; modelValue?: any; error?: any }, Events> = (
+		props,
+		context,
+	) => {
+		const { updateFormData, formElements } = formCore(context.emit);
+		const config: any = inject('config') || undefined;
+
+		return h(component, {
+			...props,
+			error: formElements.value[props.name]?.error || props.error,
+			modelValue: props.modelValue || formElements.value[props.name]?.value,
+			'onUpdate:modelValue': (value: any) => {
+				updateFormData(props.name, value);
+				formElements.value[props.name]?.value || value;
+				context.emit('update:modelValue', formElements.value[props.name]?.value || value);
+			},
+			...(!config || config.useFocus && {
+				onFocus: () => {
+					formElements.value[props.name].error && (formElements.value[props.name].error = undefined);
+				},
+				onChange: () => {
+					formElements.value[props.name].error && (formElements.value[props.name].error = undefined);
+				},
+				onBlur: () => {
+					formElements.value[props.name].error && (formElements.value[props.name].error = undefined);
+				},
+			}),
 		},
+		context.slots.default);
 	};
 
-	return cmp;
+	return FComponent;
 };

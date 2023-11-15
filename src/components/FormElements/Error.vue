@@ -1,21 +1,16 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
-import { FormType } from './components';
-import { Form, Input } from './components';
-
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
-const form = ref<FormType>();
+defineProps<{
+	error?: any;
+}>();
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
-const send = (data: any) => {
-	console.log('[data]: ', data);
-};
 /*---------------------------------------------
 /  COMPUTED
 ---------------------------------------------*/
@@ -30,23 +25,7 @@ const send = (data: any) => {
 ---------------------------------------------*/
 </script>
 <template>
-	<div class="wrapper">
-		<pre>{{ form?.formData }}</pre>
-		<Form
-			ref="form"
-			@submit="send">
-			<Input name="email" />
-			<button type="submit">
-				Küldés
-			</button>
-		</Form>
-		<button @click="form?.resetForm()">
-			Reset
-		</button>
+	<div>
+		<span>{{ error }}</span>
 	</div>
 </template>
-<style>
-.wrapper {
-	padding: 1rem;
-}
-</style>

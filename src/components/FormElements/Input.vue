@@ -14,7 +14,7 @@ const props = withDefaults(
 		required?: boolean;
 		type?: HTMLInputAttributeType;
 		defaultValue?: FormValue;
-		prefix?: string;
+		error?: string;
 	}>(),
 	{
 		modelValue: undefined,
@@ -23,7 +23,7 @@ const props = withDefaults(
 		label: undefined,
 		id: undefined,
 		defaultValue: undefined,
-		prefix: '',
+		error: undefined,
 	},
 );
 const emit = defineEmits(['update:modelValue', 'blur']);
@@ -58,32 +58,27 @@ const value = computed({
 	<div>
 		<label
 			v-if="label"
-			class="input-label"
 			:id="`label-${id ? id : name}`"
 			:for="id ? id : name">
 			<slot name="label">
 				{{ label }}
 			</slot>
 			<span
-				class="required"
 				v-if="required">
 				<slot name="required">*</slot>
 			</span>
 		</label>
-		<div class="position-relative">
+		<div>
 			<input
-				class="form-control"
 				v-bind="$attrs"
 				v-model="value"
 				:name="name"
 				:type="type"
 				:id="id ? id : name"
-				:class="prefix && 'has-prefix'"
+				:required="required"
 				:aria-labelledby="`label-${id ? id : name}`"
-				@blur="emit('blur')">
-			<span
-				v-if="prefix"
-				class="prefix">{{ prefix }}</span>
+				@blur="emit('blur', name)">
 		</div>
+		<small v-if="error">{{ error }}</small>
 	</div>
 </template>

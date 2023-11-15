@@ -43,7 +43,7 @@ export const formCore = (emit: any) => {
 		while (stack.length > 0) {
 			const element = stack.pop();
 	
-			if (typeof element?.type === 'object') {
+			if (typeof element?.type === 'object' || typeof element?.type === 'function') {
 				formLookUpTable.value.set(element.props?.name, element.props);
 			} else if (Array.isArray(element?.children) && element?.children.length) {
 				stack.push(...element.children as VNode[]);
@@ -53,7 +53,6 @@ export const formCore = (emit: any) => {
 	
 	const setFormElements = () => {
 		formLookUpTable.value.forEach((props, key) => {
-			0;
 			if (!formElements.value[key]) {
 				formElements.value[key] = { ...baseValue, ...{ value: props?.['default-value'] || '' } };
 			}
@@ -76,6 +75,14 @@ export const formCore = (emit: any) => {
 		formElements.value = {};
 		emit('update:modelValue', {});
 	};
+
+	const setError = (cb: (elements?: any) => void) => {
+		cb?.(formElements.value);
+	};
+
+	const hideInputError = (name: string) => {
+		formElements.value[name].error = undefined;
+	};
 	
 	const resetForm = () => {
 		Object.keys(formElements.value).forEach((key) => {
@@ -85,6 +92,8 @@ export const formCore = (emit: any) => {
 
 	return {
 		resetForm,
+		setError,
+		hideInputError,
 		formElements,
 		updateFormData,
 		hasSlotContent,
