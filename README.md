@@ -151,5 +151,3 @@ const send = (data: any) => {
 	</div>
 </template>
 ```
-
-**Happy Coding!** 🚀
