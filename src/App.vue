@@ -41,7 +41,7 @@ const send = (data: any) => {
 			<Input name="last_name" />
 			<Input name="email" />
 			<button type="submit">
-				Küldés
+				Send
 			</button>
 		</Form>
 		<button @click="form?.resetForm()">
