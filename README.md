@@ -25,7 +25,7 @@ My focus was to create something that feels good to use without struggling with 
 
 When you define the **Input** element inside the **Form** the only thing you have to do is set the **name** attribute and the Form will automatically extract the value.
 
-It also works well with **HMR** without any issue! You can **add / remove / change** inpus and the data will be updated.
+It also works well with **HMR** without any issue! You can **add / remove / change** inputs and the data will be updated.
 
 **But enough talk let's see some code!**
 
