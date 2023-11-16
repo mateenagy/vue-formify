@@ -123,7 +123,7 @@ const send = (data: any) => {
 </template>
 ```
 
-This composable also help to create other UI frameworks compatible with this frameworks. Take a look at how we implement Element Plus checkbox:
+This composable also help to create other UI frameworks compatible with VueFormify. Take a look at how we implement Element Plus checkbox:
 
 ```vue
 <script lang="ts" setup>
@@ -147,6 +147,45 @@ const send = (data: any) => {
 	<div>
 		<Form @submit="send">
 			<Checkbox name="check_this" />
+			<button type="submit">Send</button>
+		</Form>
+	</div>
+</template>
+```
+
+## 🛑 Handling errors
+I prefer to minimize client-side error handling or not using at all, as it can become convoluted when combined with backend error handling. That's why this framework doesn't include built-in error handling. But rest assured, you have the flexibility to manage errors. By using template ref, you can access the form object to set errors. In theory, you can implement any JavaScript validator; for instance, I use yup in this example."
+
+```vue
+<script lang="ts" setup>
+import { Form, Input } from "vue-formify";
+import { FormType } from "vue-formify/dist/components";
+
+const form = ref<FormType>();
+const send = (data: any) => {
+	const rules = yup.object({
+		first_name: yup.string().required('First name requried'),
+		last_name: yup.string().required('Last name requried'),
+		email: yup.string().required('Email requried'),
+	});
+
+	rules.validate(data, { abortEarly: false })
+		.then(() => {
+			console.log('data', data);
+		})
+		.catch((errors) => {
+			errors.inner.forEach((error) => {
+				form.value?.setError(error.path, error.message);
+			});
+		});
+};
+</script>
+<template>
+	<div>
+		<Form ref="form" @submit="send">
+			<Input name="first_name" />
+			<Input name="last_name" />
+			<Input name="email" />
 			<button type="submit">Send</button>
 		</Form>
 	</div>

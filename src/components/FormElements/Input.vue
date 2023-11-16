@@ -26,7 +26,7 @@ const props = withDefaults(
 		error: undefined,
 	},
 );
-const emit = defineEmits(['update:modelValue', 'blur']);
+const emit = defineEmits(['update:modelValue', 'blur', 'focus', 'change', 'input']);
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
@@ -76,8 +76,12 @@ const value = computed({
 				:type="type"
 				:id="id ? id : name"
 				:required="required"
+				:aria-required="required"
 				:aria-labelledby="`label-${id ? id : name}`"
-				@blur="emit('blur', name)">
+				@blur="emit('blur', $event, name, value)"
+				@focus="emit('focus', $event, name, value)"
+				@input="emit('input', $event, name, value)"
+				@change="emit('change', $event, name, value)">
 		</div>
 		<small v-if="error">{{ error }}</small>
 	</div>

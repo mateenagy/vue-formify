@@ -19,7 +19,7 @@ export type FormElement = Record<string, {
 }>
 
 export type FormType<T = unknown> = {
-	setError: (cb: (elements?: any) => void) => void;
+	setError: (name: string, error: any) => void;
 	errorHandler: any;
 	hideInputError: (name: string) => void;
 	resetForm: () => void;

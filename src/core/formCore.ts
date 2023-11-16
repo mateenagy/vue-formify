@@ -44,7 +44,6 @@ export const formCore = (emit: any) => {
 			const element = stack.pop();
 	
 			if (typeof element?.type === 'object' || typeof element?.type === 'function') {
-				console.log('[element]: ', element.children);
 				formLookUpTable.value.set(element.props?.name, element.props);
 			} else if (Array.isArray(element?.children) && element?.children.length) {
 				stack.push(...element.children as VNode[]);
@@ -77,8 +76,8 @@ export const formCore = (emit: any) => {
 		emit('update:modelValue', {});
 	};
 
-	const setError = (cb: (elements?: any) => void) => {
-		cb?.(formElements.value);
+	const setError = (name: string, error: any) => {
+		formElements.value[name].error = error;
 	};
 
 	const hideInputError = (name: string) => {
