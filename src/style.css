@@ -1,0 +1,44 @@
+
+*:where(:not(html, iframe, canvas, img, svg, video, audio):not(svg *, symbol *)) {
+	all: unset;
+	display: revert;
+}
+
+/* Preferred box-sizing value */
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+/* Safari - solving issue when using user-select:none on the <body> text input doesn't working */
+input,
+textarea {
+	-webkit-user-select: auto;
+	background-color: #fff;
+	color: #000;
+	border: 1px solid #000;
+	border-radius: 5px;
+	padding: 0.7rem 1rem;
+	width: 100%;
+}
+
+/* revert the 'white-space' property for textarea elements on Safari */
+textarea {
+	white-space: revert;
+}
+
+button {
+	padding: 1rem 1.5rem;
+	background-color: #71a5de;
+	color: #fff;
+	border-radius: 10px;
+	margin-top: 0.5rem;
+	cursor: pointer;
+}
+
+
+/* reset default text opacity of input placeholder */
+::placeholder {
+	color: unset;
+}
