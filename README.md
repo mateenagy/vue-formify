@@ -191,3 +191,11 @@ const send = (data: any) => {
 	</div>
 </template>
 ```
+
+## ⛔️ Limitations
+I found one limitation with this approach. Sadly if you want to wrap multiple input component to be one component file and use that inside form then it will not work:
+```vue
+<Form>
+	<Inputs />  <!-- <-This component contains multiple Input component  -->
+</Form>
+```
