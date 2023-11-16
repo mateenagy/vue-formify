@@ -10,9 +10,11 @@ npm i vue-formify
 
 ```ts
 import { VueFormify } from "vue-formify";
-import 'vue-formify/dist/vue-formify.css'; // Not important. It only contians input css reset and some very basic styling.
+import "vue-formify/dist/vue-formify.css"; // Not important. It only contians input css reset and some very basic styling.
 
-app.use(VueFormify);
+app.use(VueFormify, {
+	useFocus: true,
+});
 ```
 
 ## 💡 How it works
@@ -154,6 +156,7 @@ const send = (data: any) => {
 ```
 
 ## 🛑 Handling errors
+
 I prefer to minimize client-side error handling or not using at all, as it can become convoluted when combined with backend error handling. That's why this framework doesn't include built-in error handling. But rest assured, you have the flexibility to manage errors. By using template ref, you can access the form object to set errors. In theory, you can implement any JavaScript validator; for instance, I use yup in this example."
 
 ```vue
@@ -164,14 +167,15 @@ import { FormType } from "vue-formify/dist/components";
 const form = ref<FormType>();
 const send = (data: any) => {
 	const rules = yup.object({
-		first_name: yup.string().required('First name requried'),
-		last_name: yup.string().required('Last name requried'),
-		email: yup.string().required('Email requried'),
+		first_name: yup.string().required("First name requried"),
+		last_name: yup.string().required("Last name requried"),
+		email: yup.string().required("Email requried"),
 	});
 
-	rules.validate(data, { abortEarly: false })
+	rules
+		.validate(data, { abortEarly: false })
 		.then(() => {
-			console.log('data', data);
+			console.log("data", data);
 		})
 		.catch((errors) => {
 			errors.inner.forEach((error) => {
@@ -193,7 +197,9 @@ const send = (data: any) => {
 ```
 
 ## ⛔️ Limitations
+
 I found one limitation with this approach. Sadly if you want to wrap multiple input component to be one component file and use that inside form then it will not work:
+
 ```vue
 <Form>
 	<Inputs />  <!-- <-This component contains multiple Input component  -->
