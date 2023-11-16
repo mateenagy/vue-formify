@@ -17,15 +17,15 @@ app.use(VueFormify);
 
 ## 💡 How it works
 
-My focus was to create something that feels like native and feels good to use. For that purpose I made only have 3 components all together:
+My focus was to create something that feels good to use without struggling with styling or using other libraries components. For that purpose I made only 3 components all together:
 
--   **Form**: As native forms we put our inputs inside a `<Form>` element.
--   **Input**: It's basically an input field with extra features like a11y and error messages
+-   **Form**: Same as native forms, we put our inputs inside the `<Form>` element.
+-   **Input**: It's basically an input field with extra features like a11y and able to show error messages and label for input.
 -   **Error**: The main usage of this component is when you create input from different UI libraries (e.g. Element Plus) you can show error messages without creating a wrapper component
 
 When you define the **Input** element inside the **Form** the only thing you have to do is set the **name** attribute and the Form will automatically extract the value.
 
-It also works well with **HMR** without any issue! You can **add / remove / change** input and the data will be updated.
+It also works well with **HMR** without any issue! You can **add / remove / change** inpus and the data will be updated.
 
 **But enough talk let's see some code!**
 
