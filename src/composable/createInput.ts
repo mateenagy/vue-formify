@@ -8,8 +8,15 @@ type Events = {
 	update(value: any): void;
 }
 
+type BaseInput = {
+	name: string;
+	modelValue?: any;
+	error?: any;
+	ignore?: boolean;
+}
+
 export const createInput = <T>(component: Component) => {
-	const FComponent: FunctionalComponent<T & { name: string; modelValue?: any; error?: any }, Events> = (
+	const FComponent: FunctionalComponent<T & BaseInput, Events> = (
 		props,
 		context,
 	) => {
@@ -17,9 +24,9 @@ export const createInput = <T>(component: Component) => {
 		const config: any = inject('config') || undefined;
 
 		return h(component, {
-			...props,
 			error: formElements.value[props.name]?.error || props.error,
 			modelValue: props.modelValue || formElements.value[props.name]?.value,
+			ignore: false,
 			'onUpdate:modelValue': (value: any) => {
 				updateFormData(props.name, value);
 				formElements.value[props.name]?.value || value;
@@ -36,8 +43,9 @@ export const createInput = <T>(component: Component) => {
 					formElements.value[props.name].error && (formElements.value[props.name].error = undefined);
 				},
 			}),
+			...props,
 		},
-		context.slots.default);
+		{ ...context.slots });
 	};
 
 	return FComponent;

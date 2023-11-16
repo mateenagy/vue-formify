@@ -2,6 +2,8 @@
 import { ref } from 'vue';
 import { FormType } from './components';
 import { Form, Input } from './components';
+import FormGroup from './components/FormGroup.vue';
+import { createInput } from './composable/createInput';
 
 /*---------------------------------------------
 /  PROPS & EMITS
@@ -10,12 +12,18 @@ const form = ref<FormType>();
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
+const imageUrl = ref<string>('');
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
 const send = (data: any) => {
-	console.log('[data]: ', data);
+	console.log('[data]: ', { ...data, ... { img: imageUrl.value } });
+	form.value?.setError((elements) => {
+		elements.email.error = 'email error';
+	});
 };
+
+const Group = createInput(FormGroup);
 /*---------------------------------------------
 /  COMPUTED
 ---------------------------------------------*/
@@ -36,6 +44,8 @@ const send = (data: any) => {
 			ref="form"
 			@submit="send">
 			<Input name="email" />
+			<Group name="group" />
+			<FormGroup />
 			<button type="submit">
 				Küldés
 			</button>

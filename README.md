@@ -10,6 +10,7 @@ npm i vue-formify
 
 ```ts
 import { VueFormify } from "vue-formify";
+import 'vue-formify/dist/vue-formify.css'; // Not important. It only contians input css reset and some very basic styling.
 
 app.use(VueFormify);
 ```

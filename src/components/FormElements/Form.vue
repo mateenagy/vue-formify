@@ -11,7 +11,7 @@ const emit = defineEmits(['update:modelValue', 'submit', 'update:error', 'setErr
 /  VARIABLES
 ---------------------------------------------*/
 const slots = useSlots();
-const { formElements, updateFormData, resetForm, hasSlotContent, setError, hideInputError } = formCore(emit);
+const { formElements, updateFormData, resetForm, hasSlotContent, setError, hideInputError, formLookUpTable } = formCore(emit);
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
@@ -23,7 +23,8 @@ const data = computed(() => {
 	const data = Object.create({});
 
 	Object.keys(formElements.value).forEach((key) => {
-		data[key] = formElements.value[key].value;
+		const props = formLookUpTable.value.get(key);
+		props?.ignore !== '' && (data[key] = formElements.value[key].value);
 	});
 
 	return data;

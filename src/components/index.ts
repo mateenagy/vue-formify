@@ -1,10 +1,8 @@
 import { AllowedComponentProps, Component, VNodeProps } from 'vue';
-import { default as ErrorComponent } from './FormElements/Error.vue';
 import { default as InputComponent } from './FormElements/Input.vue';
 import { createInput } from '@/composable/createInput';
 
 const Input = createInput<ComponentProps<typeof InputComponent>>(InputComponent);
-const Error = createInput<ComponentProps<typeof ErrorComponent>>(ErrorComponent);
 
 export type ComponentProps<C extends Component> = C extends new (...args: any) => any
 	? Omit<InstanceType<C>['$props'], keyof VNodeProps | keyof AllowedComponentProps>
@@ -12,7 +10,6 @@ export type ComponentProps<C extends Component> = C extends new (...args: any) =
 
 export {
 	Input,
-	Error,
 };
 
 export type FormValue = string | number | boolean | Date;
@@ -54,4 +51,5 @@ export type HTMLInputAttributeType =
 | 'week';
 
 export { default as Form } from './FormElements/Form.vue';
+export { default as Error } from './FormElements/Error.vue';
 export { default as VueFormify } from '@/plugin/plugin';

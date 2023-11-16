@@ -1,12 +1,8 @@
 <script lang="ts" setup>
-import { formElements } from '@/core/formCore';
-
+import Input from '@/components/FormElements/Input.vue';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
-const props = defineProps<{
-	errorFor: string;
-}>();
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
@@ -28,6 +24,13 @@ const props = defineProps<{
 </script>
 <template>
 	<div>
-		<span v-bind="$attrs">{{ formElements[props.errorFor]?.error }}</span>
+		<slot>
+			<Input
+				name="lorem"
+				label="Lorem" />
+			<Input
+				name="ipsum"
+				label="Ipsum" />
+		</slot>
 	</div>
 </template>
