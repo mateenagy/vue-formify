@@ -8,15 +8,6 @@ VueFormify is a form creating framework. This is **not a UI library**. There are
 npm i vue-formify
 ```
 
-```ts
-import { VueFormify } from "vue-formify";
-import "vue-formify/dist/vue-formify.css"; // Not important. It only contians input css reset and some very basic styling.
-
-app.use(VueFormify, {
-	useFocus: true,
-});
-```
-
 ## 💡 How it works
 
 My focus was to create something that feels good to use without struggling with styling or using other libraries components. For that purpose I made only 3 components all together:
@@ -101,9 +92,7 @@ import ColorPickerComponent from "./components/ColorPickerComponent.vue";
 import { FormType, ComponentProps } from "vue-formify/dist/components";
 
 const ColorPicker =
-	createInput<ComponentProps<typeof ColorPickerComponent>>(
-		ColorPickerComponent
-	);
+	createInput<ComponentProps<typeof ColorPickerComponent>>(ColorPickerComponent);
 
 const send = (data: any) => {
 	console.log(data);
