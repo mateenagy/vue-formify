@@ -146,7 +146,7 @@ const send = (data: any) => {
 
 ## 🛑 Handling errors
 
-I prefer to minimize client-side error handling or not using at all, as it can become convoluted when combined with backend error handling. That's why this framework doesn't include built-in error handling. But rest assured, you have the flexibility to manage errors. By using template ref, you can access the form object to set errors. In theory, you can implement any JavaScript validator; for instance, I use yup in this example."
+I prefer to minimize client-side error handling or not using at all, as it can become convoluted when combined with backend error handling. That's why this framework doesn't include built-in error handling but you have the option to set and show errors. But rest assured, you have the flexibility to manage errors. By using template ref, you can access the form object to set errors. In theory, you can implement any JavaScript validator; for instance, I use yup in this example."
 
 ```vue
 <script lang="ts" setup>

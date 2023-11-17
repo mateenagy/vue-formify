@@ -36,10 +36,7 @@ const send = (data: any) => {
 			ref="form"
 			@submit="send">
 			<Input
-				name="first_name"
-				required />
-			<Input name="last_name" />
-			<Input name="email" />
+				name="email" />
 			<button type="submit">
 				Send
 			</button>
