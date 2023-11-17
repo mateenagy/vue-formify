@@ -1,8 +1,7 @@
 import { App } from 'vue';
-import { Form, Input, Error } from './index';
+import { Form, Input, Error, FormType, ComponentProps } from './index';
 import { createInput } from '@/composable/createInput';
 import VueFormify from '@/plugin/plugin';
-
 
 
 export default {
@@ -18,4 +17,9 @@ export {
 	Input,
 	createInput,
 	VueFormify,
+};
+
+export type {
+	FormType,
+	ComponentProps,
 };

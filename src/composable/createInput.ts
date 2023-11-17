@@ -21,7 +21,7 @@ export const createInput = <T>(component: Component) => {
 		context,
 	) => {
 		const { updateFormData, formElements } = formCore(context.emit);
-		const config: any = inject('config') || undefined;
+		const config: any = inject('config', undefined);
 
 		return h(component, {
 			error: formElements.value[props.name]?.error || props.error,

@@ -5,7 +5,7 @@ type PluginOptions = {
 }
 
 const VueFormify = {
-	install: (app: App, options: PluginOptions) => {
+	install: (app: App, options?: PluginOptions) => {
 		const config: PluginOptions = {
 			...{ useFocus: true },
 			...options,

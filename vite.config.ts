@@ -11,9 +11,8 @@ export default defineConfig({
 	plugins: [
 		vue(),
 		dts({
-			strictOutput: false,
 			insertTypesEntry: true,
-			outDir: 'dist',
+			rollupTypes: true,
 		}),
 		typescript2({
 			check: false,
