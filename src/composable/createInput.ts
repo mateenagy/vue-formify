@@ -2,28 +2,38 @@ import { Component, h, inject, onBeforeUnmount, onMounted, ref, watch } from 'vu
 import { defineComponent } from 'vue';
 import { STORE } from '@/store/store';
 
-
 type BaseInput = {
 	name: string;
-	defaultValue?: any;
+	default?: any;
+	value?: any;
 	modelValue?: any;
 	error?: any;
 	ignore?: boolean;
 }
 
 type CreateInputOptions = {
-	modelKey: string;
+	modelKey?: string;
+	defaultValueKey?: any;
 }
 
 export const createInput = <T>(component: Component, options?: CreateInputOptions) => {
 	const cmp = defineComponent<T & BaseInput>({
-		props: (component as any).props,
+		props: {
+			...(component as any).props,
+			name: {
+				type: String,
+				default: '',
+			},
+			default: {
+				type: [String, Boolean, Number, Object],
+				default: '',
+			},
+		},
 		emits: ['update:modelValue'],
 		setup: (props, ctx) => {
 			const { formName, updateFormData }: any = inject('form');
 			const config: any = inject('config', undefined);
 			const prevValue = ref<string>(props.name);
-			console.log('[cmp]: ', component);
 
 			const createModelBindings = () => {
 				const bindingMethod = Object.create({});
@@ -32,14 +42,14 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 					STORE.value[formName][props.name]?.value || value;
 					ctx.emit(`update:${options?.modelKey}`, STORE.value[formName][props.name]?.value || value);
 				};
-	
+
 				return bindingMethod;
 			};
 
 			onMounted(() => {
 				if (!STORE.value[formName][props.name]) {
 					STORE.value[formName][props.name] = {
-						value: props.defaultValue || '',
+						value: props.value || props[options?.defaultValueKey as keyof typeof props] || props.default,
 						error: '',
 					};
 				}
@@ -49,10 +59,10 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 				delete STORE.value[formName][props.name];
 			});
 
-			watch(() => [props.name, props.defaultValue], () => {
+			watch(() => [props.name, props.value], () => {
 				delete STORE.value[formName][prevValue.value];
 				STORE.value[formName][props.name] = {
-					value: props.defaultValue || '',
+					value: props.value || props[options?.defaultValueKey as keyof typeof props] || props.default,
 					error: '',
 				};
 				prevValue.value = props.name;
@@ -72,8 +82,9 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 						},
 					}),
 					...props,
-					error: STORE.value[formName][props.name]?.error || props.error,
-					modelValue: props.modelValue || STORE.value[formName][props.name]?.value,
+					name: props.name,
+					error: STORE.value?.[formName]?.[props?.name]?.error || props.error,
+					modelValue: STORE.value?.[formName]?.[props.name]?.value || props.modelValue,
 					ignore: false,
 					'onUpdate:modelValue': (value: any) => {
 						ctx.emit('update:modelValue', value);
