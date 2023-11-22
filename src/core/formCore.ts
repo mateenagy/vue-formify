@@ -1,10 +1,13 @@
 import { ref, Slots, VNode } from 'vue';
 import { FormElement, FormValue } from '@/components';
 
-const formElements = ref<FormElement>(Object.create({}));
-const formLookUpTable = ref<Map<string, any>>(new Map());
+
+type FormType = Record<string, any>;
 
 export const formCore = (emit: any) => {
+	const formElements = ref<FormElement>(Object.create({}));
+	const formLookUpTable = ref<Map<string, any>>(new Map());
+	const inputs = ref<FormType>();
 	const baseValue = {
 		value: '',
 		error: undefined,
@@ -101,6 +104,6 @@ export const formCore = (emit: any) => {
 	};
 };
 
-export {
-	formElements,
-};
+// export {
+// 	formElements,
+// };

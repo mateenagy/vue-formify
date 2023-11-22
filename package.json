@@ -43,7 +43,8 @@
     "test": "echo \"No test specified\""
   },
   "dependencies": {
-    "vue": "^3.3.4"
+    "vue": "^3.3.4",
+	"element-plus": "^2.4"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.2.3",
