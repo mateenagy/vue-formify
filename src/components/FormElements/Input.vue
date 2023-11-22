@@ -8,12 +8,12 @@ import { FormValue, HTMLInputAttributeType } from '..';
 const props = withDefaults(
 	defineProps<{
 		name: string;
+		value: any;
 		modelValue?: FormValue;
 		label?: string;
 		id?: string;
 		required?: boolean;
 		type?: HTMLInputAttributeType;
-		defaultValue?: FormValue;
 		error?: string;
 	}>(),
 	{
@@ -22,7 +22,6 @@ const props = withDefaults(
 		type: 'text',
 		label: undefined,
 		id: undefined,
-		defaultValue: undefined,
 		error: undefined,
 	},
 );
@@ -63,15 +62,14 @@ const value = computed({
 			<slot name="label">
 				{{ label }}
 			</slot>
-			<span
-				v-if="required">
+			<span v-if="required">
 				<slot name="required">*</slot>
 			</span>
 		</label>
 		<div>
 			<input
 				v-bind="$attrs"
-				v-model="value"
+				:value="value"
 				:name="name"
 				:type="type"
 				:id="id ? id : name"
@@ -80,7 +78,7 @@ const value = computed({
 				:aria-labelledby="`label-${id ? id : name}`"
 				@blur="emit('blur', $event, name, value)"
 				@focus="emit('focus', $event, name, value)"
-				@input="emit('input', $event, name, value)"
+				@input="emit('input', $event, name, value), emit('update:modelValue', ($event.target as HTMLInputElement).value)"
 				@change="emit('change', $event, name, value)">
 		</div>
 		<small v-if="error">{{ error }}</small>

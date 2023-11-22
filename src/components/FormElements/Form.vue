@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { useSlots, computed, provide, onBeforeUpdate, onMounted } from 'vue';
-import { formCore } from '@/core/formCore';
-import '@/style.css';
+import { computed, provide, onMounted, onUnmounted } from 'vue';
+import { FormElement, FormValue } from '@/components';
+import { STORE } from '@/store/store';
 
 /*---------------------------------------------
 /  PROPS & EMITS
@@ -10,22 +10,41 @@ const emit = defineEmits(['update:modelValue', 'submit', 'update:error', 'setErr
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
-const slots = useSlots();
-const { formElements, updateFormData, resetForm, hasSlotContent, setError, hideInputError, formLookUpTable } = formCore(emit);
+let originalForm = Object.create({});
+const uid = Math.floor(Math.random() * Date.now());
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
+const updateFormData = (key: keyof FormElement, value: FormValue) => {
+	if (STORE.value[uid][key]) {
+		STORE.value[uid][key].value = value;
+		emit('update:modelValue', STORE.value[uid][key].value);
+	} else {
+		emit('update:modelValue', value);
+	}
+};
 
+const setError = (name: string, error: any) => {
+	STORE.value[uid][name].error = error;
+};
+
+const hideInputError = (name: string) => {
+	STORE.value[uid][name].error = undefined;
+};
+	
+const resetForm = () => {
+	STORE.value[uid] = JSON.parse(originalForm);
+};
 /*---------------------------------------------
 /  COMPUTED
 ---------------------------------------------*/
 const data = computed(() => {
 	const data = Object.create({});
-
-	Object.keys(formElements.value).forEach((key) => {
-		const props = formLookUpTable.value.get(key);
-		props?.ignore !== '' && (data[key] = formElements.value[key].value);
-	});
+	if (STORE.value[uid]) {
+		Object.keys(STORE.value[uid]).forEach((key) => {
+			data[key] = STORE.value[uid][key].value;
+		});
+	}
 
 	return data;
 });
@@ -35,8 +54,10 @@ const data = computed(() => {
 /*---------------------------------------------
 /  CREATED
 ---------------------------------------------*/
-provide('formModel', {
-	formElements,
+STORE.value[uid] = Object.create({});
+
+provide('form', {
+	formName: uid,
 	updateFormData,
 });
 
@@ -50,15 +71,16 @@ defineExpose({
 /  HOOKS
 ---------------------------------------------*/
 onMounted(() => {
-	hasSlotContent(slots);
+	originalForm = JSON.stringify(STORE.value[uid]);
 });
 
-onBeforeUpdate(() => {
-	hasSlotContent(slots);
+onUnmounted(() => {
+	delete STORE.value[uid];
 });
 </script>
 <template>
-	<form @submit.prevent="emit('submit', data)">
+	<form
+		@submit.prevent="emit('submit', data)">
 		<slot></slot>
 	</form>
 </template>

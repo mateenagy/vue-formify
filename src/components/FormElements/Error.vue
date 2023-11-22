@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { formElements } from '@/core/formCore';
+import { inject } from 'vue';
+import { STORE } from '@/store/store';
 
 /*---------------------------------------------
 /  PROPS & EMITS
@@ -7,6 +8,7 @@ import { formElements } from '@/core/formCore';
 const props = defineProps<{
 	errorFor: string;
 }>();
+const { formName }: any = inject('form');
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
@@ -28,6 +30,6 @@ const props = defineProps<{
 </script>
 <template>
 	<div>
-		<span v-bind="$attrs">{{ formElements[props.errorFor]?.error }}</span>
+		<span v-bind="$attrs">{{ STORE.value?.[formName][props.errorFor]?.error }}</span>
 	</div>
 </template>
