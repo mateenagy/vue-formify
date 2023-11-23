@@ -5,6 +5,10 @@ import { FormValue, HTMLInputAttributeType } from '..';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
+defineOptions({
+	inheritAttrs: false,
+});
+
 const props = withDefaults(
 	defineProps<{
 		name: string;

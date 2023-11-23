@@ -7,15 +7,32 @@ import { STORE } from './store/store';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
-const form = ref<FormType>();
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
+const form = ref<FormType>();
+
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
 const send = (data: any) => {
 	console.log('data', data);
+	const errors = [
+		{
+			code: 'first_name:required',
+		},
+		{
+			code: 'email:required',
+		},
+		{
+			code: 'last_name:required',
+		},
+	];
+
+	errors.forEach((error) => {
+		const key = error.code.split(':')[0];
+		form.value?.setError(key, error.code);
+	});
 };
 /*---------------------------------------------
 /  COMPUTED
@@ -39,16 +56,8 @@ const send = (data: any) => {
 			<Form
 				@submit="send"
 				ref="form">
-				<Input name="first_name" />
-				<button>
-					Send
-				</button>
-			</Form>
-		</div>
-		<div>
-			<Form
-				@submit="send"
-				ref="form">
+				<Input
+					name="first_name" />
 				<Input name="last_name" />
 				<button>
 					Send

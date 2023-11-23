@@ -25,7 +25,9 @@ const updateFormData = (key: keyof FormElement, value: FormValue) => {
 };
 
 const setError = (name: string, error: any) => {
-	STORE.value[uid][name].error = error;
+	if (STORE.value[uid][name]) {
+		STORE.value[uid][name].error = error;
+	}
 };
 
 const hideInputError = (name: string) => {

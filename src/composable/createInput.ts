@@ -49,7 +49,7 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 			onMounted(() => {
 				if (!STORE.value[formName][props.name]) {
 					STORE.value[formName][props.name] = {
-						value: props.value || props[options?.defaultValueKey as keyof typeof props] || props.default,
+						value: (props.value || props[options?.defaultValueKey as keyof typeof props] || props.default),
 						error: '',
 					};
 				}
@@ -59,10 +59,10 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 				delete STORE.value[formName][props.name];
 			});
 
-			watch(() => [props.name, props.value], () => {
+			watch(() => [props.name, props.value, props.default], () => {
 				delete STORE.value[formName][prevValue.value];
 				STORE.value[formName][props.name] = {
-					value: props.value || props[options?.defaultValueKey as keyof typeof props] || props.default,
+					value: (props.value || props[options?.defaultValueKey as keyof typeof props] || props.default),
 					error: '',
 				};
 				prevValue.value = props.name;
@@ -70,7 +70,7 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 
 			return () => {
 				return h(component, {
-					...(!config || config.useFocus && {
+					...((!config || config.useFocus) && {
 						onFocus: () => {
 							STORE.value[formName][props.name].error && (STORE.value[formName][props.name].error = undefined);
 						},
