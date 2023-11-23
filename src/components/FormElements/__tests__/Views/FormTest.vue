@@ -13,7 +13,7 @@ const foo = ref('');
 /  METHODS
 ---------------------------------------------*/
 const sendForm = (data: any) => {
-	console.log('[data]: ', data);
+	console.log('[data]: ', data, foo);
 };
 /*---------------------------------------------
 /  COMPUTED
