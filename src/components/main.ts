@@ -15,6 +15,7 @@ export default {
 export {
 	Form,
 	Input,
+	Error,
 	createInput,
 	VueFormify,
 };
