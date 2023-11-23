@@ -1,7 +1,7 @@
 {
   "name": "vue-formify",
   "private": false,
-  "version": "0.0.6",
+  "version": "0.0.7",
   "type": "module",
   "engines": {
     "node": "v18.16.0"
@@ -66,10 +66,10 @@
   },
   "license": "MIT",
   "repository": {
-	"type": "git",
-	"url": "git+https://github.com/mateenagy/vue-formify.git"
+    "type": "git",
+    "url": "git+https://github.com/mateenagy/vue-formify.git"
   },
   "bugs": {
-	"url": "https://github.com/mateenagy/vue-formify/issues"
+    "url": "https://github.com/mateenagy/vue-formify/issues"
   }
 }
