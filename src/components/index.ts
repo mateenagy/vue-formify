@@ -11,7 +11,10 @@ export type ComponentProps<C extends Component> = C extends new (...args: any) =
 export {
 	Input,
 };
-
+export type PluginOptions = {
+	useFocus?: boolean;
+	globalErrorCSSClass?: string;
+}
 export type FormValue = string | number | boolean | Date;
 export type FormElement = Record<string, {
 	value: FormValue;

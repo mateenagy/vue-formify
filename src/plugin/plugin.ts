@@ -1,8 +1,5 @@
 import { App } from 'vue';
-
-type PluginOptions = {
-	useFocus: boolean;
-}
+import { PluginOptions } from '@/components';
 
 const VueFormify = {
 	install: (app: App, options?: PluginOptions) => {

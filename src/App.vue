@@ -58,7 +58,8 @@ const send = (data: any) => {
 				ref="form">
 				<Input
 					name="first_name" />
-				<Input name="last_name" />
+				<Input
+					name="last_name" />
 				<button>
 					Send
 				</button>
@@ -72,5 +73,9 @@ const send = (data: any) => {
 <style>
 .wrapper {
 	padding: 1rem;
+}
+
+.error-message {
+	color: rgb(255, 77, 77);
 }
 </style>

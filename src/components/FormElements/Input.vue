@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { computed } from 'vue';
-import { FormValue, HTMLInputAttributeType } from '..';
+import { computed, inject } from 'vue';
+import { FormValue, HTMLInputAttributeType, PluginOptions } from '..';
 
 /*---------------------------------------------
 /  PROPS & EMITS
@@ -18,6 +18,7 @@ const props = withDefaults(
 		id?: string;
 		required?: boolean;
 		type?: HTMLInputAttributeType;
+		errorClass?: string;
 		error?: string;
 	}>(),
 	{
@@ -27,12 +28,14 @@ const props = withDefaults(
 		label: undefined,
 		id: undefined,
 		error: undefined,
+		errorClass: undefined,
 	},
 );
 const emit = defineEmits(['update:modelValue', 'blur', 'focus', 'change', 'input']);
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
+const config: PluginOptions | undefined = inject('config', undefined);
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
@@ -85,6 +88,8 @@ const value = computed({
 				@input="emit('input', $event, name, value), emit('update:modelValue', ($event.target as HTMLInputElement).value)"
 				@change="emit('change', $event, name, value)">
 		</div>
-		<small v-if="error">{{ error }}</small>
+		<small
+			:class="[errorClass, (config as any)?.globalErrorCSSClass]"
+			v-if="error">{{ error }}</small>
 	</div>
 </template>

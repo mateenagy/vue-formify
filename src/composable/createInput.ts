@@ -1,5 +1,6 @@
 import { Component, h, inject, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { defineComponent } from 'vue';
+import { PluginOptions } from '@/components';
 import { STORE } from '@/store/store';
 
 type BaseInput = {
@@ -32,7 +33,7 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 		emits: ['update:modelValue'],
 		setup: (props, ctx) => {
 			const { formName, updateFormData }: any = inject('form');
-			const config: any = inject('config', undefined);
+			const config: PluginOptions | undefined = inject('config', undefined);
 			const prevValue = ref<string>(props.name);
 
 			const createModelBindings = () => {
@@ -70,7 +71,7 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 
 			return () => {
 				return h(component, {
-					...((!config || config.useFocus) && {
+					...((!config || (config as PluginOptions).useFocus) && {
 						onFocus: () => {
 							STORE.value[formName][props.name].error && (STORE.value[formName][props.name].error = undefined);
 						},
