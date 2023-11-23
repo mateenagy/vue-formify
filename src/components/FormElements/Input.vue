@@ -12,7 +12,7 @@ defineOptions({
 const props = withDefaults(
 	defineProps<{
 		name: string;
-		value: any;
+		value?: any;
 		modelValue?: FormValue;
 		label?: string;
 		id?: string;
@@ -29,6 +29,7 @@ const props = withDefaults(
 		id: undefined,
 		error: undefined,
 		errorClass: undefined,
+		value: '',
 	},
 );
 const emit = defineEmits(['update:modelValue', 'blur', 'focus', 'change', 'input']);
