@@ -40,21 +40,26 @@
     "dev": "vite",
     "lint": "eslint 'src/**/*.{ts,js,vue}' '*.{ts,js}' --no-fix",
     "lint:fix": "eslint 'src/**/*.{ts,js,vue}' '*.{ts,js}' --fix",
-    "test": "echo \"No test specified\""
+	"vitest": "vitest --environment jsdom run",
+    "test": "npm run vitest"
   },
   "dependencies": {
     "vue": "^3.3.4"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.2.3",
+	"@vue/test-utils": "^2.4",
+    "@types/jsdom": "^16.2",
     "@types/node": "^20.9",
     "typescript": "^5.0.2",
     "rollup-plugin-typescript2": "^0.36",
     "vite-plugin-dts": "^3.6",
     "vite": "^4.4.5",
+	"vitest": "^0.34",
     "vue-tsc": "^1.8.5",
     "path": "^0.12",
     "@babel/types": "^7.23",
+	"jsdom": "^19.0",
     "unplugin-auto-import": "^0.16",
     "eslint": "^8.53",
     "eslint-plugin-vue": "^9.18",
