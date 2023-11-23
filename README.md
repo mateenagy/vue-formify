@@ -60,7 +60,7 @@ This is a basic input field with label and error message.
 | modelValue | FormValue 	| Input value (v-model) |
 | label | string 	| Input label |
 | id | string 	| Input id |
-| defaultValue | FormValue | Input default value |
+| default | FormValue | Input default value |
 | error | string | Input error message |
 
 | Methods  	| Descripton                                    	|
