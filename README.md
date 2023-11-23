@@ -18,6 +18,9 @@ I made VueFormify intuitive and straightforward. Seamlessly integrate it into yo
 
 This package is about empowering developers to take charge of their forms but not in a painful way. Take a look, try it and redefine the way you create forms in Vue.js.
 
+## 💻 Demo
+If you are interested to try I put together a <a href="https://stackblitz.com/edit/vue-formify-starter?file=src%2FApp.vue" target="_blank">**stackblitz**</a> project.
+
 ## 📦 Install
 
 ```
