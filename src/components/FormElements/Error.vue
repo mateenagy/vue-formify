@@ -35,8 +35,8 @@ const config: PluginOptions | undefined = inject('config', undefined);
 </script>
 <template>
 	<div>
-		<span
+		<small
 			:class="(config as any)?.globalErrorCSSClass"
-			v-bind="$attrs">{{ STORE.value?.[formName][props.errorFor]?.error }}</span>
+			v-bind="$attrs">{{ STORE?.[formName][props.errorFor]?.error }}</small>
 	</div>
 </template>
