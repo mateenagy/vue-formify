@@ -165,3 +165,37 @@ const sendForm = (data: any) => {
 	</Form>
 </template>
 ```
+### Validation example with yup
+There is no built in validation, but you can use any third party library or custom logic.
+
+```vue
+<script setup lang="ts">
+import { Form, Input} from 'vue-formify'
+import * as yup from 'yup';
+
+
+const sendForm = (data: any) => {
+	const schema = yup.object({
+		first_name: yup.string().required(),
+		last_name: yup.string().required(),
+	});
+
+	schema.validate(data)
+		.then(() => {
+			console.log('data', data);
+		})
+		.catch((errors) => {
+			console.error(errors);
+		})
+};
+
+</script>
+<template>
+	<Form ref="form" @submit="sendForm">
+		<Input name="first_name" />
+		<Input name="last_name" />
+
+		<button>Send</button>
+	</Form>
+</template>
+```
