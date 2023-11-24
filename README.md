@@ -133,6 +133,61 @@ const sendForm = (data: any) => {
 	</Form>
 </template>
 ```
+
+### With custom component
+To use you own component is just as easy as it could be. Take this custom color picker example:
+
+`ColorPicker.vue`
+```vue
+<script setup lang="ts">
+defineProps<{
+	modelValue: any;
+}>();
+const emit = defineEmits(['update:modelValue']);
+const value = computed({
+	get: () => {
+		return props.modelValue;
+	},
+	set: (value: any) => {
+		emit('update:modelValue', value);
+	},
+});
+</script>
+<template>
+	<div>
+		<label>Pick a color!</label>
+		<input type="color" v-model="value" />
+	</div>
+</template>
+```
+
+```vue
+<script setup lang="ts">
+import ColorPicker from '@/components/ColorPicker/ColorPicker.vue';
+import { Form, Error, createInput, ComponentProps} from 'vue-formify'
+
+const ColorInput = createInput<ComponentProps<typeof ColorPicker>>(ColorPicker);
+
+const sendForm = (data: any) => {
+	console.log('data', data);
+	/* 
+	console output: 
+	{
+		color: '...'
+	}
+	*/
+};
+
+</script>
+<template>
+	<Form ref="form" @submit="sendForm">
+		<ColorInput name="color" />
+		<Error error-for="color" />
+
+		<button>Send</button>
+	</Form>
+</template>
+```
 ### With custom UI library
 ```vue
 <script setup lang="ts">
