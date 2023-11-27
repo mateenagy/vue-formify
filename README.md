@@ -35,17 +35,17 @@ For simplicity VueFormify only have 3 component:
 The most important component. It contains all the inputs and extract data automatically so you don't need to use v-model.
 
 
-| Events  | Parameter	| Descripton                                    	|
+| Events  | Parameter	| Description                                    	|
 |-------- |--------	|-----------------------------------------------	|
 | @submit | `{ data: T }` 	| Send form data. data automatically extracted. 	|
 
-| Methods 	| Parameters  	| Descripton						|
+| Methods 	| Parameters  	| Description						|
 |--------	|--------	|---------------------- 			|	
 | resetForm | 	-		| Reset form to default value. 		|
 | setError  | 	`{ name: string; error: any }`		| Set error messages to specified input 				|
 | hideInputError  | 	`{ name: string }`		| Hide error messages from specified input 				|
 
-| Properties 	| Descripton                                    	|
+| Properties 	| Description                                    	|
 |--------	|-----------------------------------------------	|
 | formData 	| Extracted data from the form. (`data` from `submit` already contain these but it can be useful)	|
 
@@ -57,7 +57,7 @@ The most important component. It contains all the inputs and extract data automa
 
 ### Input: `Component<T>`
 This is a basic input field with label and error message.
-| Props  | Type	| Descripton                                    	|
+| Props  | Type	| Description                                    	|
 |-------- |--------	|-----------------------------------------------	|
 | name | `string ` 	| Uniqe name of the input. The form extract data from name attribute |
 | modelValue | FormValue 	| Input value (v-model) |
@@ -66,7 +66,7 @@ This is a basic input field with label and error message.
 | default | FormValue | Input default value |
 | error | string | Input error message |
 
-| Methods  	| Descripton                                    	|
+| Methods  	| Description                                    	|
 |-------- |-----------------------------------------------	|
 | @blur  | input blur event |
 | @focus  | input focus event |
@@ -84,7 +84,7 @@ This is a basic input field with label and error message.
 
 ### Error: `Component<T>`
 A simple component for show error for specified input. Easy to use with custom components.
-| Props  | Type	| Descripton                                    	|
+| Props  | Type	| Description                                    	|
 |-------- |--------	|-----------------------------------------------	|
 | errorFor | `string ` 	| Name of the input to show the error for |
 
@@ -101,14 +101,14 @@ A simple component for show error for specified input. Easy to use with custom c
 ### createInput: `ComponentProps<typeof component>(component: Component, options?: CreateInputOptions) => FunctionalComponent<T & BaseInput, any>`
 **createInput** composable is a very important part of this package. This handy function can create usable component for `<Form>` from any custom component with ease. With the help of `ComponentProps` type we can keep the original component props autocompletion.
 
-| Method option  	| Descripton                                    	|
+| Method option  	| Description                                    	|
 |-------- |-----------------------------------------------	|
 | modelKey  | If there is a special `v-model` like `v-model:checked` you can specify it. |
 | defaultValueKey  | If default value is predefined on component like `defaultChecked` then use it as default value instead of `default`. |
 
 With **createInput** every component will get these properties:
 
-| Property  	| Descripton                                    	|
+| Property  	| Description                                    	|
 |-------- |-----------------------------------------------	|
 | name (required)  | Name of the input. The extracted data key will be the name. |
 | default  | Default value. |
