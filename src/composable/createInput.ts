@@ -10,6 +10,7 @@ type BaseInput = {
 	modelValue?: any;
 	error?: any;
 	ignore?: boolean;
+	preserve?: boolean;
 }
 
 type CreateInputOptions = {
@@ -30,6 +31,10 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 				default: '',
 			},
 			ignore: {
+				type: Boolean,
+				default: false,
+			},
+			preserve: {
 				type: Boolean,
 				default: false,
 			},
@@ -61,7 +66,7 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 			});
 
 			onBeforeUnmount(() => {
-				delete STORE.value[formName][props.name];
+				!props.preserve && delete STORE.value[formName][props.name];
 			});
 
 			watch(() => [props.name, props.value, props.default, props.ignore], (curr) => {
