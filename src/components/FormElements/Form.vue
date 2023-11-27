@@ -17,8 +17,8 @@ const uid = Math.floor(Math.random() * Date.now());
 ---------------------------------------------*/
 const updateFormData = (key: keyof FormElement, value: FormValue) => {
 	if (STORE.value[uid][key]) {
-		STORE.value[uid][key].value = value;
 		emit('update:modelValue', STORE.value[uid][key].value);
+		STORE.value[uid][key].value = value;
 	} else {
 		emit('update:modelValue', value);
 	}
@@ -83,6 +83,6 @@ onUnmounted(() => {
 <template>
 	<form
 		@submit.prevent="emit('submit', data)">
-		<slot></slot>
+		<slot :data="data"></slot>
 	</form>
 </template>

@@ -67,7 +67,9 @@ const value = computed({
 			v-if="label"
 			:id="`label-${id ? id : name}`"
 			:for="id ? id : name">
-			<slot name="label">
+			<slot
+				name="label"
+				:label="label">
 				{{ label }}
 			</slot>
 			<span v-if="required">
@@ -89,8 +91,12 @@ const value = computed({
 				@input="emit('input', $event, name, value), emit('update:modelValue', ($event.target as HTMLInputElement).value)"
 				@change="emit('change', $event, name, value)">
 		</div>
-		<small
-			:class="[errorClass, (config as any)?.globalErrorCSSClass]"
-			v-if="error">{{ error }}</small>
+		<slot
+			name="error"
+			:error="error">
+			<small
+				:class="[errorClass, (config as any)?.globalErrorCSSClass]"
+				v-if="error">{{ error }}</small>
+		</slot>
 	</div>
 </template>

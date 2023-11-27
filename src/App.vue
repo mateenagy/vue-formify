@@ -2,8 +2,6 @@
 import { ref } from 'vue';
 import { FormType } from './components';
 import { Form, Input } from './components';
-import { STORE } from './store/store';
-
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
@@ -17,22 +15,9 @@ const form = ref<FormType>();
 ---------------------------------------------*/
 const send = (data: any) => {
 	console.log('data', data);
-	const errors = [
-		{
-			code: 'first_name:required',
-		},
-		{
-			code: 'email:required',
-		},
-		{
-			code: 'last_name:required',
-		},
-	];
-
-	errors.forEach((error) => {
-		const key = error.code.split(':')[0];
-		form.value?.setError(key, error.code);
-	});
+	if (!data.first_name) {
+		form.value?.setError('first_name', 'error message');
+	}
 };
 /*---------------------------------------------
 /  COMPUTED
@@ -49,15 +34,19 @@ const send = (data: any) => {
 </script>
 <template>
 	<div class="wrapper">
-		<p>STORE</p>
-		<pre>{{ STORE }}</pre>
-		<pre>{{ form?.formData }}</pre>
 		<div>
 			<Form
 				@submit="send"
-				ref="form">
+				ref="form"
+				v-slot="{ data }">
+				<pre>{{ data }}</pre>
 				<Input
-					name="first_name" />
+					name="first_name"
+					label="First name">
+					<template #error="{ error }">
+						{{ error }}
+					</template>
+				</Input>
 				<Input
 					name="last_name" />
 				<button>

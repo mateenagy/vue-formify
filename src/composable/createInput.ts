@@ -29,6 +29,10 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 				type: [String, Boolean, Number, Object],
 				default: '',
 			},
+			ignore: {
+				type: Boolean,
+				default: false,
+			},
 		},
 		emits: ['update:modelValue'],
 		setup: (props, ctx) => {
@@ -48,7 +52,7 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 			};
 
 			onMounted(() => {
-				if (!STORE.value[formName][props.name]) {
+				if (!STORE.value[formName][props.name] && !props.ignore) {
 					STORE.value[formName][props.name] = {
 						value: (props.value || props[options?.defaultValueKey as keyof typeof props] || props.default),
 						error: '',
@@ -60,26 +64,28 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 				delete STORE.value[formName][props.name];
 			});
 
-			watch(() => [props.name, props.value, props.default], () => {
+			watch(() => [props.name, props.value, props.default, props.ignore], (curr) => {
 				delete STORE.value[formName][prevValue.value];
-				STORE.value[formName][props.name] = {
-					value: (props.value || props[options?.defaultValueKey as keyof typeof props] || props.default),
-					error: '',
-				};
-				prevValue.value = props.name;
-			});
+				if (!curr[3]) {
+					STORE.value[formName][props.name] = {
+						value: (props.value || props[options?.defaultValueKey as keyof typeof props] || props.default),
+						error: '',
+					};
+					prevValue.value = props.name;
+				}
+			}, { deep: true });
 
 			return () => {
 				return h(component, {
 					...((!config || (config as PluginOptions).useFocus) && {
 						onFocus: () => {
-							STORE.value[formName][props.name].error && (STORE.value[formName][props.name].error = undefined);
+							(!props.ignore && STORE.value[formName][props.name].error) && (STORE.value[formName][props.name].error = undefined);
 						},
 						onChange: () => {
-							STORE.value[formName][props.name].error && (STORE.value[formName][props.name].error = undefined);
+							(!props.ignore && STORE.value[formName][props.name].error) && (STORE.value[formName][props.name].error = undefined);
 						},
 						onBlur: () => {
-							STORE.value[formName][props.name].error && (STORE.value[formName][props.name].error = undefined);
+							(!props.ignore && STORE.value[formName][props.name].error) && (STORE.value[formName][props.name].error = undefined);
 						},
 					}),
 					...props,

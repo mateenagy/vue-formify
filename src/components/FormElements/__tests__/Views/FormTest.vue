@@ -8,12 +8,16 @@ import Form from '@/components/FormElements/Form.vue';
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
-const foo = ref('');
+const response = ref('');
+const form = ref();
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
 const sendForm = (data: any) => {
-	console.log('[data]: ', data, foo);
+	response.value = data.first_name;
+	if (!data.first_name) {
+		form.value?.setError('first_name', 'First name required');
+	}
 };
 /*---------------------------------------------
 /  COMPUTED
@@ -29,8 +33,22 @@ const sendForm = (data: any) => {
 ---------------------------------------------*/
 </script>
 <template>
-	<Form @submit="sendForm">
+	<Form
+		@submit="sendForm"
+		ref="form">
 		<Input name="first_name" />
-		<button>Send</button>
+		<Input
+			name="first_name">
+			<template #error="{ error }">
+				<span class="custom-error">
+					{{ error }}
+				</span>
+			</template>
+		</Input>
+		<button type="submit">
+			Send
+		</button>
 	</Form>
+	<h2>First name</h2>
+	<p>{{ response }}</p>
 </template>
