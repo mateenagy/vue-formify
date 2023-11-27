@@ -101,6 +101,21 @@ A simple component for show error for specified input. Easy to use with custom c
 ### createInput: `ComponentProps<typeof component>(component: Component, options?: CreateInputOptions) => FunctionalComponent<T & BaseInput, any>`
 **createInput** composable is a very important part of this package. This handy function can create usable component for `<Form>` from any custom component with ease. With the help of `ComponentProps` type we can keep the original component props autocompletion.
 
+| Method option  	| Descripton                                    	|
+|-------- |-----------------------------------------------	|
+| modelKey  | If there is a special `v-model` like `v-model:checked` you can specify it. |
+| defaultValueKey  | If default value is predefined on component like `defaultChecked` then use it as default value instead of `default`. |
+
+With **createInput** every component will get these properties:
+
+| Property  	| Descripton                                    	|
+|-------- |-----------------------------------------------	|
+| name (required)  | Name of the input. The extracted data key will be the name. |
+| default  | Default value. |
+| modelValue  | For v-model. |
+| error  | Error message |
+| ignore  | If true the data won't be extracted |
+
 ```vue
 <script setup lang="ts">
 import { createInput, ComponentProps } from 'vue-formify'
