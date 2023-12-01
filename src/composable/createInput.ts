@@ -59,7 +59,7 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 			onMounted(() => {
 				if (!STORE.value[formName][props.name] && !props.ignore) {
 					STORE.value[formName][props.name] = {
-						value: (props.value || props[options?.defaultValueKey as keyof typeof props] || props.default),
+						value: (props[options?.defaultValueKey as keyof typeof props] || props.default),
 						error: '',
 					};
 				}
@@ -73,7 +73,7 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 				delete STORE.value[formName][prevValue.value];
 				if (!curr[3]) {
 					STORE.value[formName][props.name] = {
-						value: (props.value || props[options?.defaultValueKey as keyof typeof props] || props.default),
+						value: (props[options?.defaultValueKey as keyof typeof props] || props.default),
 						error: '',
 					};
 					prevValue.value = props.name;
