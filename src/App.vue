@@ -1,7 +1,10 @@
 <script lang="ts" setup>
+import { ElSwitch } from 'element-plus';
 import { ref } from 'vue';
-import { FormType } from './components';
+import { ComponentProps, FormType } from './components';
 import { Form, Input } from './components';
+import { createInput } from './composable/createInput';
+import { STORE } from './store/store';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
@@ -9,7 +12,7 @@ import { Form, Input } from './components';
 /  VARIABLES
 ---------------------------------------------*/
 const form = ref<FormType>();
-
+const Switch = createInput<ComponentProps<typeof ElSwitch>>(ElSwitch);
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
@@ -35,20 +38,27 @@ const send = (data: any) => {
 <template>
 	<div class="wrapper">
 		<div>
+			<pre>{{ STORE }}</pre>
 			<Form
 				@submit="send"
 				ref="form"
 				v-slot="{ data }">
 				<pre>{{ data }}</pre>
 				<Input
+					name="social.facebooka"
+					label="facebook" />
+				<Input
+					name="social.asd.qwe.asd"
+					default="asd"
+					label="twitter" />
+				<Input
 					name="first_name"
-					label="First name">
+					default="lol">
 					<template #error="{ error }">
 						{{ error }}
 					</template>
 				</Input>
-				<Input
-					name="last_name" />
+				<Input name="last_name" />
 				<button>
 					Send
 				</button>
