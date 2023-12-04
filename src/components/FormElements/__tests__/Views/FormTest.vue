@@ -9,12 +9,14 @@ import Form from '@/components/FormElements/Form.vue';
 /  VARIABLES
 ---------------------------------------------*/
 const response = ref('');
+const responseWithObject = ref('');
 const form = ref();
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
 const sendForm = (data: any) => {
 	response.value = data.first_name;
+	responseWithObject.value = data.social.facebook;
 	if (!data.first_name) {
 		form.value?.setError('first_name', 'First name required');
 	}
@@ -45,10 +47,14 @@ const sendForm = (data: any) => {
 				</span>
 			</template>
 		</Input>
+		<Input name="social.facebook" />
 		<button type="submit">
 			Send
 		</button>
 	</Form>
 	<h2>First name</h2>
 	<p>{{ response }}</p>
+	<p id="respObj">
+		{{ responseWithObject }}
+	</p>
 </template>

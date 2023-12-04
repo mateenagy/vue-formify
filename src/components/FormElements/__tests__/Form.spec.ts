@@ -13,11 +13,19 @@ describe('Form', () => {
 	});
 
 	it('Send form', async () => {
-		const input = wrapper.find('input');
+		const input = wrapper.find('input[name="first_name"]');
 		const form = wrapper.findComponent(Form);
 		await input.setValue('Lorem');
 		await form.trigger('submit');
 		expect(wrapper.find('p').text()).toEqual('Lorem');
+	});
+
+	it('Send form with object input name', async () => {
+		const input = wrapper.find('input[name="social.facebook"]');
+		const form = wrapper.findComponent(Form);
+		await input.setValue('Lorem ipsum');
+		await form.trigger('submit');
+		expect(wrapper.find('#respObj').text()).toEqual('Lorem ipsum');
 	});
 
 	it('Get error', async () => {

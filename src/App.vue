@@ -1,9 +1,7 @@
 <script lang="ts" setup>
-import { ElSwitch } from 'element-plus';
 import { ref } from 'vue';
-import { ComponentProps, FormType } from './components';
+import { FormType } from './components';
 import { Form, Input } from './components';
-import { createInput } from './composable/createInput';
 import { STORE } from './store/store';
 /*---------------------------------------------
 /  PROPS & EMITS
@@ -12,7 +10,6 @@ import { STORE } from './store/store';
 /  VARIABLES
 ---------------------------------------------*/
 const form = ref<FormType>();
-const Switch = createInput<ComponentProps<typeof ElSwitch>>(ElSwitch);
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
@@ -20,6 +17,9 @@ const send = (data: any) => {
 	console.log('data', data);
 	if (!data.first_name) {
 		form.value?.setError('first_name', 'error message');
+	}
+	if (!data.social.twitter) {
+		form.value?.setError('social.twitter', 'twitter link required');
 	}
 };
 /*---------------------------------------------
@@ -39,26 +39,38 @@ const send = (data: any) => {
 	<div class="wrapper">
 		<div>
 			<pre>{{ STORE }}</pre>
-			<Form
+			<Form  
 				@submit="send"
 				ref="form"
 				v-slot="{ data }">
 				<pre>{{ data }}</pre>
-				<Input
-					name="social.facebooka"
-					label="facebook" />
-				<Input
-					name="social.asd.qwe.asd"
-					default="asd"
-					label="twitter" />
-				<Input
-					name="first_name"
-					default="lol">
-					<template #error="{ error }">
-						{{ error }}
-					</template>
-				</Input>
-				<Input name="last_name" />
+				<div>
+					<Input
+						name="first_name"
+						label="First name" />
+				</div>
+				<div>
+					<Input
+						name="last_nameqwe"
+						label="Last name" />
+				</div>
+				<div>
+					<Input
+						name="email"
+						label="Email" />
+				</div>
+				<div>
+					<div>
+						<Input
+							name="social.twitter"
+							label="Twitter link" />
+					</div>
+					<div>
+						<Input
+							name="social.dev.github"
+							label="Github" />
+					</div>
+				</div>
 				<button>
 					Send
 				</button>

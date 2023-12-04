@@ -2,6 +2,7 @@
 import { computed, provide, onMounted, onUnmounted } from 'vue';
 import { FormElement, FormValue } from '@/components';
 import { STORE } from '@/store/store';
+import { getValueByPath, stringToObject, mergeDeep, flattenObject } from '@/utils/utils';
 
 /*---------------------------------------------
 /  PROPS & EMITS
@@ -15,54 +16,20 @@ const uid = Math.floor(Math.random() * Date.now());
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
-const updateStoreValue = (store: any, path: string, value: any) => {
-	const keys = path.split('.');
-	let currentObject = store;
-
-	keys.forEach((key, index) => {
-		if (!currentObject[key]) {
-			currentObject[key] = {};
-		}
-
-		if (index === keys.length - 1) {
-			// If it's the last key, update the value
-			currentObject[key].value = value;
-		}
-
-		currentObject = currentObject[key];
-	});
-};
-const flattenObject = (obj: any): Record<string, string> => {
-	const result: any = {};
-
-	for (const key in obj) {
-		if (typeof obj[key] === 'object' && 'value' in obj[key]) {
-			// If the property is an object with a 'value' property, extract the value
-			result[key] = obj[key].value;
-		} else if (typeof obj[key] === 'object') {
-			// If the property is an object without a 'value' property, recursively flatten it
-			result[key] = flattenObject(obj[key]);
-		}
-	}
-
-	return result;
-};
 const updateFormData = (key: keyof FormElement, value: FormValue) => {
-	if (key.includes('.')) {
-		updateStoreValue(STORE.value[uid], key, value);
+	const current = stringToObject(key, { value });
+	STORE.value[uid] = mergeDeep(STORE.value[uid], current);
+
+	if (getValueByPath(STORE.value[uid], key)) {
+		emit('update:modelValue', getValueByPath(STORE.value[uid], key).value);
 	} else {
-		if (STORE.value[uid][key]) {
-			emit('update:modelValue', STORE.value[uid][key].value);
-			STORE.value[uid][key].value = value;
-		} else {
-			emit('update:modelValue', value);
-		}
+		emit('update:modelValue', value);
 	}
 };
 
 const setError = (name: string, error: any) => {
-	if (STORE.value[uid][name]) {
-		STORE.value[uid][name].error = error;
+	if (getValueByPath(STORE.value[uid], name)) {
+		getValueByPath(STORE.value[uid], name).error = error;
 	}
 };
 

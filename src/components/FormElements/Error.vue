@@ -2,14 +2,14 @@
 import { inject } from 'vue';
 import { PluginOptions } from '..';
 import { STORE } from '@/store/store';
-
+import { getValueByPath } from '@/utils/utils';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
 defineOptions({
 	inheritAttrs: false,
 });
-const props = defineProps<{
+defineProps<{
 	errorFor: string;
 }>();
 const { formName }: any = inject('form');
@@ -35,8 +35,12 @@ const config: PluginOptions | undefined = inject('config', undefined);
 </script>
 <template>
 	<div>
-		<small
-			:class="(config as any)?.globalErrorCSSClass"
-			v-bind="$attrs">{{ STORE?.[formName][props.errorFor]?.error }}</small>
+		<slot
+			name="error"
+			:error="getValueByPath(STORE[formName], errorFor)?.error">
+			<small
+				:class="(config as any)?.globalErrorCSSClass"
+				v-bind="$attrs">{{ getValueByPath(STORE[formName], errorFor)?.error }}</small>
+		</slot>
 	</div>
 </template>
