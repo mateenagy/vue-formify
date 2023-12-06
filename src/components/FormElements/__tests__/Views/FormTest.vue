@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { Input } from '@/components';
-import Form from '@/components/FormElements/Form.vue';
+import { Formify } from '@/components/main';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
@@ -35,23 +34,23 @@ const sendForm = (data: any) => {
 ---------------------------------------------*/
 </script>
 <template>
-	<Form
+	<Formify.Form
 		@submit="sendForm"
 		ref="form">
-		<Input name="first_name" />
-		<Input
+		<Formify.Input name="first_name" />
+		<Formify.Input
 			name="first_name">
 			<template #error="{ error }">
 				<span class="custom-error">
 					{{ error }}
 				</span>
 			</template>
-		</Input>
-		<Input name="social.facebook" />
+		</Formify.Input>
+		<Formify.Input name="social.facebook" />
 		<button type="submit">
 			Send
 		</button>
-	</Form>
+	</Formify.Form>
 	<h2>First name</h2>
 	<p>{{ response }}</p>
 	<p id="respObj">

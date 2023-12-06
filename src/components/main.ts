@@ -1,23 +1,20 @@
 import { App } from 'vue';
-import { Form, Input, Error, FormType, ComponentProps } from './index';
+import * as Formify from './VueFormify';
+import { FormType, ComponentProps } from './index';
 import { createInput } from '@/composable/createInput';
 import VueFormify from '@/plugin/plugin';
 
 
 export default {
 	install: (app: App) => {
-		app.component('Form', Form);
-		app.component('Input', Input);
-		app.component('Error', Error);
+		app.component('Formify', Formify);
 	},
 };
 
 export {
-	Form,
-	Input,
-	Error,
 	createInput,
 	VueFormify,
+	Formify,
 };
 
 export type {

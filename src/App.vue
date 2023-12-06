@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { FormType } from './components';
-import { Form, Input } from './components';
 import { STORE } from './store/store';
+import { Formify } from '@/components/main';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
@@ -39,42 +39,25 @@ const send = (data: any) => {
 	<div class="wrapper">
 		<div>
 			<pre>{{ STORE }}</pre>
-			<Form  
+			<Formify.Form  
 				@submit="send"
 				ref="form"
 				v-slot="{ data }">
 				<pre>{{ data }}</pre>
 				<div>
-					<Input
+					<Formify.Input
 						name="first_name"
 						label="First name" />
 				</div>
 				<div>
-					<Input
+					<Formify.Input
 						name="last_nameqwe"
 						label="Last name" />
-				</div>
-				<div>
-					<Input
-						name="email"
-						label="Email" />
-				</div>
-				<div>
-					<div>
-						<Input
-							name="social.twitter"
-							label="Twitter link" />
-					</div>
-					<div>
-						<Input
-							name="social.dev.github"
-							label="Github" />
-					</div>
 				</div>
 				<button>
 					Send
 				</button>
-			</Form>
+			</Formify.Form>
 		</div>
 		<button @click="form?.resetForm()">
 			Reset

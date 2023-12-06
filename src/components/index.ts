@@ -1,16 +1,9 @@
 import { AllowedComponentProps, Component, VNodeProps } from 'vue';
-import { default as InputComponent } from './FormElements/Input.vue';
-import { createInput } from '@/composable/createInput';
-
-const Input = createInput<ComponentProps<typeof InputComponent>>(InputComponent);
 
 export type ComponentProps<C extends Component> = C extends new (...args: any) => any
 	? Omit<InstanceType<C>['$props'], keyof VNodeProps | keyof AllowedComponentProps>
 	: never;
 
-export {
-	Input,
-};
 export type PluginOptions = {
 	useFocus?: boolean;
 	globalErrorCSSClass?: string;
@@ -53,6 +46,4 @@ export type HTMLInputAttributeType =
 | 'url'
 | 'week';
 
-export { default as Form } from './FormElements/Form.vue';
-export { default as Error } from './FormElements/Error.vue';
 export { default as VueFormify } from '@/plugin/plugin';

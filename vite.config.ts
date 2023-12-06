@@ -22,7 +22,8 @@ export default defineConfig({
 					outDir: 'dist',
 					sourceMap: true,
 					declaration: true,
-					declarationMap: true,
+					declarationMap: false,
+					emitDeclarationOnly: true,
 				},
 			},
 			exclude: ['vite.config.ts'],
@@ -33,14 +34,16 @@ export default defineConfig({
 		lib: {
 			entry: 'src/components/main.ts',
 			name: 'VueFormify',
-			formats: ['es', 'cjs', 'umd'],
+			formats: ['es', 'umd'],
 			fileName: format => `vue-formify.${format}.js`,
 		},
 		rollupOptions: {
 			input: {
 				main: path.resolve(__dirname, 'src/components/main.ts'),
 			},
-			external: ['vue'],
+			external: [
+				'vue',
+			],
 			output: {
 				assetFileNames: (assetInfo) => {
 					if (assetInfo.name === 'main.css') {

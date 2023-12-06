@@ -43,7 +43,7 @@
     "vitest": "vitest --environment jsdom run",
     "test": "npm run vitest"
   },
-  "dependencies": {
+  "peerDependencies": {
     "vue": "^3.3.4"
   },
   "devDependencies": {
