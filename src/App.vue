@@ -18,9 +18,6 @@ const send = (data: any) => {
 	if (!data.first_name) {
 		form.value?.setError('first_name', 'error message');
 	}
-	if (!data.social.twitter) {
-		form.value?.setError('social.twitter', 'twitter link required');
-	}
 };
 /*---------------------------------------------
 /  COMPUTED
@@ -51,7 +48,17 @@ const send = (data: any) => {
 				</div>
 				<div>
 					<Formify.Input
-						name="last_nameqwe"
+						name="last_name"
+						label="Last name" />
+				</div>
+				<div>
+					<Formify.Input
+						name="foo.bar"
+						label="Last name" />
+				</div>
+				<div>
+					<Formify.Input
+						name="boo.baz"
 						label="Last name" />
 				</div>
 				<button>

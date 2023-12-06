@@ -29,7 +29,7 @@ npm i vue-formify
 
 ## 🔧 How it works
 
-For simplicity VueFormify only have 3 component:
+For simplicity I made **Formify** namespace which only have 3 component:
 
 ### Form: `FormType<T>`
 The most important component. It contains all the inputs and extract data automatically so you don't need to use v-model.
@@ -50,9 +50,9 @@ The most important component. It contains all the inputs and extract data automa
 | formData 	| Extracted data from the form. (`data` from `submit` already contain these but it can be useful)	|
 
 ```html
-<Form ref="form" @submit="sendForm">
+<Formify.Form ref="form" @submit="sendForm">
 	...
-</Form>
+</Formify.Form>
 ```
 
 ### Input: `Component<T>`
@@ -74,12 +74,12 @@ This is a basic input field with label and error message.
 | @input  | input input event |
 
 ```html
-<Form ref="form" @submit="sendForm">
-	<Input name="first_name" />
-	<Input name="last_name" />
+<Formify.Form ref="form" @submit="sendForm">
+	<Formify.Input name="first_name" />
+	<Formify.Input name="last_name" />
 
 	<button>Send</button>
-</Form>
+</Formify.Form>
 ```
 
 ### Error: `Component<T>`
@@ -89,12 +89,12 @@ A simple component for show error for specified input. Easy to use with custom c
 | errorFor | `string ` 	| Name of the input to show the error for |
 
 ```html
-<Form ref="form" @submit="sendForm">
+<Formify.Form ref="form" @submit="sendForm">
 	<CustomComponent name="custom" />
-	<Error error-for="custom" />
+	<Formify.Error error-for="custom" />
 
 	<button>Send</button>
-</Form>
+</Formify.Form>
 ```
 
 ## Composables
@@ -115,6 +115,7 @@ With **createInput** every component will get these properties:
 | modelValue  | For v-model. |
 | error  | Error message |
 | ignore  | If true the data won't be extracted |
+| preserve | If true than it's preserve the value after input removed |
 
 ```vue
 <script setup lang="ts">
@@ -132,7 +133,7 @@ const CustomComponent = createInput<ComponentProps<typeof CustomComponent>>(Cust
 
 ```vue
 <script setup lang="ts">
-import { Form, Input, Error} from 'vue-formify'
+import { Formify } from 'vue-formify'
 
 const sendForm = (data: any) => {
 	console.log('data', data);
@@ -140,12 +141,12 @@ const sendForm = (data: any) => {
 
 </script>
 <template>
-	<Form ref="form" @submit="sendForm">
-		<Input name="first_name" />
-		<Input name="last_name" />
+	<Formify.Form ref="form" @submit="sendForm">
+		<Formify.Input name="first_name" />
+		<Formify.Input name="last_name" />
 
 		<button>Send</button>
-	</Form>
+	</Formify.Form>
 </template>
 ```
 
@@ -179,7 +180,7 @@ const value = computed({
 ```vue
 <script setup lang="ts">
 import ColorPicker from '@/components/ColorPicker/ColorPicker.vue';
-import { Form, Error, createInput, ComponentProps} from 'vue-formify'
+import { Formify, createInput, ComponentProps} from 'vue-formify'
 
 const ColorInput = createInput<ComponentProps<typeof ColorPicker>>(ColorPicker);
 
@@ -195,18 +196,18 @@ const sendForm = (data: any) => {
 
 </script>
 <template>
-	<Form ref="form" @submit="sendForm">
+	<Formify.Form ref="form" @submit="sendForm">
 		<ColorInput name="color" />
 		<Error error-for="color" />
 
 		<button>Send</button>
-	</Form>
+	</Formify.Form>
 </template>
 ```
 ### With custom UI library
 ```vue
 <script setup lang="ts">
-import { Form, Input, Error, createInput, ComponentProps} from 'vue-formify'
+import { Formify, createInput, ComponentProps} from 'vue-formify'
 import { ElCheckbox } from 'element-plus'
 
 const Checkbox = createInput<ComponentProps<typeof ElCheckbox>>(ElCheckbox);
@@ -225,14 +226,14 @@ const sendForm = (data: any) => {
 
 </script>
 <template>
-	<Form ref="form" @submit="sendForm">
-		<Input name="first_name" />
-		<Input name="last_name" />
+	<Formify.Form ref="form" @submit="sendForm">
+		<Formify.Input name="first_name" />
+		<Formify.Input name="last_name" />
 		<Checkbox name="accept_terms" />
-		<Error error-for="accept_terms" />
+		<Formify.Error error-for="accept_terms" />
 
 		<button>Send</button>
-	</Form>
+	</Formify.Form>
 </template>
 ```
 ### Validation example with yup
@@ -240,7 +241,7 @@ There is no built in validation, but you can use any third party library or cust
 
 ```vue
 <script setup lang="ts">
-import { Form, Input} from 'vue-formify'
+import { Formify } from 'vue-formify'
 import * as yup from 'yup';
 
 
@@ -261,11 +262,11 @@ const sendForm = (data: any) => {
 
 </script>
 <template>
-	<Form ref="form" @submit="sendForm">
-		<Input name="first_name" />
-		<Input name="last_name" />
+	<Formify.Form ref="form" @submit="sendForm">
+		<Formify.Input name="first_name" />
+		<Formify.Input name="last_name" />
 
 		<button>Send</button>
-	</Form>
+	</Formify.Form>
 </template>
 ```
