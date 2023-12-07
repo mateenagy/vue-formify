@@ -43,23 +43,13 @@ const send = (data: any) => {
 				<pre>{{ data }}</pre>
 				<div>
 					<Formify.Input
-						name="first_name"
-						label="First name" />
+						name="foo.links[0]"
+						label="Link 1" />
 				</div>
 				<div>
 					<Formify.Input
-						name="last_name"
-						label="Last name" />
-				</div>
-				<div>
-					<Formify.Input
-						name="foo.bar"
-						label="Last name" />
-				</div>
-				<div>
-					<Formify.Input
-						name="boo.baz"
-						label="Last name" />
+						name="foo.links[1]"
+						label="Link 2" />
 				</div>
 				<button>
 					Send

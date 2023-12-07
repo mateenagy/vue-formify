@@ -9,6 +9,7 @@ import { Formify } from '@/components/main';
 ---------------------------------------------*/
 const response = ref('');
 const responseWithObject = ref('');
+const responseWithArray = ref('');
 const form = ref();
 /*---------------------------------------------
 /  METHODS
@@ -16,6 +17,7 @@ const form = ref();
 const sendForm = (data: any) => {
 	response.value = data.first_name;
 	responseWithObject.value = data.social.facebook;
+	responseWithArray.value = data.links;
 	if (!data.first_name) {
 		form.value?.setError('first_name', 'First name required');
 	}
@@ -47,6 +49,8 @@ const sendForm = (data: any) => {
 			</template>
 		</Formify.Input>
 		<Formify.Input name="social.facebook" />
+		<Formify.Input name="links[0]" />
+		<Formify.Input name="links[1]" />
 		<button type="submit">
 			Send
 		</button>
@@ -55,5 +59,8 @@ const sendForm = (data: any) => {
 	<p>{{ response }}</p>
 	<p id="respObj">
 		{{ responseWithObject }}
+	</p>
+	<p id="respArray">
+		{{ responseWithArray }}
 	</p>
 </template>

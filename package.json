@@ -6,7 +6,7 @@
   "engines": {
     "node": "v18.16.0"
   },
-  "description": "Create forms without pain and more ease",
+  "description": "Unleash Form-Building Freedom! 🚀",
   "keywords": [
     "vue",
     "form",
@@ -76,5 +76,6 @@
   },
   "bugs": {
     "url": "https://github.com/mateenagy/vue-formify/issues"
-  }
+  },
+  "homepage": "https://vue-formify.matenagy.me/"
 }

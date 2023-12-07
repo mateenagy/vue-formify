@@ -25,7 +25,20 @@ describe('Form', () => {
 		const form = wrapper.findComponent(Formify.Form);
 		await input.setValue('Lorem ipsum');
 		await form.trigger('submit');
+		console.log('[qew]: ', wrapper.find('#respObj').text());
 		expect(wrapper.find('#respObj').text()).toEqual('Lorem ipsum');
+	});
+
+	it('Send form with array input name', async () => {
+		const input = wrapper.find('input[name="links[0]"]');
+		const input2 = wrapper.find('input[name="links[1]"]');
+		const form = wrapper.findComponent(Formify.Form);
+		await input.setValue('Lorem ipsum');
+		await input2.setValue('Dolor sit amet');
+		await form.trigger('submit');
+		console.log('hahi', wrapper.find('#respArray').text());
+		expect(wrapper.find('#respArray').text()).contains('Lorem ipsum');
+		expect(wrapper.find('#respArray').text()).contains('Dolor sit amet');
 	});
 
 	it('Get error', async () => {
