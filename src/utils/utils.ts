@@ -9,13 +9,13 @@ export const stringToObject = (path: string, defaultValue: Record<string, any>) 
 
 	/* DISABLE NESTING BEHAVIOUR */
 	if (disable_matches) {
-		const key = disable_matches[0].replace(REMOVE_BRACKETS_REGEX, '' );
-		
+		const key = disable_matches[0].replace(REMOVE_BRACKETS_REGEX, '');
+
 		return {
 			[key]: defaultValue,
 		};
 	}
-	
+
 	/* CREATE OBJECT FROM DOT NOTATION */
 	const paths = path.split('.');
 
@@ -27,9 +27,9 @@ export const stringToObject = (path: string, defaultValue: Record<string, any>) 
 export const getValueByPath = (object: Record<string, any>, path: string) => {
 	const matches = path.match(BETWEEN_BRACKETS_REGEX);
 
-	/* DISABLE NESTING BEHAVIOUR */
+	/* DISABLE DOT NOTATION BEHAVIOUR */
 	if (matches) {
-		const key = matches[0].replace( REMOVE_BRACKETS_REGEX, '' );
+		const key = matches[0].replace(REMOVE_BRACKETS_REGEX, '');
 
 		return object[key];
 	}
@@ -52,7 +52,7 @@ export const deleteByPath = (object: Record<string, any>, path: string) => {
 	const matches = path.match(BETWEEN_BRACKETS_REGEX);
 
 	if (matches) {
-		const key = matches[0].replace( REMOVE_BRACKETS_REGEX, '' );
+		const key = matches[0].replace(REMOVE_BRACKETS_REGEX, '');
 
 		delete object[key];
 	}
@@ -68,7 +68,7 @@ export const deleteByPath = (object: Record<string, any>, path: string) => {
 
 	if (last) {
 		delete currentObject[last];
-	
+
 		if (Object.keys(currentObject).length === 0) {
 			deleteByPath(object, parts.join('.'));
 		}
@@ -122,4 +122,25 @@ export const mergeDeep = (...objects: any) => {
 
 		return prev;
 	}, {});
+};
+
+export const createFormDataFromObject = (obj: Record<string, any>, formData: FormData, parentKey = '') => {
+	Object.keys(obj).reduce((acc, key) => {
+		const newKey = parentKey ? `${parentKey}.${key}` : key;
+		
+		if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key]) && !(obj[key] instanceof Date) && !(obj[key] instanceof File) && !(obj[key] instanceof Blob)) {
+			const nested = createFormDataFromObject(obj[key],formData, newKey);
+			acc += nested;
+		} else {
+			if (Array.isArray(obj[key])) {
+				obj[key].forEach((value: any) => {
+					formData.append(`${newKey}[]`, value);
+				});
+			} else {
+				formData.append(`${newKey}`, obj[key]);
+			}
+		}
+
+		return acc;
+	}, '');
 };

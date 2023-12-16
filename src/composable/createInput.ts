@@ -72,10 +72,11 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 				!props.preserve && deleteByPath(STORE.value[formName], props.name);
 			});
 
-			watch(() => [props.name, props.value, props.default, props.ignore], (curr, prev) => {
-				deleteByPath(STORE.value[formName], prev[0]);
-				if (!curr[3]) {
-					const current = stringToObject(props.name, defaultValue);
+			watch(() => [props.name, props.value, props.default, props.ignore], (curr) => {
+				const [name, value, def, ignore] = curr;
+				deleteByPath(STORE.value[formName], name);
+				if (!ignore) {
+					const current = stringToObject(props.name, { ...defaultValue, ...{ value: def } });
 					STORE.value[formName] = mergeDeep(STORE.value[formName], current);
 				}
 			}, { deep: true });

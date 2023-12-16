@@ -2,11 +2,15 @@
 import { computed, provide, onMounted, onUnmounted } from 'vue';
 import { FormElement, FormValue } from '@/components';
 import { STORE } from '@/store/store';
-import { getValueByPath, stringToObject, mergeDeep, flattenObject } from '@/utils/utils';
+import { getValueByPath, stringToObject, mergeDeep, flattenObject, createFormDataFromObject } from '@/utils/utils';
 
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
+const props = defineProps<{
+	enctype?: 'application/x-www-form-urlencoded' | 'multipart/form-data';
+	action?: string;
+}>();
 const emit = defineEmits(['update:modelValue', 'submit', 'update:error', 'setError', 'error-handler']);
 /*---------------------------------------------
 /  VARIABLES
@@ -46,7 +50,16 @@ const resetForm = () => {
 const data = computed(() => {
 	const data = Object.create({});
 	if (STORE.value[uid]) {
-		return flattenObject(STORE.value[uid]);
+		const flattenData = flattenObject(STORE.value[uid]);
+
+		if (props?.enctype === 'multipart/form-data') {
+			const form_data = new FormData();
+			createFormDataFromObject(flattenData, form_data);
+
+			return form_data;
+		}
+
+		return flattenData;
 	}
 
 	return data;
@@ -80,10 +93,19 @@ onMounted(() => {
 onUnmounted(() => {
 	delete STORE.value[uid];
 });
+
+const submit = (payload: Event) => {
+	if (props.action) {
+		return;
+	}
+	payload.preventDefault();
+	emit('submit', data.value);
+};
 </script>
 <template>
 	<form
-		@submit.prevent="emit('submit', data)">
+		@submit="submit"
+		:action="action">
 		<slot :data="data"></slot>
 	</form>
 </template>

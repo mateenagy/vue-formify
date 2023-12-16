@@ -15,9 +15,6 @@ const form = ref<FormType>();
 ---------------------------------------------*/
 const send = (data: any) => {
 	console.log('data', data);
-	if (!data.first_name) {
-		form.value?.setError('first_name', 'error message');
-	}
 };
 /*---------------------------------------------
 /  COMPUTED
@@ -36,20 +33,46 @@ const send = (data: any) => {
 	<div class="wrapper">
 		<div>
 			<pre>{{ STORE }}</pre>
-			<Formify.Form  
+			<Formify.Form 
 				@submit="send"
 				ref="form"
 				v-slot="{ data }">
 				<pre>{{ data }}</pre>
 				<div>
 					<Formify.Input
-						name="foo.links[0]"
-						label="Link 1" />
+						name="p"
+						type="number"
+						label="Page" />
 				</div>
 				<div>
 					<Formify.Input
-						name="foo.links[1]"
-						label="Link 2" />
+						name="links[0]"
+						label="message" />
+				</div>
+				<div>
+					<Formify.Checkbox
+						default="yes"
+						true-label="yes"
+						false-label="no"
+						name="check"
+						label="hali" />
+				</div>
+				<div>
+					<Formify.Radio
+						name="radio"
+						value="foo"
+						label="foo" />
+				</div>
+				<div>
+					<Formify.Radio
+						name="radio"
+						value="bar"
+						label="bar" />
+				</div>
+				<div>
+					<Formify.Input
+						name="links[1]"
+						label="message" />
 				</div>
 				<button>
 					Send
