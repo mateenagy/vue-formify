@@ -20,8 +20,8 @@ const uid = Math.floor(Math.random() * Date.now());
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
-const updateFormData = (key: keyof FormElement, value: FormValue) => {
-	const current = stringToObject(key, { value });
+const updateFormData = (key: keyof FormElement, value: FormValue, ignore: boolean = false) => {
+	const current = stringToObject(key, { value, ignore });
 	STORE.value[uid] = mergeDeep(STORE.value[uid], current);
 
 	if (getValueByPath(STORE.value[uid], key)) {

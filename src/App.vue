@@ -40,39 +40,8 @@ const send = (data: any) => {
 				<pre>{{ data }}</pre>
 				<div>
 					<Formify.Input
-						name="p"
-						type="number"
-						label="Page" />
-				</div>
-				<div>
-					<Formify.Input
-						name="links[0]"
-						label="message" />
-				</div>
-				<div>
-					<Formify.Checkbox
-						default="yes"
-						true-label="yes"
-						false-label="no"
-						name="check"
-						label="hali" />
-				</div>
-				<div>
-					<Formify.Radio
-						name="radio"
-						value="foo"
-						label="foo" />
-				</div>
-				<div>
-					<Formify.Radio
-						name="radio"
-						value="bar"
-						label="bar" />
-				</div>
-				<div>
-					<Formify.Input
-						name="links[1]"
-						label="message" />
+						name="first_name"
+						label="First name" />
 				</div>
 				<button>
 					Send

@@ -53,7 +53,7 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 			const createModelBindings = () => {
 				const bindingMethod = Object.create({});
 				bindingMethod[`onUpdate:${options?.modelKey}`] = (value: any) => {
-					updateFormData(props.name, value);
+					updateFormData(props.name, value, props.ignore);
 					getValueByPath(STORE.value[formName], props.name)?.value || value;
 					ctx.emit(`update:${options?.modelKey}`, getValueByPath(STORE.value[formName], props.name)?.value || value);
 				};
@@ -72,9 +72,10 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 				!props.preserve && deleteByPath(STORE.value[formName], props.name);
 			});
 
-			watch(() => [props.name, props.value, props.default, props.ignore], (curr) => {
+			watch(() => [props.name, props.value, props.default, props.ignore], (curr, prev) => {
 				const [name, value, def, ignore] = curr;
-				deleteByPath(STORE.value[formName], name);
+				const [prevName] = prev;
+				deleteByPath(STORE.value[formName], prevName);
 				if (!ignore) {
 					const current = stringToObject(props.name, { ...defaultValue, ...{ value: def } });
 					STORE.value[formName] = mergeDeep(STORE.value[formName], current);
@@ -101,7 +102,7 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 					ignore: false,
 					'onUpdate:modelValue': (value: any) => {
 						ctx.emit('update:modelValue', value);
-						updateFormData(props.name, value);
+						updateFormData(props.name, value, props.ignore);
 					},
 					...(options?.modelKey && { ...createModelBindings() }),
 				},

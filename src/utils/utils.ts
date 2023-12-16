@@ -94,7 +94,7 @@ export const flattenObject = (obj: any): Record<string, string> => {
 				}
 			}
 		} else if (typeof obj[key] === 'object' && 'value' in obj[key]) {
-			result[key] = obj[key].value;
+			!obj[key].ignore && (result[key] = obj[key].value);
 		} else if (typeof obj[key] === 'object') {
 			result[key] = flattenObject(obj[key]);
 		}
