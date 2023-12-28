@@ -1,7 +1,7 @@
 {
   "name": "vue-formify",
   "private": false,
-  "version": "0.0.20",
+  "version": "0.0.21",
   "type": "module",
   "engines": {
     "node": "v18.16.0"
@@ -45,9 +45,9 @@
   },
   "peerDependencies": {
     "vue": "^3.3"
-},
-"devDependencies": {
-	"vue": "^3.3",
+  },
+  "devDependencies": {
+    "vue": "^3.3",
     "@vitejs/plugin-vue": "^5.0",
     "@vue/test-utils": "^2.4",
     "@types/jsdom": "^16.2",
