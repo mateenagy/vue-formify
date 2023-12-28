@@ -1,8 +1,9 @@
 <script lang="ts" setup>
+import { ElCheckbox } from 'element-plus';
 import { ref } from 'vue';
-import { FormType } from './components';
+import { ComponentProps, FormType } from './components';
 import { STORE } from './store/store';
-import { Formify } from '@/components/main';
+import { Formify, createInput } from '@/components/main';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
@@ -10,6 +11,7 @@ import { Formify } from '@/components/main';
 /  VARIABLES
 ---------------------------------------------*/
 const form = ref<FormType>();
+const Checkbox = createInput<ComponentProps<typeof ElCheckbox>>(ElCheckbox);
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
@@ -42,6 +44,19 @@ const send = (data: any) => {
 					<Formify.Input
 						name="first_name"
 						label="First name" />
+				</div>
+				<div>
+					<Checkbox
+						name="check"
+						:default="false">
+						Check this
+					</Checkbox>
+				</div>
+				<div>
+					<Formify.Input
+						default="lorem"
+						name="foo.bar"
+						label="Last name" />
 				</div>
 				<button>
 					Send

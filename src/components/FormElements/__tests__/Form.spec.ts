@@ -25,7 +25,6 @@ describe('Form', () => {
 		const form = wrapper.findComponent(Formify.Form);
 		await input.setValue('Lorem ipsum');
 		await form.trigger('submit');
-		console.log('[qew]: ', wrapper.find('#respObj').text());
 		expect(wrapper.find('#respObj').text()).toEqual('Lorem ipsum');
 	});
 
@@ -36,7 +35,6 @@ describe('Form', () => {
 		await input.setValue('Lorem ipsum');
 		await input2.setValue('Dolor sit amet');
 		await form.trigger('submit');
-		console.log('hahi', wrapper.find('#respArray').text());
 		expect(wrapper.find('#respArray').text()).contains('Lorem ipsum');
 		expect(wrapper.find('#respArray').text()).contains('Dolor sit amet');
 	});

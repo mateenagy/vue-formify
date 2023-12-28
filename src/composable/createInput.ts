@@ -42,10 +42,10 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 		},
 		emits: ['update:modelValue'],
 		setup: (props, ctx) => {
-			const { formName, updateFormData }: any = inject('form');
+			const { formUID }: any = inject('form');
 			const config: PluginOptions | undefined = inject('config', undefined);
 			const defaultValue = {
-				value: props[options?.defaultValueKey as keyof typeof props] || props.default,
+				value: props.modelValue || props[options?.defaultValueKey as keyof typeof props] || props.default,
 				error: undefined,
 				ignore: props.ignore,
 			};
@@ -53,32 +53,32 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 			const createModelBindings = () => {
 				const bindingMethod = Object.create({});
 				bindingMethod[`onUpdate:${options?.modelKey}`] = (value: any) => {
-					updateFormData(props.name, value, props.ignore);
-					getValueByPath(STORE.value[formName], props.name)?.value || value;
-					ctx.emit(`update:${options?.modelKey}`, getValueByPath(STORE.value[formName], props.name)?.value || value);
+					!props.ignore && (getValueByPath(STORE.value[formUID], props.name).value = value);
+					getValueByPath(STORE.value[formUID], props.name)?.value || value;
+					ctx.emit(`update:${options?.modelKey}`, getValueByPath(STORE.value[formUID], props.name)?.value || value);
 				};
 
 				return bindingMethod;
 			};
 
 			onMounted(() => {
-				if (!getValueByPath(STORE.value[formName], props.name) && !props.ignore) {
+				if (!getValueByPath(STORE.value[formUID], props.name) && !props.ignore) {
 					const current = stringToObject(props.name, defaultValue);
-					STORE.value[formName] = mergeDeep(STORE.value[formName], current);
+					STORE.value[formUID] = mergeDeep(STORE.value[formUID], current);
 				}
 			});
 
 			onBeforeUnmount(() => {
-				!props.preserve && deleteByPath(STORE.value[formName], props.name);
+				!props.preserve && deleteByPath(STORE.value[formUID], props.name);
 			});
 
 			watch(() => [props.name, props.value, props.default, props.ignore], (curr, prev) => {
 				const [name, value, def, ignore] = curr;
 				const [prevName] = prev;
-				deleteByPath(STORE.value[formName], prevName);
+				deleteByPath(STORE.value[formUID], prevName);
 				if (!ignore) {
 					const current = stringToObject(props.name, { ...defaultValue, ...{ value: def } });
-					STORE.value[formName] = mergeDeep(STORE.value[formName], current);
+					STORE.value[formUID] = mergeDeep(STORE.value[formUID], current);
 				}
 			}, { deep: true });
 
@@ -86,23 +86,23 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 				return h(component, {
 					...((!config || (config as PluginOptions).useFocus) && {
 						onFocus: () => {
-							(!props.ignore && getValueByPath(STORE.value[formName], props.name)?.error) && (getValueByPath(STORE.value[formName], props.name).error = undefined);
+							(!props.ignore && getValueByPath(STORE.value[formUID], props.name)?.error) && (getValueByPath(STORE.value[formUID], props.name).error = undefined);
 						},
 						onChange: () => {
-							(!props.ignore && getValueByPath(STORE.value[formName], props.name)?.error) && (getValueByPath(STORE.value[formName], props.name).error = undefined);
+							(!props.ignore && getValueByPath(STORE.value[formUID], props.name)?.error) && (getValueByPath(STORE.value[formUID], props.name).error = undefined);
 						},
 						onBlur: () => {
-							(!props.ignore && getValueByPath(STORE.value[formName], props.name)?.error) && (getValueByPath(STORE.value[formName], props.name).error = undefined);
+							(!props.ignore && getValueByPath(STORE.value[formUID], props.name)?.error) && (getValueByPath(STORE.value[formUID], props.name).error = undefined);
 						},
 					}),
 					...props,
 					name: props.name,
-					error: getValueByPath(STORE.value[formName], props.name)?.error || props.error,
-					modelValue: getValueByPath(STORE.value[formName], props.name)?.value || props.modelValue,
+					error: getValueByPath(STORE.value[formUID], props.name)?.error || props.error,
+					modelValue: props.modelValue || getValueByPath(STORE.value[formUID], props.name)?.value,
 					ignore: false,
 					'onUpdate:modelValue': (value: any) => {
 						ctx.emit('update:modelValue', value);
-						updateFormData(props.name, value, props.ignore);
+						!props.ignore && (getValueByPath(STORE.value[formUID], props.name).value = value);
 					},
 					...(options?.modelKey && { ...createModelBindings() }),
 				},

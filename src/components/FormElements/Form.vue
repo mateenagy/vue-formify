@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 import { computed, provide, onMounted, onUnmounted } from 'vue';
-import { FormElement, FormValue } from '@/components';
 import { STORE } from '@/store/store';
-import { getValueByPath, stringToObject, mergeDeep, flattenObject, createFormDataFromObject } from '@/utils/utils';
+import { getValueByPath, flattenObject, createFormDataFromObject } from '@/utils/utils';
 
 /*---------------------------------------------
 /  PROPS & EMITS
@@ -20,17 +19,6 @@ const uid = Math.floor(Math.random() * Date.now());
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
-const updateFormData = (key: keyof FormElement, value: FormValue, ignore: boolean = false) => {
-	const current = stringToObject(key, { value, ignore });
-	STORE.value[uid] = mergeDeep(STORE.value[uid], current);
-
-	if (getValueByPath(STORE.value[uid], key)) {
-		emit('update:modelValue', getValueByPath(STORE.value[uid], key).value);
-	} else {
-		emit('update:modelValue', value);
-	}
-};
-
 const setError = (name: string, error: any) => {
 	if (getValueByPath(STORE.value[uid], name)) {
 		getValueByPath(STORE.value[uid], name).error = error;
@@ -73,8 +61,7 @@ const data = computed(() => {
 STORE.value[uid] = Object.create({});
 
 provide('form', {
-	formName: uid,
-	updateFormData,
+	formUID: uid,
 });
 
 defineExpose({

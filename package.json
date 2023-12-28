@@ -44,23 +44,24 @@
     "test": "npm run vitest"
   },
   "peerDependencies": {
-    "vue": "^3.3.4"
-  },
-  "devDependencies": {
-    "@vitejs/plugin-vue": "^4.2.3",
+    "vue": "^3.3"
+},
+"devDependencies": {
+	"vue": "^3.3",
+    "@vitejs/plugin-vue": "^5.0",
     "@vue/test-utils": "^2.4",
     "@types/jsdom": "^16.2",
-    "@types/node": "^20.9",
-    "typescript": "^5.0.2",
+    "@types/node": "^20.10",
+    "typescript": "^5.3",
     "rollup-plugin-typescript2": "^0.36",
     "vite-plugin-dts": "^3.6",
-    "vite": "^4.4.5",
-    "vitest": "^0.34",
-    "vue-tsc": "^1.8.5",
+    "vite": "^5.0",
+    "vitest": "^1.1",
+    "vue-tsc": "^1.8",
     "path": "^0.12",
     "@babel/types": "^7.23",
-    "jsdom": "^19.0",
-    "unplugin-auto-import": "^0.16",
+    "jsdom": "^23.0",
+    "unplugin-auto-import": "^0.17",
     "eslint": "^8.53",
     "eslint-plugin-vue": "^9.18",
     "eslint-plugin-import": "^2.29",

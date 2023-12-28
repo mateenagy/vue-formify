@@ -1,6 +1,7 @@
 import * as path from 'path';
 import vue from '@vitejs/plugin-vue';
 import typescript2 from 'rollup-plugin-typescript2';
+// eslint-disable-next-line import/namespace
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 
