@@ -3,7 +3,7 @@ import { ElCheckbox } from 'element-plus';
 import { ref } from 'vue';
 import { ComponentProps, FormType } from './components';
 import { STORE } from './store/store';
-import { Formify, createInput } from '@/components/main';
+import { createInput, FormifyCheckbox, FormifyForm, FormifyInput, FormifyRadio } from '@/components/main';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
@@ -35,13 +35,13 @@ const send = (data: any) => {
 	<div class="wrapper">
 		<div>
 			<pre>{{ STORE }}</pre>
-			<Formify.Form 
+			<FormifyForm
 				@submit="send"
 				ref="form"
 				v-slot="{ data }">
 				<pre>{{ data }}</pre>
 				<div>
-					<Formify.Input
+					<FormifyInput
 						name="first_name"
 						label="First name" />
 				</div>
@@ -49,19 +49,38 @@ const send = (data: any) => {
 					<Checkbox
 						name="check"
 						:default="false">
-						Check this
+						Element plus checkbox
 					</Checkbox>
 				</div>
 				<div>
-					<Formify.Input
+					<FormifyInput
 						default="lorem"
 						name="foo.bar"
 						label="Last name" />
 				</div>
+				<div>
+					<FormifyCheckbox
+						name="asd"
+						:default="true"
+						label="hali">
+					</FormifyCheckbox>
+				</div>
+				<div>
+					<FormifyRadio
+						name="radio"
+						value="foo"
+						label="foo" />
+				</div>
+				<div>
+					<FormifyRadio
+						name="radio"
+						value="bar"
+						label="bar" />
+				</div>
 				<button>
 					Send
 				</button>
-			</Formify.Form>
+			</FormifyForm>
 		</div>
 		<button @click="form?.resetForm()">
 			Reset

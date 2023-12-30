@@ -1,272 +1,96 @@
-# VueFormify: Unleash Form-Building Freedom! 🚀
+<style>
+.title {
+	font-size: 30px;
+	font-weight: bold;
+	text-align: center;
+	margin-bottom: 10px;
+	text-shadow: 0 0 50px rgba(255,255,255, 40%),
+				0 0 10px rgba(255,255,255, 50%);
+}
+span {
+	text-shadow: 0 0 50px rgba(66, 184, 131, 50%),
+				0 0 10px rgba(66, 184, 131, 80%);
+}
+.sub-title {
+	font-size: 18px;
+	font-weight: bold;
+	text-align: center;
+	margin-bottom: 10px
+}
 
-**VueFormify** is a form creation package that liberates developers to create forms with freedom! VueFormify is not just a form package; it's your ticket to form-building autonomy, empowering you to craft both simple and complex forms with a bare yet robust skeleton.
+ul {
+	list-style: none;
+	padding: 0;
+}
 
-### 🎨 Unleash Your Creativity:
+li {
+	position: relative;
+	margin-bottom: 0.5rem;
+	padding-left: 10px;
+	display: flex;
+	align-items: center;
 
-Unlike other form libraries, VueFormify is not confined to being a UI library. It liberates you from the shackles of pre-defined styles and layouts, allowing seamless integration with your favorite UI libraries such as Element Plus, PrimeVue, Radix Vue, and more. **Your forms, your rules** – VueFormify puts the power back in your hands.
+	&::before {
+		content: '';
+		position: absolute;
+		width: 5px;
+		height: 5px;
+		left: 0;
+		background-color: #42b883;
+		border-radius: 50%;
+	}
+}
+.text-center {
+	text-align: center;
+}
+</style>
 
-### 🚫 No Validation Boundaries:
+<div class="title"><span style="color: #42b883">Vue</span>Formify</div>
+<p class="sub-title">Unleash Form-Building Freedom! 🚀</p>
 
-VueFormify takes a unique stance on validation – there isn't any built-in. Why? Because I believe you should have complete control over how you handle data and errors because everyone do it differently. Mold your validation strategies to fit your application's needs, ensuring a tailored user experience without compromise.
+<div class="text-center"><strong>VueFormify</strong> is a form creation package that liberates developers to create forms with freedom! VueFormify is not just a form package; it's your ticket to form-building autonomy, empowering you to craft both simple and complex forms with a bare yet robust skeleton.</div>
 
-### 🚀 Easy To Learn - Easy To Use
+## Features
+<ul>
+	<li>Auto collect form values</li>
+	<li>Nested Objects and Arrays</li>
+	<li>You can access values with v-model if you want</li>
+	<li>Easy to create custom component</li>
+	<li>Easy to integrate any third party UI library</li>
+	<li>Using JSON or FormData</li>
+	<li>4 basic input component: Input, Checkbox, Radio, Error</li>
+	<li>No styling: use anything you want from Bootstrap to Tailwind</li>
+	<li>Form reset</li>
+	<li>Only 3kb (gzipped)</li>
+</ul>
 
-I made VueFormify intuitive and straightforward. Seamlessly integrate it into your project and watch as the simplicity of VueFormify transforms form creation into a breeze.
-
-### 💡 Empowering Developers, One Form at a Time:
-
-This package is about empowering developers to take charge of their forms but not in a painful way. Take a look, try it and redefine the way you create forms in Vue.js.
-
-## 💻 Demo
-If you are interested to try I put together a <a href="https://stackblitz.com/edit/vue-formify-starter?file=src%2FApp.vue" target="_blank">**stackblitz**</a> project.
-
+## 📚 Documentation
+Read more in the <a href="https://vue-formify.matenagy.me/" target="_blank">documentation</a>
 ## 📦 Install
-
 ```
 npm i vue-formify
 ```
-
-## 🔧 How it works
-
-For simplicity I made **Formify** namespace which only have 3 component:
-
-### Form: `FormType<T>`
-The most important component. It contains all the inputs and extract data automatically so you don't need to use v-model.
-
-
-| Events  | Parameter	| Description                                    	|
-|-------- |--------	|-----------------------------------------------	|
-| @submit | `{ data: T }` 	| Send form data. data automatically extracted. 	|
-
-| Methods 	| Parameters  	| Description						|
-|--------	|--------	|---------------------- 			|	
-| resetForm | 	-		| Reset form to default value. 		|
-| setError  | 	`{ name: string; error: any }`		| Set error messages to specified input 				|
-| hideInputError  | 	`{ name: string }`		| Hide error messages from specified input 				|
-
-| Properties 	| Description                                    	|
-|--------	|-----------------------------------------------	|
-| formData 	| Extracted data from the form. (`data` from `submit` already contain these but it can be useful)	|
-
-```html
-<Formify.Form ref="form" @submit="sendForm">
-	...
-</Formify.Form>
-```
-
-### Input: `Component<T>`
-This is a basic input field with label and error message.
-| Props  | Type	| Description                                    	|
-|-------- |--------	|-----------------------------------------------	|
-| name | `string ` 	| Uniqe name of the input. The form extract data from name attribute |
-| modelValue | FormValue 	| Input value (v-model) |
-| label | string 	| Input label |
-| id | string 	| Input id |
-| default | FormValue | Input default value |
-| error | string | Input error message |
-
-| Methods  	| Description                                    	|
-|-------- |-----------------------------------------------	|
-| @blur  | input blur event |
-| @focus  | input focus event |
-| @change  | input change event |
-| @input  | input input event |
-
-```html
-<Formify.Form ref="form" @submit="sendForm">
-	<Formify.Input name="first_name" />
-	<Formify.Input name="last_name" />
-
-	<button>Send</button>
-</Formify.Form>
-```
-
-### Error: `Component<T>`
-A simple component for show error for specified input. Easy to use with custom components.
-| Props  | Type	| Description                                    	|
-|-------- |--------	|-----------------------------------------------	|
-| errorFor | `string ` 	| Name of the input to show the error for |
-
-```html
-<Formify.Form ref="form" @submit="sendForm">
-	<CustomComponent name="custom" />
-	<Formify.Error error-for="custom" />
-
-	<button>Send</button>
-</Formify.Form>
-```
-
-## Composables
-### createInput: `ComponentProps<typeof component>(component: Component, options?: CreateInputOptions) => FunctionalComponent<T & BaseInput, any>`
-**createInput** composable is a very important part of this package. This handy function can create usable component for `<Form>` from any custom component with ease. With the help of `ComponentProps` type we can keep the original component props autocompletion.
-
-| Method option  	| Description                                    	|
-|-------- |-----------------------------------------------	|
-| modelKey  | If there is a special `v-model` like `v-model:checked` you can specify it. |
-| defaultValueKey  | If default value is predefined on component like `defaultChecked` then use it as default value instead of `default`. |
-
-With **createInput** every component will get these properties:
-
-| Property  	| Description                                    	|
-|-------- |-----------------------------------------------	|
-| name (required)  | Name of the input. The extracted data key will be the name. |
-| default  | Default value. |
-| modelValue  | For v-model. |
-| error  | Error message |
-| ignore  | If true the data won't be extracted |
-| preserve | If true than it's preserve the value after input removed |
-
+## 💻 Usage
 ```vue
-<script setup lang="ts">
-import { createInput, ComponentProps } from 'vue-formify'
-import { ElCheckbox } from 'element-plus'
-import CustomComponent from './components/CustomComponent.vue'
+<script lang="ts" setup>
+import { FormifyForm, FormifyInput } from 'vue-formify';
 
-const Checkbox = createInput<ComponentProps<typeof ElCheckbox>>(ElCheckbox);
-const CustomComponent = createInput<ComponentProps<typeof CustomComponent>>(CustomComponent);
-</script>
-```
-
-## Examples
-### Simple
-
-```vue
-<script setup lang="ts">
-import { Formify } from 'vue-formify'
-
-const sendForm = (data: any) => {
-	console.log('data', data);
+type SimpleForm = {
+	first_name: string;
+	last_name: string;
+}
+const sendForm = (data: SimpleForm) => {
+	console.log('first_name', data.first_name);
+	console.log('last_name', data.last_name);
 };
 
 </script>
-<template>
-	<Formify.Form ref="form" @submit="sendForm">
-		<Formify.Input name="first_name" />
-		<Formify.Input name="last_name" />
 
+<template>
+	<FormifyForm @submit="sendForm">
+		<FormifyInput name="first_name" />
+		<FormifyInput name="last_name" />
 		<button>Send</button>
-	</Formify.Form>
-</template>
-```
-
-### With custom component
-To use you own component is just as easy as it could be. Take this custom color picker example:
-
-`ColorPicker.vue`
-```vue
-<script setup lang="ts">
-defineProps<{
-	modelValue: any;
-}>();
-const emit = defineEmits(['update:modelValue']);
-const value = computed({
-	get: () => {
-		return props.modelValue;
-	},
-	set: (value: any) => {
-		emit('update:modelValue', value);
-	},
-});
-</script>
-<template>
-	<div>
-		<label>Pick a color!</label>
-		<input type="color" v-model="value" />
-	</div>
-</template>
-```
-
-```vue
-<script setup lang="ts">
-import ColorPicker from '@/components/ColorPicker/ColorPicker.vue';
-import { Formify, createInput, ComponentProps} from 'vue-formify'
-
-const ColorInput = createInput<ComponentProps<typeof ColorPicker>>(ColorPicker);
-
-const sendForm = (data: any) => {
-	console.log('data', data);
-	/* 
-	console output: 
-	{
-		color: '...'
-	}
-	*/
-};
-
-</script>
-<template>
-	<Formify.Form ref="form" @submit="sendForm">
-		<ColorInput name="color" />
-		<Error error-for="color" />
-
-		<button>Send</button>
-	</Formify.Form>
-</template>
-```
-### With custom UI library
-```vue
-<script setup lang="ts">
-import { Formify, createInput, ComponentProps} from 'vue-formify'
-import { ElCheckbox } from 'element-plus'
-
-const Checkbox = createInput<ComponentProps<typeof ElCheckbox>>(ElCheckbox);
-
-const sendForm = (data: any) => {
-	console.log('data', data);
-	/* 
-	console output: 
-	{
-		first_name: '...'
-		last_name: '...',
-		accept_terms: true/false,
-	}
-	*/
-};
-
-</script>
-<template>
-	<Formify.Form ref="form" @submit="sendForm">
-		<Formify.Input name="first_name" />
-		<Formify.Input name="last_name" />
-		<Checkbox name="accept_terms" />
-		<Formify.Error error-for="accept_terms" />
-
-		<button>Send</button>
-	</Formify.Form>
-</template>
-```
-### Validation example with yup
-There is no built in validation, but you can use any third party library or custom logic.
-
-```vue
-<script setup lang="ts">
-import { Formify } from 'vue-formify'
-import * as yup from 'yup';
-
-
-const sendForm = (data: any) => {
-	const schema = yup.object({
-		first_name: yup.string().required(),
-		last_name: yup.string().required(),
-	});
-
-	schema.validate(data)
-		.then(() => {
-			console.log('data', data);
-		})
-		.catch((errors) => {
-			console.error(errors);
-		})
-};
-
-</script>
-<template>
-	<Formify.Form ref="form" @submit="sendForm">
-		<Formify.Input name="first_name" />
-		<Formify.Input name="last_name" />
-
-		<button>Send</button>
-	</Formify.Form>
+	</FormifyForm>
 </template>
 ```
