@@ -12,7 +12,7 @@ defineOptions({
 defineProps<{
 	errorFor: string;
 }>();
-const { formName }: any = inject('form');
+const { formUID }: any = inject('form');
 const config: PluginOptions | undefined = inject('config', undefined);
 /*---------------------------------------------
 /  VARIABLES
@@ -37,10 +37,10 @@ const config: PluginOptions | undefined = inject('config', undefined);
 	<div>
 		<slot
 			name="error"
-			:error="getValueByPath(STORE[formName], errorFor)?.error">
+			:error="getValueByPath(STORE[formUID], errorFor)?.error">
 			<small
 				:class="(config as any)?.globalErrorCSSClass"
-				v-bind="$attrs">{{ getValueByPath(STORE[formName], errorFor)?.error }}</small>
+				v-bind="$attrs">{{ getValueByPath(STORE[formUID], errorFor)?.error }}</small>
 		</slot>
 	</div>
 </template>
