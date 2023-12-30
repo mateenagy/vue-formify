@@ -1,5 +1,9 @@
-# <span style="color: #42b883">Vue</span>Formify
-<p class="sub-title">Unleash Form-Building Freedom! 🚀</p>
+<p align="center">
+  <a href="https://vue-formify.matenagy.me/" target="_blank">
+	<img src="https://raw.githubusercontent.com/mateenagy/vue-formify/main/logo.png"  width="250px"/>
+  </a>
+</p>
+<p align="center" style="font-size: 20px">Unleash Form-Building Freedom! 🚀</p>
 
 <div class="text-center"><strong>VueFormify</strong> is a form creation package that liberates developers to create forms with freedom! VueFormify is not just a form package; it's your ticket to form-building autonomy, empowering you to craft both simple and complex forms with a bare yet robust skeleton.</div>
 
