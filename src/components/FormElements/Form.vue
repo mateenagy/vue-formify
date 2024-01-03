@@ -10,7 +10,7 @@ const props = defineProps<{
 	enctype?: 'application/x-www-form-urlencoded' | 'multipart/form-data';
 	action?: string;
 }>();
-const emit = defineEmits(['update:modelValue', 'submit', 'update:error', 'setError', 'error-handler']);
+const emit = defineEmits(['submit']);
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
@@ -91,7 +91,8 @@ const submit = (payload: Event) => {
 </script>
 <template>
 	<form
-		@submit="submit"
+		:key="uid"
+		@submit.prevent="submit"
 		:action="action">
 		<slot :data="data"></slot>
 	</form>

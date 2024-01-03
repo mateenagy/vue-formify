@@ -1,4 +1,4 @@
-import { Component, h, inject, onBeforeUnmount, onMounted, watch } from 'vue';
+import { Component, h, inject, onBeforeUnmount, watch } from 'vue';
 import { defineComponent } from 'vue';
 import { PluginOptions } from '@/components';
 import { STORE } from '@/store/store';
@@ -61,23 +61,21 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 				return bindingMethod;
 			};
 
-			onMounted(() => {
-				if (!getValueByPath(STORE.value[formUID], props.name) && !props.ignore) {
-					const current = stringToObject(props.name, defaultValue);
-					STORE.value[formUID] = mergeDeep(STORE.value[formUID], current);
-				}
-			});
+			if (!getValueByPath(STORE.value[formUID], props.name) && !props.ignore) {
+				const current = stringToObject(props.name, defaultValue);
+				STORE.value[formUID] = mergeDeep(STORE.value[formUID], current);
+			}
 
 			onBeforeUnmount(() => {
 				!props.preserve && deleteByPath(STORE.value[formUID], props.name);
 			});
 
-			watch(() => [props.name, props.value, props.default, props.ignore], (curr, prev) => {
-				const [name, value, def, ignore] = curr;
+			watch(() => [props.name, props.value, props.default, props[options?.defaultValueKey as keyof typeof props], props.ignore], (curr, prev) => {
+				const [name, value, def, customDef, ignore] = curr;
 				const [prevName] = prev;
 				deleteByPath(STORE.value[formUID], prevName);
 				if (!ignore) {
-					const current = stringToObject(props.name, { ...defaultValue, ...{ value: def } });
+					const current = stringToObject(props.name, { ...defaultValue, ...{ value: def || customDef } });
 					STORE.value[formUID] = mergeDeep(STORE.value[formUID], current);
 				}
 			}, { deep: true });
@@ -102,7 +100,8 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 					ignore: false,
 					'onUpdate:modelValue': (value: any) => {
 						ctx.emit('update:modelValue', value);
-						!props.ignore && (getValueByPath(STORE.value[formUID], props.name).value = value);
+						!props.ignore && 
+							(getValueByPath(STORE.value[formUID], props.name) && (getValueByPath(STORE.value[formUID], props.name).value = value));
 					},
 					...(options?.modelKey && { ...createModelBindings() }),
 				},

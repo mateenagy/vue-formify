@@ -46,4 +46,12 @@ describe('Form', () => {
 		await form.trigger('submit');
 		expect(wrapper.find('.custom-error').text()).toEqual('First name required');
 	});
+
+	it('Custom component', async () => {
+		const input = wrapper.find('input[name="color"]');
+		const form = wrapper.findComponent(FormifyForm);
+		await input.setValue('#ffffff');
+		await form.trigger('submit');
+		expect(wrapper.find('#respCustom').text()).toEqual('#ffffff');
+	});
 });

@@ -1,23 +1,21 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { FormifyForm, FormifyInput } from '@/components/main';
+import CustomInput from './CustomInput.vue';
+import { FormifyForm, FormifyInput, createInput, ComponentProps } from '@/components/main';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
-const response = ref('');
-const responseWithObject = ref('');
-const responseWithArray = ref('');
+const response = ref(Object.create({}));
 const form = ref();
+const ColorPicker = createInput<ComponentProps<typeof CustomInput>>(CustomInput);
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
 const sendForm = (data: any) => {
-	response.value = data.first_name;
-	responseWithObject.value = data.social.facebook;
-	responseWithArray.value = data.links;
+	response.value = data;
 	if (!data.first_name) {
 		form.value?.setError('first_name', 'First name required');
 	}
@@ -36,31 +34,40 @@ const sendForm = (data: any) => {
 ---------------------------------------------*/
 </script>
 <template>
-	<FormifyForm
-		@submit="sendForm"
-		ref="form">
-		<FormifyInput name="first_name" />
-		<FormifyInput
-			name="first_name">
-			<template #error="{ error }">
-				<span class="custom-error">
-					{{ error }}
-				</span>
-			</template>
-		</FormifyInput>
-		<FormifyInput name="social.facebook" />
-		<FormifyInput name="links[0]" />
-		<FormifyInput name="links[1]" />
-		<button type="submit">
-			Send
-		</button>
-	</FormifyForm>
+	<div>
+		<FormifyForm
+			@submit="sendForm"
+			ref="form">
+			<FormifyInput name="first_name" />
+			<FormifyInput
+				name="first_name">
+				<template #error="{ error }">
+					<span class="custom-error">
+						{{ error }}
+					</span>
+				</template>
+			</FormifyInput>
+			<FormifyInput name="social.facebook" />
+			<FormifyInput name="links[0]" />
+			<FormifyInput name="links[1]" />
+			<ColorPicker name="color" />
+			<button type="submit">
+				Send
+			</button>
+		</FormifyForm>
+	</div>
 	<h2>First name</h2>
-	<p>{{ response }}</p>
+	<p>{{ response.first_name }}</p>
 	<p id="respObj">
-		{{ responseWithObject }}
+		{{ response?.social?.facebook }}
 	</p>
 	<p id="respArray">
-		{{ responseWithArray }}
+		{{ response?.links }}
+	</p>
+	<p id="respCustom">
+		{{ response?.color }}
+	</p>
+	<p id="debug">
+		{{ response }}
 	</p>
 </template>

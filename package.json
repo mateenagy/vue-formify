@@ -41,27 +41,32 @@
     "lint": "eslint 'src/**/*.{ts,js,vue}' '*.{ts,js}' --no-fix",
     "lint:fix": "eslint 'src/**/*.{ts,js,vue}' '*.{ts,js}' --fix",
     "vitest": "vitest --environment jsdom run",
+    "vitest:hot": "vitest --environment jsdom",
     "test": "npm run vitest"
   },
   "peerDependencies": {
-    "vue": "^3.3"
+    "vue": "^3"
   },
   "devDependencies": {
-    "vue": "^3.3",
+	"vue": "^3.4",
+	"vite": "^5.0",
+    "vue-tsc": "^1.8",
+
     "@vitejs/plugin-vue": "^5.0",
+    "rollup-plugin-typescript2": "^0.36",
+    "vite-plugin-dts": "^3.7",
+    "unplugin-auto-import": "^0.17",
+	
+    "typescript": "^5.3",
+    "@types/node": "^20.10",
+    "path": "^0.12",
+	
+    "vitest": "^1.1",
     "@vue/test-utils": "^2.4",
     "@types/jsdom": "^16.2",
-    "@types/node": "^20.10",
-    "typescript": "^5.3",
-    "rollup-plugin-typescript2": "^0.36",
-    "vite-plugin-dts": "^3.6",
-    "vite": "^5.0",
-    "vitest": "^1.1",
-    "vue-tsc": "^1.8",
-    "path": "^0.12",
     "@babel/types": "^7.23",
     "jsdom": "^23.0",
-    "unplugin-auto-import": "^0.17",
+	
     "eslint": "^8.53",
     "eslint-plugin-vue": "^9.18",
     "eslint-plugin-import": "^2.29",
@@ -69,6 +74,7 @@
     "@typescript-eslint/parser": "^6.10",
     "@typescript-eslint/eslint-plugin": "^6.10",
     "@vue/eslint-config-typescript": "^12.0",
+
     "element-plus": "^2.4"
   },
   "license": "MIT",

@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { ElCheckbox } from 'element-plus';
-import { ref } from 'vue';
+import { reactive, ref, watch } from 'vue';
 import { ComponentProps, FormType } from './components';
+import CustomDefault from './components/FormElements/CustomDefault.vue';
 import { STORE } from './store/store';
 import { createInput, FormifyCheckbox, FormifyForm, FormifyInput, FormifyRadio } from '@/components/main';
 /*---------------------------------------------
@@ -12,6 +13,7 @@ import { createInput, FormifyCheckbox, FormifyForm, FormifyInput, FormifyRadio }
 ---------------------------------------------*/
 const form = ref<FormType>();
 const Checkbox = createInput<ComponentProps<typeof ElCheckbox>>(ElCheckbox);
+const Custom = createInput<ComponentProps<typeof CustomDefault>>(CustomDefault, { defaultValueKey: 'defaultValue' });
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
@@ -21,9 +23,15 @@ const send = (data: any) => {
 /*---------------------------------------------
 /  COMPUTED
 ---------------------------------------------*/
+const user = reactive({
+	id: 12,
+});
 /*---------------------------------------------
 /  WATCHERS
 ---------------------------------------------*/
+watch(() => user.id, (newId) => {
+	console.log('[newId]: ', newId);
+});
 /*---------------------------------------------
 /  CREATED
 ---------------------------------------------*/
@@ -40,6 +48,8 @@ const send = (data: any) => {
 				ref="form"
 				v-slot="{ data }">
 				<pre>{{ data }}</pre>
+				<Custom
+					name="custom" />
 				<div>
 					<FormifyInput
 						name="first_name"
