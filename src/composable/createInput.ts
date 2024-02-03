@@ -12,6 +12,7 @@ type BaseInput = {
 	error?: any;
 	ignore?: boolean;
 	preserve?: boolean;
+	id?: string;
 }
 
 type CreateInputOptions = {
@@ -38,6 +39,10 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 			preserve: {
 				type: Boolean,
 				default: false,
+			},
+			id: {
+				type: String,
+				default: '',
 			},
 		},
 		emits: ['update:modelValue'],
@@ -94,6 +99,7 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 						},
 					}),
 					...props,
+					id: props.id || Math.floor(Math.random() * Date.now()).toString(),
 					name: props.name,
 					error: getValueByPath(STORE.value[formUID], props.name)?.error || props.error,
 					modelValue: props.modelValue || getValueByPath(STORE.value[formUID], props.name)?.value,

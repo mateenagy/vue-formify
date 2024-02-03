@@ -18,8 +18,8 @@ const props = withDefaults(
 		id?: string;
 		required?: boolean;
 		errorClass?: string;
-		trueLabel: any;
-		falseLabel: any;
+		trueLabel?: any;
+		falseLabel?: any;
 		error?: string;
 	}>(),
 	{
