@@ -4,7 +4,7 @@
 	"version": "0.0.26",
 	"type": "module",
 	"engines": {
-		"node": "v18.16.0"
+		"node": "v20.12.1"
 	},
 	"description": "Unleash Form-Building Freedom! 🚀",
 	"keywords": [
