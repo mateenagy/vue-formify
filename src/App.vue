@@ -30,9 +30,6 @@ import { STORE } from './store/store';
 			<div>
 				<FormComponent />
 			</div>
-			<div>
-				<FormComponent />
-			</div>
 		</div>
 	</div>
 </template>

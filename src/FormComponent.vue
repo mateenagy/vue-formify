@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { FormType } from './components';
+import CustomDefault from './components/FormElements/CustomDefault.vue';
 import { STORE } from './store/store';
-import { FormifyCheckbox, FormifyForm, FormifyInput } from '@/components/main';
+import { FormifyCheckbox, FormifyForm, FormifyInput, createInput, ComponentProps } from '@/components/main';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
@@ -10,6 +11,7 @@ import { FormifyCheckbox, FormifyForm, FormifyInput } from '@/components/main';
 /  VARIABLES
 ---------------------------------------------*/
 const form = ref<FormType>();
+const Input = createInput<ComponentProps<typeof CustomDefault>>(CustomDefault, { defaultValueKey: 'value' });
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
@@ -42,6 +44,9 @@ const send = (data: any) => {
 						label="hali">
 					</FormifyCheckbox>
 					<FormifyInput name="first_name" />
+					<Input
+						name="lorem"
+						value="ipsum" />
 				</div>
 				<button>
 					Send

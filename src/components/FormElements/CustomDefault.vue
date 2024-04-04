@@ -7,13 +7,13 @@
 // }>();
 withDefaults(
 	defineProps<{
-		defaultValue?: string;
+		value?: string;
 	}>(),
 	{
-		defaultValue: undefined,
+		value: undefined,
 	},
 );
-const value = defineModel();
+const modelValue = defineModel();
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
@@ -38,6 +38,6 @@ const value = defineModel();
 		hali
 		<input
 			type="text"
-			v-model="value">
+			v-model="modelValue">
 	</div>
 </template>

@@ -50,7 +50,7 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 			const { formUID }: any = inject('form');
 			const config: PluginOptions | undefined = inject('config', undefined);
 			const defaultValue = {
-				value: props.modelValue || props[options?.defaultValueKey as keyof typeof props] || props.default,
+				value: props[options?.defaultValueKey as keyof typeof props] || props.default || props.modelValue,
 				error: undefined,
 				ignore: props.ignore,
 			};

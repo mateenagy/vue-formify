@@ -1,84 +1,84 @@
 {
-  "name": "vue-formify",
-  "private": false,
-  "version": "0.0.26",
-  "type": "module",
-  "engines": {
-    "node": "v18.16.0"
-  },
-  "description": "Unleash Form-Building Freedom! 🚀",
-  "keywords": [
-    "vue",
-    "form",
-    "forms",
-    "formify",
-    "vue-formify"
-  ],
-  "files": [
-    "dist",
-    "dist/vue-formify.js",
-    "dist/vue-formify.mjs",
-    "dist/vue-formify.d.ts"
-  ],
-  "main": "./dist/vue-formify.umd.js",
-  "module": "./dist/vue-formify.es.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/vue-formify.es.js",
-      "require": "./dist/vue-formify.umd.js",
-      "types": "./dist/index.d.ts"
-    },
-    "./dist/vue-formify.css": {
-      "import": "./dist/vue-formify.css",
-      "require": "./dist/vue-formify.css"
-    }
-  },
-  "scripts": {
-    "start": "vue-tsc && vite build --watch",
-    "build": "npm run lint && vue-tsc && vite build",
-    "dev": "vite",
-    "lint": "eslint 'src/**/*.{ts,js,vue}' '*.{ts,js}' --no-fix",
-    "lint:fix": "eslint 'src/**/*.{ts,js,vue}' '*.{ts,js}' --fix",
-    "vitest": "vitest --environment jsdom run",
-    "vitest:hot": "vitest --environment jsdom",
-    "test": "npm run vitest"
-  },
-  "peerDependencies": {
-    "vue": "^3"
-  },
-  "devDependencies": {
-    "vue": "^3.4",
-    "vite": "^5.0",
-    "vue-tsc": "^1.8",
-    "@vitejs/plugin-vue": "^5.0",
-    "rollup-plugin-typescript2": "^0.36",
-    "vite-plugin-dts": "^3.7",
-    "unplugin-auto-import": "^0.17",
-    "typescript": "^5.3",
-    "@types/node": "^20.10",
-    "path": "^0.12",
-    "vitest": "^1.1",
-    "@vue/test-utils": "^2.4",
-    "@types/jsdom": "^16.2",
-    "@babel/types": "^7.23",
-    "jsdom": "^23.0",
-    "eslint": "^8.53",
-    "eslint-plugin-vue": "^9.18",
-    "eslint-plugin-import": "^2.29",
-    "eslint-plugin-prefer-arrow": "^1.2",
-    "@typescript-eslint/parser": "^6.10",
-    "@typescript-eslint/eslint-plugin": "^6.10",
-    "@vue/eslint-config-typescript": "^12.0",
-    "element-plus": "^2.4"
-  },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mateenagy/vue-formify.git"
-  },
-  "bugs": {
-    "url": "https://github.com/mateenagy/vue-formify/issues"
-  },
-  "homepage": "https://vue-formify.matenagy.me/"
+	"name": "vue-formify",
+	"private": false,
+	"version": "0.0.26",
+	"type": "module",
+	"engines": {
+		"node": "v18.16.0"
+	},
+	"description": "Unleash Form-Building Freedom! 🚀",
+	"keywords": [
+		"vue",
+		"form",
+		"forms",
+		"formify",
+		"vue-formify"
+	],
+	"files": [
+		"dist",
+		"dist/vue-formify.js",
+		"dist/vue-formify.mjs",
+		"dist/vue-formify.d.ts"
+	],
+	"main": "./dist/vue-formify.umd.js",
+	"module": "./dist/vue-formify.es.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"import": "./dist/vue-formify.es.js",
+			"require": "./dist/vue-formify.umd.js",
+			"types": "./dist/index.d.ts"
+		},
+		"./dist/vue-formify.css": {
+			"import": "./dist/vue-formify.css",
+			"require": "./dist/vue-formify.css"
+		}
+	},
+	"scripts": {
+		"start": "vue-tsc && vite build --watch",
+		"build": "npm run lint && vue-tsc && vite build",
+		"dev": "vite",
+		"lint": "eslint 'src/**/*.{ts,js,vue}' '*.{ts,js}' --no-fix",
+		"lint:fix": "eslint 'src/**/*.{ts,js,vue}' '*.{ts,js}' --fix",
+		"vitest": "vitest --environment jsdom run",
+		"vitest:hot": "vitest --environment jsdom",
+		"test": "npm run vitest"
+	},
+	"peerDependencies": {
+		"vue": "^3"
+	},
+	"devDependencies": {
+		"vue": "^3.4",
+		"vite": "^5.2",
+		"vue-tsc": "^2.0",
+		"@vitejs/plugin-vue": "^5.0",
+		"rollup-plugin-typescript2": "^0.36",
+		"vite-plugin-dts": "^3.8",
+		"unplugin-auto-import": "^0.17",
+		"typescript": "^5.4",
+		"@types/node": "^20.12",
+		"path": "^0.12",
+		"vitest": "^1.4",
+		"@vue/test-utils": "^2.4",
+		"@types/jsdom": "^21.1",
+		"@babel/types": "^7.24",
+		"jsdom": "^24.0",
+		"eslint": "^8.57",
+		"eslint-plugin-vue": "^9.24",
+		"eslint-plugin-import": "^2.29",
+		"eslint-plugin-prefer-arrow": "^1.2",
+		"@typescript-eslint/parser": "^7.5",
+		"@typescript-eslint/eslint-plugin": "^7.5",
+		"@vue/eslint-config-typescript": "^13.0",
+		"element-plus": "^2.6"
+	},
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/mateenagy/vue-formify.git"
+	},
+	"bugs": {
+		"url": "https://github.com/mateenagy/vue-formify/issues"
+	},
+	"homepage": "https://vue-formify.matenagy.me/"
 }
