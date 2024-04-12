@@ -22,6 +22,7 @@ import { STORE } from './store/store';
 /*---------------------------------------------
 /  HOOKS
 ---------------------------------------------*/
+
 </script>
 <template>
 	<div class="wrapper">

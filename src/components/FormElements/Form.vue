@@ -9,6 +9,7 @@ import { getValueByPath, flattenObject, createFormDataFromObject } from '@/utils
 const props = defineProps<{
 	enctype?: 'application/x-www-form-urlencoded' | 'multipart/form-data';
 	action?: string;
+	validationSchema?: any;
 }>();
 const emit = defineEmits(['submit']);
 /*---------------------------------------------
@@ -81,7 +82,21 @@ onUnmounted(() => {
 	delete STORE.value[uid];
 });
 
-const submit = (payload: Event) => {
+
+const submit = async (payload: Event) => {
+	if (props.validationSchema) {
+		const result = await props.validationSchema.parse(data.value);
+
+		if (result.errors.length) {
+			console.log(result.errors);
+			
+			result.errors.forEach((err: any) => {
+				setError(err.key, err.message);
+			});
+
+			return;
+		}
+	}
 	if (props.action) {
 		return;
 	}
