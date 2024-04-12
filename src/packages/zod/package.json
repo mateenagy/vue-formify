@@ -14,8 +14,8 @@
 		"../../../dist/vue-formify-zod.umd.js",
 		"../../../dist/packages/zod/index.d.ts"
 	],
-	"peerDependencies": {
-		"zod": "^3.22"
+	"dependencies": {
+		"zod": "^3"
 	},
 	"author": "",
 	"license": "MIT",
