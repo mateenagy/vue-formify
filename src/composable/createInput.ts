@@ -29,7 +29,7 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 				default: '',
 			},
 			default: {
-				type: [String, Boolean, Number, Object],
+				type: [String, Boolean, Number, Object, Array],
 				default: '',
 			},
 			ignore: {
@@ -44,13 +44,21 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 				type: String,
 				default: '',
 			},
+			[options?.defaultValueKey]: {
+				type: [String, Boolean, Number, Object, Array],
+				default: '',
+			},
+			modelValue: {
+				type: [String, Boolean, Number, Object, Array],
+				default: undefined,
+			},
 		},
 		emits: ['update:modelValue'],
 		setup: (props, ctx) => {
 			const { formUID }: any = inject('form');
 			const config: PluginOptions | undefined = inject('config', undefined);
 			const defaultValue = {
-				value: props[options?.defaultValueKey as keyof typeof props] || props.default || props.modelValue,
+				value: props.modelValue ?? (options?.defaultValueKey && props[options?.defaultValueKey as keyof typeof props]) ?? props.default ?? '',
 				error: undefined,
 				ignore: props.ignore,
 			};
@@ -76,6 +84,7 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 			});
 
 			watch(() => [props.name, props.value, props.default, props[options?.defaultValueKey as keyof typeof props], props.ignore], (curr, prev) => {
+				// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
 				const [name, value, def, customDef, ignore] = curr;
 				const [prevName] = prev;
 				deleteByPath(STORE.value[formUID], prevName);
@@ -106,7 +115,7 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 					ignore: false,
 					'onUpdate:modelValue': (value: any) => {
 						ctx.emit('update:modelValue', value);
-						!props.ignore && 
+						!props.ignore &&
 							(getValueByPath(STORE.value[formUID], props.name) && (getValueByPath(STORE.value[formUID], props.name).value = value));
 					},
 					...(options?.modelKey && { ...createModelBindings() }),

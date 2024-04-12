@@ -37,6 +37,7 @@
 	"scripts": {
 		"start": "vue-tsc && vite build --watch",
 		"build": "npm run lint && vue-tsc && vite build",
+		"build:local": "vite build",
 		"dev": "vite",
 		"lint": "eslint 'src/**/*.{ts,js,vue}' '*.{ts,js}' --no-fix",
 		"lint:fix": "eslint 'src/**/*.{ts,js,vue}' '*.{ts,js}' --fix",
