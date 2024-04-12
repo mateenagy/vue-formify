@@ -1,7 +1,7 @@
 {
 	"name": "vue-formify",
 	"private": false,
-	"version": "0.0.27",
+	"version": "0.0.28",
 	"type": "module",
 	"engines": {
 		"node": "v20.12.1"
