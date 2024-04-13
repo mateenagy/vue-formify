@@ -1,0 +1,8 @@
+{
+  "name": "@vue-formify/yup",
+  "version": "0.0.28",
+  "description": "",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC"
+}

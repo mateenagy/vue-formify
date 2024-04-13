@@ -1,0 +1,32 @@
+{
+	"name": "@vue-formify/zod",
+	"version": "0.0.28",
+	"private": false,
+	"description": "Zod schema integration for vue-formify",
+	"engines": {
+		"node": "v20.12.1"
+	},
+	"type": "module",
+	"main": "../../dist/vue-formify-zod.umd.js",
+	"module": "../../dist/vue-formify-zod.es.js",
+	"types": "../../dist/packages/zod/index.d.ts",
+	"files": [
+		"../../dist/vue-formify-zod.es.js",
+		"../../dist/vue-formify-zod.umd.js",
+		"../../dist/packages/zod/index.d.ts"
+	],
+	"peerDependencies": {
+		"zod": "^3"
+	},
+	"author": "",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/mateenagy/vue-formify.git",
+		"directory": "packages/zod"
+	},
+	"bugs": {
+		"url": "https://github.com/mateenagy/vue-formify/issues"
+	},
+	"homepage": "https://vue-formify.matenagy.me/"
+}

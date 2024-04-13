@@ -10,15 +10,13 @@ const arrayToStringPath = (arr: (string | number)[]): string => {
 			result = result.slice(0, -1);
 			result += `[${element}]`;
 		} else {
-			// Handle unexpected types (optional)
 			console.warn(`Unexpected type in array: ${typeof element}`);
 
-			return ''; // Or throw an error if strict type checking is required
+			return '';
 		}
 		result += '.';
 	}
 
-	// Remove the trailing dot
 	return result.slice(0, -1);
 };
 

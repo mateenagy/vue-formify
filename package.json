@@ -1,11 +1,14 @@
 {
 	"name": "vue-formify",
 	"private": false,
-	"version": "0.0.27",
+	"version": "0.0.28",
 	"type": "module",
 	"engines": {
 		"node": "v20.12.1"
 	},
+	"workspaces": [
+		"packages/*"
+	],
 	"description": "Unleash Form-Building Freedom! 🚀",
 	"keywords": [
 		"vue",
@@ -75,7 +78,6 @@
 		"element-plus": "^2.6",
 		"rollup": "^4.14",
 		"terser": "^5.30",
-		"@vue-formify/zod": "link:@vue-formify/zod",
 		"zod": "^3.22"
 	},
 	"license": "MIT",
