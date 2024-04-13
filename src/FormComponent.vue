@@ -1,11 +1,11 @@
 <script lang="ts" setup>
+import { schemaFromZod } from '@vue-formify/zod';
 import { ref } from 'vue';
 import { object, string } from 'zod';
 import { FormType } from './components';
 import CustomDefault from './components/FormElements/CustomDefault.vue';
 import { STORE } from './store/store';
 import { FormifyCheckbox, FormifyForm, FormifyInput, createInput, ComponentProps, FormifyError } from '@/components/main';
-import { schemaFromZod } from '@vue-formify/zod';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
