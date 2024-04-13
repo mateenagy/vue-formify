@@ -1,19 +1,17 @@
 {
 	"name": "@vue-formify/zod",
-	"version": "0.0.28",
+	"version": "0.0.29",
 	"private": false,
 	"description": "Zod schema integration for vue-formify",
 	"engines": {
 		"node": "v20.12.1"
 	},
 	"type": "module",
-	"main": "../../dist/vue-formify-zod.umd.js",
-	"module": "../../dist/vue-formify-zod.es.js",
-	"types": "../../dist/packages/zod/index.d.ts",
+	"main": "dist/vue-formify-zod.umd.js",
+	"module": "dist/vue-formify-zod.es.js",
+	"types": "dist/packages/zod/index.d.ts",
 	"files": [
-		"../../dist/vue-formify-zod.es.js",
-		"../../dist/vue-formify-zod.umd.js",
-		"../../dist/packages/zod/index.d.ts"
+		"dist"
 	],
 	"peerDependencies": {
 		"zod": "^3"

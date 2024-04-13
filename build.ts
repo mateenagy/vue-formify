@@ -1,23 +1,35 @@
 import * as path from 'path';
 import fs from 'fs-extra';
 import { rollup } from 'rollup';
+import { dts } from 'rollup-plugin-dts';
 import typescript2 from 'rollup-plugin-typescript2';
 import * as Terser from 'terser';
+import tsconfig from './tsconfig.json' assert { type: 'json' };
 
 type BuildData = {
 	pckg: string;
 }
 
 const buildPackage = async ({ pckg }: BuildData) => {
-	const pckgout = path.join(__dirname, '/dist/');
+	const pckgout = path.join(__dirname, `/packages/${pckg}/dist/`);
+
 	for (const format of ['es', 'umd']) {
 		const bundle = await rollup({
 			input: path.resolve(__dirname, `./packages/${pckg}/index.ts`),
+			output: { file: path.join(__dirname, `/packages/${pckg}/dist/index.d.ts`), format: 'es' },
 			plugins: [
 				typescript2({
 					include: path.resolve(__dirname, `./packages/${pckg}/index.ts`),
 					check: false,
 					useTsconfigDeclarationDir: true,
+					tsconfig: 'tsconfig.json',
+					tsconfigOverride: {
+						compilerOptions: {
+							declaration: true,
+							outDir: pckgout,
+							declarationDir: pckgout,
+						},
+					},
 				}),
 			],
 		});
