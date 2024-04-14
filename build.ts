@@ -54,3 +54,4 @@ const buildPackage = async ({ pckg }: BuildData) => {
 };
 
 buildPackage({ pckg: 'zod' });
+buildPackage({ pckg: 'yup' });

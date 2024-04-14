@@ -23,6 +23,8 @@ const arrayToStringPath = (arr: (string | number)[]): string => {
 const processError = (error: ZodIssue[]) => {
 	const _error: any[] = [];
 	error.forEach((err) => {
+		console.log(typeof err.path, err.path);
+		
 		_error.push({
 			key: arrayToStringPath(err.path),
 			message: err.message,

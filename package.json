@@ -81,7 +81,8 @@
 		"vitest": "^1.4",
 		"vue": "^3.4",
 		"vue-tsc": "^2.0",
-		"zod": "^3.22"
+		"zod": "^3.22",
+		"yup": "^1.4"
 	},
 	"license": "MIT",
 	"repository": {

@@ -1,11 +1,18 @@
 {
 	"name": "@vue-formify/zod",
-	"version": "0.0.29",
+	"version": "0.0.30",
 	"private": false,
 	"description": "Zod schema integration for vue-formify",
 	"engines": {
 		"node": "v20.12.1"
 	},
+	"keywords": [
+		"vue",
+		"vue3",
+		"validation",
+		"validator",
+		"form"
+	],
 	"type": "module",
 	"main": "dist/vue-formify-zod.umd.js",
 	"module": "dist/vue-formify-zod.es.js",

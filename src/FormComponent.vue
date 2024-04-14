@@ -1,7 +1,9 @@
 <script lang="ts" setup>
+import { schemaFromYup } from '@vue-formify/yup';
 import { schemaFromZod } from '@vue-formify/zod';
 import { ref } from 'vue';
-import { object, string } from 'zod';
+import * as yup from 'yup';
+import * as zod from 'zod';
 import { FormType } from './components';
 import CustomDefault from './components/FormElements/CustomDefault.vue';
 import { STORE } from './store/store';
@@ -20,23 +22,40 @@ const Input = createInput<ComponentProps<typeof CustomDefault>>(CustomDefault, {
 const send = (data: any) => {
 	console.log('data', data);
 };
-const user = object({
-	first_name: string({ required_error: 'Password is required' }),
-	last_name: string({ required_error: 'This filed is required' }).min(1, { message: 'Not enough' }),
-	foo: object({
-		bar: string({ required_error: 'This filed is required' }),
-		baz: string({ required_error: 'This filed is required' }),
+const schemaZod = schemaFromZod(zod.object({
+	first_name: zod.string({ required_error: 'Password is required' }),
+	last_name: zod.string({ required_error: 'This filed is required' }).min(1, { message: 'Not enough' }),
+	foo: zod.object({
+		bar: zod.string({ required_error: 'This filed is required' }),
+		baz: zod.string({ required_error: 'This filed is required' }),
 	}),
-	social: object({
-		name: string().min(1, 'Required'),
+	social: zod.object({
+		name: zod.string().min(1, 'Required'),
 	}).array(),
-	a: object({
-		b: object({
-			name: string().min(1, { message: 'Requried field' }),
+	a: zod.object({
+		b: zod.object({
+			name: zod.string().min(1, { message: 'Requried field' }),
 		}).array(),
 	}).array(),
-});
-const schema = schemaFromZod(user);
+}));
+
+const schemaYup = schemaFromYup(yup.object({
+	first_name: yup.string().min(3, 'Halika'),
+	last_name: yup.string().min(3, 'Galika'),
+	foo: yup.object({
+		bar: yup.string().required('Requried'),
+		baz: yup.string().required('Requried'),
+	}),
+	social: yup.array()
+		.of(yup.object({
+			name: yup.string().min(1, 'Required'),
+		})),
+	a: yup.array().of(yup.object({
+		b: yup.array().of(yup.object({
+			name: yup.string().min(1, 'Required field lol'),
+		})),
+	})),
+}));
 /*---------------------------------------------
 /  COMPUTED
 ---------------------------------------------*/
@@ -54,7 +73,7 @@ const schema = schemaFromZod(user);
 	<div class="wrapper">
 		<div>
 			<FormifyForm
-				:validation-schema="schema"
+				:validation-schema="schemaZod"
 				@submit="send"
 				ref="form">
 				<div>
