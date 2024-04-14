@@ -1,8 +1,8 @@
 {
-	"name": "@vue-formify/yup",
+	"name": "@vue-formify/valibot",
 	"version": "0.0.30",
 	"private": false,
-	"description": "Yup schema integration for vue-formify",
+	"description": "Valibot schema integration for vue-formify",
 	"engines": {
 		"node": "v20.12.1"
 	},
@@ -14,21 +14,21 @@
 		"form"
 	],
 	"type": "module",
-	"main": "dist/vue-formify-yup.umd.js",
-	"module": "dist/vue-formify-yup.es.js",
-	"types": "dist/packages/yup/index.d.ts",
+	"main": "dist/vue-formify-valibot.umd.js",
+	"module": "dist/vue-formify-valibot.es.js",
+	"types": "dist/packages/valibot/index.d.ts",
 	"files": [
 		"dist"
 	],
 	"peerDependencies": {
-		"yup": "^1.4"
+		"valibot": "^0.30"
 	},
 	"author": "Máté Nagy",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/mateenagy/vue-formify.git",
-		"directory": "packages/yup"
+		"directory": "packages/valibot"
 	},
 	"bugs": {
 		"url": "https://github.com/mateenagy/vue-formify/issues"

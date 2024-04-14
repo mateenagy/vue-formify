@@ -88,8 +88,6 @@ const submit = async (payload: Event) => {
 		const result = await props.validationSchema.parse(data.value);
 
 		if (result.errors.length) {
-			console.log(result.errors);
-			
 			result.errors.forEach((err: any) => {
 				setError(err.key, err.message);
 			});

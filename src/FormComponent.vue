@@ -1,6 +1,8 @@
 <script lang="ts" setup>
+import { schemaFromValibot } from '@vue-formify/valibot';
 import { schemaFromYup } from '@vue-formify/yup';
 import { schemaFromZod } from '@vue-formify/zod';
+import * as v from 'valibot';
 import { ref } from 'vue';
 import * as yup from 'yup';
 import * as zod from 'zod';
@@ -56,6 +58,23 @@ const schemaYup = schemaFromYup(yup.object({
 		})),
 	})),
 }));
+
+const schemaValibot = schemaFromValibot(v.object({
+	first_name: v.string('required', [v.minLength(1, 'Required')]),
+	last_name: v.string('required', [v.minLength(1, 'Required')]),
+	foo: v.object({
+		bar: v.string('required', [v.minLength(1, 'Required')]),
+		baz: v.string('required', [v.minLength(1, 'Required')]),
+	}),
+	social: v.array(v.object({
+		name: v.string('required', [v.minLength(1, 'Required')]),
+	})),
+	a: v.array(v.object({
+		b: v.array(v.object({
+			name: v.string('required', [v.minLength(1, 'Required')]),
+		})),
+	})),
+}));
 /*---------------------------------------------
 /  COMPUTED
 ---------------------------------------------*/
@@ -73,7 +92,7 @@ const schemaYup = schemaFromYup(yup.object({
 	<div class="wrapper">
 		<div>
 			<FormifyForm
-				:validation-schema="schemaZod"
+				:validation-schema="schemaValibot"
 				@submit="send"
 				ref="form">
 				<div>

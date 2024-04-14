@@ -82,7 +82,8 @@
 		"vue": "^3.4",
 		"vue-tsc": "^2.0",
 		"zod": "^3.22",
-		"yup": "^1.4"
+		"yup": "^1.4",
+		"valibot": "^0.30"
 	},
 	"license": "MIT",
 	"repository": {
@@ -92,5 +93,6 @@
 	"bugs": {
 		"url": "https://github.com/mateenagy/vue-formify/issues"
 	},
-	"homepage": "https://vue-formify.matenagy.me/"
+	"homepage": "https://vue-formify.matenagy.me/",
+	"author": "Máté Nagy"
 }

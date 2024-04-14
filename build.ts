@@ -1,10 +1,8 @@
 import * as path from 'path';
 import fs from 'fs-extra';
 import { rollup } from 'rollup';
-import { dts } from 'rollup-plugin-dts';
 import typescript2 from 'rollup-plugin-typescript2';
 import * as Terser from 'terser';
-import tsconfig from './tsconfig.json' assert { type: 'json' };
 
 type BuildData = {
 	pckg: string;
@@ -55,3 +53,4 @@ const buildPackage = async ({ pckg }: BuildData) => {
 
 buildPackage({ pckg: 'zod' });
 buildPackage({ pckg: 'yup' });
+buildPackage({ pckg: 'valibot' });

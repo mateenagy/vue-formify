@@ -1,4 +1,4 @@
-import { ZodObject, ZodRawShape, ZodIssue } from 'zod';
+import { BaseSchema, ObjectInput, safeParseAsync, SchemaIssue } from 'valibot';
 
 const arrayToStringPath = (arr: (string | number)[]): string => {
 	let result = '';
@@ -20,33 +20,32 @@ const arrayToStringPath = (arr: (string | number)[]): string => {
 	return result.slice(0, -1);
 };
 
-const processError = (error: ZodIssue[]) => {
+const processError = (issues: SchemaIssue[]) => {
 	const _error: any[] = [];
-	error.forEach((err) => {		
+	issues.forEach((issue) => {
+		const p = arrayToStringPath(issue.path?.map(_path => _path.key) as string[]);
+
 		_error.push({
-			key: arrayToStringPath(err.path),
-			message: err.message,
+			key: p,
+			message: issue.message,
 		});
 	});
 
 	return _error;
 };
 
-const schemaFromZod = <TSchema extends ZodObject<ZodRawShape>>(_schema: TSchema) => {
+const schemaFromValibot = <TSchema extends BaseSchema<ObjectInput<any, any>>>(_schema: TSchema) => {
 	const schema = {
 		parse: async (value: any) => {
-			if (!(_schema instanceof ZodObject)) {
-				throw new Error('You have to use ZodObject type)!');
-			}
-			const result = await _schema.safeParseAsync(value);
-
+			const result = await safeParseAsync(_schema, value);
 			if (result.success) {
 				return {
-					value: result.data,
+					value: result.output,
 					errors: [],
 				};
 			}
-			const errors = processError(result.error.issues);
+
+			const errors = processError(result.issues);
 
 			return { errors };
 		},
@@ -55,4 +54,4 @@ const schemaFromZod = <TSchema extends ZodObject<ZodRawShape>>(_schema: TSchema)
 	return schema;
 };
 
-export { schemaFromZod };
+export { schemaFromValibot };

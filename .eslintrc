@@ -17,6 +17,9 @@
 	"plugins": [
 		"prefer-arrow"
 	],
+	"settings": {
+		"import/ignore": ["valibot"]
+	},
 	"parser": "vue-eslint-parser",
 	"parserOptions": { "project": ["./tsconfig.json", "./tsconfig.node.json"] },
 	"rules": {

@@ -23,7 +23,7 @@
 	"peerDependencies": {
 		"zod": "^3"
 	},
-	"author": "",
+	"author": "Máté Nagy",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
