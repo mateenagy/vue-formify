@@ -83,7 +83,8 @@
 		"vue-tsc": "^2.0",
 		"zod": "^3.22",
 		"yup": "^1.4",
-		"valibot": "^0.30"
+		"valibot": "^0.30",
+		"primevue": "^3.51"
 	},
 	"license": "MIT",
 	"repository": {

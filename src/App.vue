@@ -1,5 +1,8 @@
 <script lang="ts" setup>
+import { TriStateCheckbox } from '@vue-formify/primevue';
+import { ref } from 'vue';
 import FormComponent from './FormComponent.vue';
+import { FormifyForm } from './components/VueFormify';
 import { STORE } from './store/store';
 /*---------------------------------------------
 /  PROPS & EMITS
@@ -10,6 +13,9 @@ import { STORE } from './store/store';
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
+const send = (data: any) => {
+	console.log(data);
+};
 /*---------------------------------------------
 /  COMPUTED
 ---------------------------------------------*/
@@ -29,7 +35,9 @@ import { STORE } from './store/store';
 		<div>
 			<pre>{{ STORE }}</pre>
 			<div>
-				<FormComponent />
+				<FormifyForm @submit="send">
+					<button>send</button>
+				</FormifyForm>
 			</div>
 		</div>
 	</div>

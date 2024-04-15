@@ -1,0 +1,37 @@
+{
+	"name": "@vue-formify/primevue",
+	"version": "0.0.30",
+	"private": false,
+	"description": "PrimeVue components integration for vue-formify",
+	"engines": {
+		"node": "v20.12.1"
+	},
+	"keywords": [
+		"vue",
+		"vue3",
+		"primevue",
+		"ui library",
+        "component library"
+	],
+	"type": "module",
+	"main": "dist/vue-formify-primevue.umd.js",
+	"module": "dist/vue-formify-primevue.es.js",
+	"types": "dist/packages/primevue/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"peerDependencies": {
+		"primevue": "^3.51"
+	},
+	"author": "Máté Nagy",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/mateenagy/vue-formify.git",
+		"directory": "packages/primevue"
+	},
+	"bugs": {
+		"url": "https://github.com/mateenagy/vue-formify/issues"
+	},
+	"homepage": "https://vue-formify.matenagy.me/"
+}
