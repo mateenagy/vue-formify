@@ -53,6 +53,17 @@ const data = computed(() => {
 
 	return data;
 });
+
+const errors = computed(() => {
+	const err = Object.create({});
+	if (STORE.value[uid]) {
+		const flattenData = flattenObject(STORE.value[uid], 'error');
+
+		return flattenData;
+	}
+
+	return err;
+});
 /*---------------------------------------------
 /  WATCHERS
 ---------------------------------------------*/
@@ -70,6 +81,7 @@ defineExpose({
 	setError,
 	hideInputError,
 	formData: data,
+	errors,
 });
 /*---------------------------------------------
 /  HOOKS
@@ -107,6 +119,8 @@ const submit = async (payload: Event) => {
 		:key="uid"
 		@submit.prevent="submit"
 		:action="action">
-		<slot :data="data"></slot>
+		<slot
+			:data="data"
+			:errors="errors"></slot>
 	</form>
 </template>
