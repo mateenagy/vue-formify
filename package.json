@@ -63,7 +63,7 @@
 		"@vitejs/plugin-vue": "^5.0",
 		"@vue/eslint-config-typescript": "^13.0",
 		"@vue/test-utils": "^2.4",
-		"element-plus": "^2.6",
+		"element-plus": "^2.7",
 		"eslint": "^8.57",
 		"eslint-plugin-import": "^2.29",
 		"eslint-plugin-prefer-arrow": "^1.2",

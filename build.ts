@@ -54,4 +54,5 @@ const buildPackage = async ({ pckg }: BuildData) => {
 // buildPackage({ pckg: 'zod' });
 // buildPackage({ pckg: 'yup' });
 // buildPackage({ pckg: 'valibot' });
-buildPackage({ pckg: 'primevue' });
+// buildPackage({ pckg: 'primevue' });
+buildPackage({ pckg: 'element-plus' });

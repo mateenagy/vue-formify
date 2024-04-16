@@ -1,0 +1,37 @@
+{
+	"name": "@vue-formify/element-plus",
+	"version": "0.0.30",
+	"private": false,
+	"description": "Element Plus components integration for vue-formify",
+	"engines": {
+		"node": "v20.12.1"
+	},
+	"keywords": [
+		"vue",
+		"vue3",
+		"element-plus",
+		"ui library",
+        "component library"
+	],
+	"type": "module",
+	"main": "dist/vue-formify-element-plus.umd.js",
+	"module": "dist/vue-formify-element-plus.es.js",
+	"types": "dist/packages/element-plus/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"peerDependencies": {
+		"element-plus": ""
+	},
+	"author": "Máté Nagy",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/mateenagy/vue-formify.git",
+		"directory": "packages/element-plus"
+	},
+	"bugs": {
+		"url": "https://github.com/mateenagy/vue-formify/issues"
+	},
+	"homepage": "https://vue-formify.matenagy.me/"
+}
