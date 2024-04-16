@@ -1,0 +1,37 @@
+{
+	"name": "@vue-formify/ionic",
+	"version": "0.0.30",
+	"private": false,
+	"description": "Ionic Vue components integration for vue-formify",
+	"engines": {
+		"node": "v20.12.1"
+	},
+	"keywords": [
+		"vue",
+		"vue3",
+		"ionic",
+		"ui library",
+        "component library"
+	],
+	"type": "module",
+	"main": "dist/vue-formify-ionic.umd.js",
+	"module": "dist/vue-formify-ionic.es.js",
+	"types": "dist/packages/ionic/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"peerDependencies": {
+		"@ionic/vue": "^7.8"
+	},
+	"author": "Máté Nagy",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/mateenagy/vue-formify.git",
+		"directory": "packages/ionic"
+	},
+	"bugs": {
+		"url": "https://github.com/mateenagy/vue-formify/issues"
+	},
+	"homepage": "https://vue-formify.matenagy.me/"
+}
