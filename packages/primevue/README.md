@@ -26,5 +26,5 @@ const send = (data: any) => {
 </template>
 ```
 ## ⚠️ Known issues
-- **InputOtp**: Basic component not working properly, but with template everything is fine. It is a Bu in the PrimeVue package.
+- **InputOtp**: Basic component not working properly, but with template everything is fine. It is a bug	 in the PrimeVue package.
 - **Password**: Bug in the PrimeVue package.
