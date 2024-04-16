@@ -25,6 +25,6 @@ const send = (data: any) => {
 </FormifyForm>
 </template>
 ```
-## 💻 Known issues
-- **InputOtp**: basic component not working properly, but with template everything is fine.
+## ⚠️ Known issues
+- **InputOtp**: Basic component not working properly, but with template everything is fine. It is a Bu in the PrimeVue package.
 - **Password**: Bug in the PrimeVue package.
