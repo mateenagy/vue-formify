@@ -1,11 +1,14 @@
 <script lang="ts" setup>
-import { FormifyForm } from './components/VueFormify';
+import { ref } from 'vue';
+import { FormType } from './components';
+import { FormifyForm, FormifyInput } from './components/VueFormify';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
+const form = ref<FormType>();
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
@@ -30,9 +33,13 @@ const send = (data: any) => {
 		<div>
 			<div>
 				<FormifyForm
-					@submit="send"
-					v-slot="{ data }">
-					<pre>{{ data }}</pre>
+					ref="form"
+					@submit="send">
+					<FormifyInput
+						name="name" />
+					<FormifyInput name="email" />
+					<FormifyInput name="foo" />
+					<FormifyInput name="fbar" />
 					<button>send</button>
 				</FormifyForm>
 			</div>

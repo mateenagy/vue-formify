@@ -22,7 +22,6 @@ import { default as _ToggleButton } from 'primevue/togglebutton';
 import { default as _TreeSelect } from 'primevue/treeselect';
 import { default as _TriStateCheckbox } from 'primevue/tristatecheckbox';
 
-
 import { ComponentProps, createInput } from 'vue-formify';
 
 const InputText = createInput<ComponentProps<typeof _InputText>>(_InputText);

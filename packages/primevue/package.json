@@ -1,6 +1,6 @@
 {
 	"name": "@vue-formify/primevue",
-	"version": "0.0.30",
+	"version": "0.0.31",
 	"private": false,
 	"description": "PrimeVue components integration for vue-formify",
 	"engines": {
