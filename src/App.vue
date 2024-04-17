@@ -33,18 +33,13 @@ const send = (data: any) => {
 	<div class="wrapper">
 		<div>
 			<div>
-				<FormifyInput name="asd" />
 				<FormifyForm
 					ref="form"
 					@submit="send" 
 					v-slot="{ data }">
-					<!-- <FormifyInput
-						name="name" /> -->
 					<pre>{{ data }}</pre>
-					<InputText name="asd" />
-					<ToggleButton
-						name="toggle"
-						:default="false" />
+					<FormifyInput
+						name="name" />
 					<button>send</button>
 				</FormifyForm>
 			</div>

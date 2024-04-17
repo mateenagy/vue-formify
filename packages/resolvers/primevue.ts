@@ -142,7 +142,6 @@ export const PrimeVueResolver = (options: PrimeVueResolverOptions = {}) => {
 	return {
 		type: 'component',
 		resolve: (name: string) => {
-			console.log(name);
 			const sideEffects = [];
 
 			if (options.importStyle) {
@@ -175,7 +174,6 @@ export const PrimeVueResolver = (options: PrimeVueResolverOptions = {}) => {
 			}
 			if (formComponents.includes(name)) {
 				return {
-					name,
 					from: '@vue-formify/primevue',
 					sideEffects,
 				};
