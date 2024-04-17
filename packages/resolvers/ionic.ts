@@ -107,7 +107,7 @@ export const IonicBuiltInComponents = [
 export const IonicResolver = () => {
 	return {
 		type: 'component',
-		resolve: (name) => {
+		resolve: (name: string) => {
 			if (IonicBuiltInComponents.includes(name)) {
 				return {
 					name,
