@@ -3,36 +3,27 @@
 	<img src="https://raw.githubusercontent.com/mateenagy/vue-formify/main/logo.png"  width="250px"/>
   </a>
 </p>
-<p align="center" style="font-size: 20px">VueFormify Yup schema validator integration</p>
+<p align="center" style="font-size: 20px">unplugin-vue-components resolvers</p>
 
 ## 📦 Install
 ```
-npm i @vue-formify/yup
+npm i @vue-formify/resolvers
 ```
 ## 💻 Usage
-```vue
-<script lang="ts" setup>
-import { schemaFromYup } from '@vue-formify/yup';
-import { object, string } from 'yup'
+Open `vite.config.ts` and use the resolver you need.
+```ts
+import Components from 'unplugin-vue-components/vite';
+import { IonicResolver } from '@vue-formify/resolver'
 
-const schema = schemaFromYup(
-	object({
-		first_name: string().required(),
-		last_name: string().required(),
-	})
-)
+export default defineConfig({
+	plugins: [
+		Components({
+			resolvers: [
+				IonicResolver(),
+			],
+			...
+		}),
+	]
+})
 
-const sendForm = (data) => {
-	console.log('data', data);
-};
-
-</script>
-
-<template>
-	<FormifyForm @submit="sendForm" :validation-schema="schema">
-		<FormifyInput name="first_name" />
-		<FormifyInput name="last_name" />
-		<button>Send</button>
-	</FormifyForm>
-</template>
 ```
