@@ -16,8 +16,8 @@ import {
 	ElTimeSelect as _ElTimeSelect,
 	ElTransfer as _ElTransfer,
 } from 'element-plus';
-
-import { ComponentProps, createInput } from 'vue-formify';
+import { ComponentProps } from '@/components';
+import { createInput } from '@/composable/createInput';
 
 const ElCheckbox = createInput<ComponentProps<typeof _ElCheckbox>>(_ElCheckbox);
 const ElCascader = createInput<ComponentProps<typeof _ElCascader>>(_ElCascader);

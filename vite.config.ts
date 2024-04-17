@@ -1,6 +1,9 @@
 import * as path from 'path';
 import vue from '@vitejs/plugin-vue';
+import { PrimeVueResolver } from '@vue-formify/resolvers';
 import typescript2 from 'rollup-plugin-typescript2';
+// import { PrimeVueResolver } from 'unplugin-vue-components/resolvers';
+import Components from 'unplugin-vue-components/vite';
 // eslint-disable-next-line import/namespace
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
@@ -14,6 +17,11 @@ export default defineConfig({
 		dts({
 			insertTypesEntry: true,
 			rollupTypes: true,
+		}),
+		Components({
+			resolvers: [
+				PrimeVueResolver(),
+			],
 		}),
 		typescript2({
 			check: false,

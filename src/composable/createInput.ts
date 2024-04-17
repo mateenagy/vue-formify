@@ -74,7 +74,7 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 				return bindingMethod;
 			};
 
-			if (formUID && !getValueByPath(STORE.value[formUID], props.name) && !props.ignore) {
+			if (formUID && props.name && !getValueByPath(STORE.value[formUID], props.name) && !props.ignore) {
 				const current = stringToObject(props.name, defaultValue);
 				STORE.value[formUID] = mergeDeep(STORE.value[formUID], current);
 			}

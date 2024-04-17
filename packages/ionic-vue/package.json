@@ -1,6 +1,6 @@
 {
 	"name": "@vue-formify/ionic-vue",
-	"version": "0.0.31",
+	"version": "0.0.32",
 	"private": false,
 	"description": "Ionic Vue components integration for vue-formify",
 	"engines": {

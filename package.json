@@ -86,7 +86,8 @@
 		"yup": "^1.4",
 		"valibot": "^0.30",
 		"primevue": "^3.51",
-		"@ionic/vue": "^7.8"
+		"@ionic/vue": "^7.8",
+		"vue-formify": "^0.0.33"
 	},
 	"license": "MIT",
 	"repository": {

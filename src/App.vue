@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { FormType } from './components';
 import { FormifyForm, FormifyInput } from './components/VueFormify';
+
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
@@ -32,14 +33,18 @@ const send = (data: any) => {
 	<div class="wrapper">
 		<div>
 			<div>
+				<FormifyInput name="asd" />
 				<FormifyForm
 					ref="form"
-					@submit="send">
-					<FormifyInput
-						name="name" />
-					<FormifyInput name="email" />
-					<FormifyInput name="foo" />
-					<FormifyInput name="fbar" />
+					@submit="send" 
+					v-slot="{ data }">
+					<!-- <FormifyInput
+						name="name" /> -->
+					<pre>{{ data }}</pre>
+					<InputText name="asd" />
+					<ToggleButton
+						name="toggle"
+						:default="false" />
 					<button>send</button>
 				</FormifyForm>
 			</div>

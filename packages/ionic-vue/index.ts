@@ -8,8 +8,8 @@ import {
 	IonSelect as _IonSelect,
 	IonToggle as _IonToggle,
 } from '@ionic/vue';
-
-import { ComponentProps, createInput } from 'vue-formify';
+import { ComponentProps } from '@/components';
+import { createInput } from '@/composable/createInput';
 
 const IonCheckbox = createInput<ComponentProps<typeof _IonCheckbox>>(_IonCheckbox, { defaultValueKey: 'value' });
 const IonRange = createInput<ComponentProps<typeof _IonRange>>(_IonRange, { defaultValueKey: 'value' });

@@ -1,6 +1,6 @@
 {
 	"name": "@vue-formify/element-plus",
-	"version": "0.0.31",
+	"version": "0.0.32",
 	"private": false,
 	"description": "Element Plus components integration for vue-formify",
 	"engines": {

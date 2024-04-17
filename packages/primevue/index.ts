@@ -21,8 +21,8 @@ import { default as _Textarea } from 'primevue/textarea';
 import { default as _ToggleButton } from 'primevue/togglebutton';
 import { default as _TreeSelect } from 'primevue/treeselect';
 import { default as _TriStateCheckbox } from 'primevue/tristatecheckbox';
-
-import { ComponentProps, createInput } from 'vue-formify';
+import { ComponentProps } from '@/components';
+import { createInput } from '@/composable/createInput';
 
 const InputText = createInput<ComponentProps<typeof _InputText>>(_InputText);
 const Calendar = createInput<ComponentProps<typeof _Calendar>>(_Calendar);
