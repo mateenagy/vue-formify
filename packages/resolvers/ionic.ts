@@ -117,7 +117,7 @@ export const IonicResolver = () => {
 			if (IonicInputComponents.includes(name)) {
 				return {
 					name,
-					from: '@vue-formify/ionic',
+					from: '@vue-formify/ionic-vue',
 				};
 			}
 		},
