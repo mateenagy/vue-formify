@@ -17,7 +17,7 @@ const buildPackage = async ({ pckg }: BuildData) => {
 			output: { file: path.join(__dirname, `/packages/${pckg}/dist/index.d.ts`), format: 'es' },
 			plugins: [
 				typescript2({
-					include: path.resolve(__dirname, `./packages/${pckg}/index.ts`),
+					include: path.resolve(__dirname, `./packages/${pckg}/*.ts`),
 					check: false,
 					useTsconfigDeclarationDir: true,
 					tsconfig: 'tsconfig.json',
@@ -56,4 +56,5 @@ const buildPackage = async ({ pckg }: BuildData) => {
 // buildPackage({ pckg: 'valibot' });
 // buildPackage({ pckg: 'primevue' });
 // buildPackage({ pckg: 'element-plus' });
-buildPackage({ pckg: 'ionic-vue' });
+// buildPackage({ pckg: 'ionic-vue' });
+buildPackage({ pckg: 'resolvers' });

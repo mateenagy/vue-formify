@@ -76,6 +76,7 @@
 		"terser": "^5.30",
 		"typescript": "^5.4",
 		"unplugin-auto-import": "^0.17",
+		"unplugin-vue-components": "^0.26",
 		"vite": "^5.2",
 		"vite-plugin-dts": "^3.8",
 		"vitest": "^1.4",
