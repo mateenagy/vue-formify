@@ -1,6 +1,6 @@
 {
 	"name": "@vue-formify/ionic-vue",
-	"version": "0.0.32",
+	"version": "0.0.34",
 	"private": false,
 	"description": "Ionic Vue components integration for vue-formify",
 	"engines": {
@@ -21,8 +21,7 @@
 		"dist"
 	],
 	"peerDependencies": {
-		"@ionic/vue": "^7.8",
-		"vue-formify": "^0.0.32"
+		"@ionic/vue": "^7"
 	},
 	"author": "Máté Nagy",
 	"license": "MIT",
