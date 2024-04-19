@@ -88,7 +88,7 @@ export const flattenObject = (obj: any, type: 'value' | 'error' = 'value'): Reco
 			if (idx !== undefined) {
 				const id = parseInt(idx);
 				if (typeof obj[key] === 'object' && 'value' in obj[key]) {
-					result[k][id] = type === 'value' ? obj[key].value : obj[key].error;
+					obj[key].value && result[k].push(type === 'value' ? obj[key].value : obj[key].error);
 				} else if (typeof obj[key] === 'object') {
 					result[k][id] = flattenObject(obj[key], type);
 				}

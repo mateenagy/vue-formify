@@ -1,5 +1,6 @@
 import * as path from 'path';
 import fs from 'fs-extra';
+import inquirer from 'inquirer';
 import { rollup } from 'rollup';
 import typescript2 from 'rollup-plugin-typescript2';
 import * as Terser from 'terser';
@@ -51,10 +52,53 @@ const buildPackage = async ({ pckg }: BuildData) => {
 	}
 };
 
-// buildPackage({ pckg: 'zod' });
-// buildPackage({ pckg: 'yup' });
-// buildPackage({ pckg: 'valibot' });
-buildPackage({ pckg: 'primevue' });
-buildPackage({ pckg: 'element-plus' });
-buildPackage({ pckg: 'ionic-vue' });
-// buildPackage({ pckg: 'resolvers' });
+inquirer
+	.prompt([
+		{
+			type: 'checkbox',
+			name: 'packages',
+			message: 'Choose which packages you want to build:',
+			choices: [
+				{
+					name: 'Zod',
+					value: 'zod',
+				},
+				{
+					name: 'Yup',
+					value: 'yup',
+				},
+				{
+					name: 'Valibot',
+					value: 'valibot',
+				},
+				{
+					name: 'Primevue',
+					value: 'primevue',
+				},
+				{
+					name: 'Element Plus',
+					value: 'element-plus',
+				},
+				{
+					name: 'Ionic Vue',
+					value: 'ionic-vue',
+				},
+				{
+					name: 'Resolvers',
+					value: 'ionic-vue',
+				},
+			],
+		},
+	])
+	.then((answers) => {
+		answers.packages.forEach((pckg: string) => {
+			buildPackage({ pckg });
+		});
+	})
+	.catch((error) => {
+		if (error.isTtyError) {
+			// Prompt couldn't be rendered in the current environment
+		} else {
+			// Something else went wrong
+		}
+	});
