@@ -11,13 +11,23 @@
 <ul>
 	<li>Auto collect form values</li>
 	<li>Nested Objects and Arrays</li>
+	<li>Form level validation integration with (external modules)</li>
+		<ul>
+			<li>yup</li>
+			<li>zod</li>
+			<li>valibot</li>
+		</ul>
+	<li>Integrated libraries (external modules)</li>
+		<ul>
+			<li>PrimeVue</li>
+			<li>Element Plus</li>
+			<li>Iconic</li>
+		</ul>
+	<li>Easy to create custom or third party components</li>
 	<li>You can access values with v-model if you want</li>
-	<li>Easy to create custom component</li>
-	<li>Easy to integrate any third party UI library</li>
 	<li>Using JSON or FormData</li>
 	<li>4 basic input component: Input, Checkbox, Radio, Error</li>
 	<li>No styling: use anything you want from Bootstrap to Tailwind</li>
-	<li>Form reset</li>
 	<li>Only 3kb (gzipped)</li>
 </ul>
 
