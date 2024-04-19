@@ -31,7 +31,7 @@
   },
   "include": [
 	"src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue",
-	"packages/**/*.ts", "packages/**/*.d.ts", "packages/**/*.tsx", "packages/**/*.vue, packages/**/**/*.ts", "packages/**/**/*.d.ts",
+	// "packages/**/*.ts", "packages/**/*.d.ts", "packages/**/*.tsx", "packages/**/*.vue, packages/**/**/*.ts", "packages/**/**/*.d.ts",
 	"build.ts"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
