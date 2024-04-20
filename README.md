@@ -21,7 +21,7 @@
 		<ul>
 			<li>PrimeVue</li>
 			<li>Element Plus</li>
-			<li>Iconic</li>
+			<li>Ionic</li>
 		</ul>
 	<li>Easy to create custom or third party components</li>
 	<li>You can access values with v-model if you want</li>
