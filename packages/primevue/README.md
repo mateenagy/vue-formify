@@ -26,12 +26,37 @@ const send = (data: any) => {
 };
 </script>
 <template>
-<FormifyForm @submit="send">
-	<InputText name="email" />
-	<button>Send</button>
-</FormifyForm>
+	<FormifyForm @submit="send">
+		<InputText name="email" />
+		<button>Send</button>
+	</FormifyForm>
 </template>
 ```
+
+### Available components
+- InputText
+- Calendar
+- CascadeSelect
+- Checkbox
+- Chips
+- ColorPicker
+- Dropdown
+- InputMask
+- InputNumber
+- InputOtp
+- InputSwitch
+- Knob
+- Listbox
+- MultiSelect
+- Password
+- RadioButton
+- Rating
+- SelectButton
+- Slider
+- Textarea
+- ToggleButton
+- TreeSelect
+- TriStateCheckbox
 ## ⚠️ Known issues
 - **InputOtp**: Basic component not working properly, but with template everything is fine. It is a bug	 in the PrimeVue package.
 - **Password**: Bug in the PrimeVue package.

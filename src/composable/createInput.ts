@@ -53,7 +53,7 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 				default: undefined,
 			},
 		},
-		emits: ['update:modelValue'],
+		emits: ['update:modelValue', `update:${options?.modelKey}`],
 		setup: (props, ctx) => {
 			const { formUID }: any = inject('form', Object.create({}));
 			const config: PluginOptions | undefined = inject('config', undefined);

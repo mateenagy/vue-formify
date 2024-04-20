@@ -16,12 +16,19 @@ const buildPackage = async ({ pckg }: BuildData) => {
 		const bundle = await rollup({
 			input: path.resolve(__dirname, `./packages/${pckg}/index.ts`),
 			output: { file: path.join(__dirname, `/packages/${pckg}/dist/index.d.ts`), format: 'es' },
+			external: [
+				'vue-formify',
+				'element-plus',
+				'radix-vue',
+				'@ionic/vue',
+				'primevue/*',
+			],
 			plugins: [
 				typescript2({
 					include: path.resolve(__dirname, `./packages/${pckg}/*.ts`),
 					check: false,
 					useTsconfigDeclarationDir: true,
-					tsconfig: 'tsconfig.json',
+					tsconfig: path.join(__dirname, '/tsconfig.json'),
 					tsconfigOverride: {
 						compilerOptions: {
 							declaration: true,
@@ -82,6 +89,10 @@ inquirer
 				{
 					name: 'Ionic Vue',
 					value: 'ionic-vue',
+				},
+				{
+					name: 'Radix Vue',
+					value: 'radix-vue',
 				},
 				{
 					name: 'Resolvers',

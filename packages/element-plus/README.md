@@ -26,9 +26,26 @@ const send = (data: any) => {
 };
 </script>
 <template>
-<FormifyForm @submit="send">
-	<ElInput name="email" />
-	<button>Send</button>
-</FormifyForm>
+	<FormifyForm @submit="send">
+		<ElInput name="email" />
+		<button>Send</button>
+	</FormifyForm>
 </template>
 ```
+### Available components
+- ElCheckbox
+- ElCascader
+- ElColorPicker
+- ElDatePicker
+- ElInput
+- ElInputNumber
+- ElRadio
+- ElRadioGroup
+- ElRate
+- ElSelect
+- ElSelectV2
+- ElSlider
+- ElSwitch
+- ElTimePicker
+- ElTimeSelect
+- ElTransfer

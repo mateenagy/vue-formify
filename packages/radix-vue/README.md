@@ -10,16 +10,19 @@
 	</a>
   </div>
 </p>
-<p align="center" style="font-size: 20px">VueFormify Ionic component integration</p>
+<p align="center" style="font-size: 20px">VueFormify Radix Vue component integration. </p>
 
 ## 📦 Install
 ```
-npm i @vue-formify/ionic-vue
+npm i @vue-formify/radix-vue
 ```
 ## 💻 Usage
+You only need to import the root components from this package. Any other part of the components need to be imported from `radix-vue`.
+
 ```vue
 <script lang="ts" setup>
-import { IonInput } from '@vue-formify/ionic-vue';
+import { SwitchRoot } from '@vue-formify/ionic-vue';
+import { SwitchThumb } from 'radix-vue'
 
 const send = (data: any) => {
 	console.log(data);
@@ -27,17 +30,23 @@ const send = (data: any) => {
 </script>
 <template>
 	<FormifyForm @submit="send">
-		<IonInput name="email" />
+		<SwitchRoot
+			id="airplane-mode"
+			name="airplane"
+			class="SwitchRoot">
+			<SwitchThumb class="SwitchThumb"/>
+		</SwitchRoot>
 		<button>Send</button>
 	</FormifyForm>
 </template>
 ```
+
 ### Available components
-- IonCheckbox
-- IonRange
-- IonDatetime
-- IonInput
-- IonRadioGroup
-- IonSegment
-- IonSelect
-- IonToggle
+- CheckboxRoot
+- ComboboxRoot
+- PinInputRoot
+- RadioGroupRoot
+- SelectRoot
+- SwitchRoot
+- TagsInputRoot
+- Toggle

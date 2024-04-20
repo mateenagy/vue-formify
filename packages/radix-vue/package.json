@@ -1,0 +1,37 @@
+{
+	"name": "@vue-formify/radix-vue",
+	"version": "0.0.34",
+	"private": false,
+	"description": "Radix Vue components integration for vue-formify",
+	"engines": {
+		"node": "v20.12.1"
+	},
+	"keywords": [
+		"vue",
+		"vue3",
+		"radix vue",
+		"ui library",
+        "component library"
+	],
+	"type": "module",
+	"main": "dist/vue-formify-radix-vue.umd.js",
+	"module": "dist/vue-formify-radix-vue.es.js",
+	"types": "dist/packages/radix-vue/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"peerDependencies": {
+		"radix-vue": "^1.7"
+	},
+	"author": "Máté Nagy",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/mateenagy/vue-formify.git",
+		"directory": "packages/radix-vue"
+	},
+	"bugs": {
+		"url": "https://github.com/mateenagy/vue-formify/issues"
+	},
+	"homepage": "https://vue-formify.matenagy.me/"
+}

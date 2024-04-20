@@ -88,7 +88,11 @@
 		"vue": "^3.4",
 		"vue-tsc": "^2.0",
 		"yup": "^1.4",
-		"zod": "^3.22"
+		"zod": "^3.22",
+		"radix-vue": "^1.7",
+		"@internationalized/date": "^3.5",
+		"vue-formify": "^0.0.35",
+		"unplugin-element-plus": "^0.8"
 	},
 	"license": "MIT",
 	"repository": {
