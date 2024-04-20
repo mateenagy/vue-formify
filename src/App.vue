@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { ElInput } from 'packages/element-plus';
-import { InputText } from 'packages/primevue';
 import { ref } from 'vue';
 import { FormType } from './components';
 import { FormifyForm, FormifyInput } from './components/VueFormify';

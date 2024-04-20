@@ -39,5 +39,8 @@
 	"packages/**/*.ts", "packages/**/*.d.ts", "packages/**/*.tsx", "packages/**/*.vue, packages/**/**/*.ts", "packages/**/**/*.d.ts",
 	"build.ts"
   ],
+  "exclude": [
+	"node_modules"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
