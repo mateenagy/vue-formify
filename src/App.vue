@@ -42,8 +42,6 @@ const send = (data: any) => {
 					<pre>{{ data }}</pre>
 					<FormifyInput
 						name="name" />
-					<ElInput />
-					<InputText />
 					<button>send</button>
 				</FormifyForm>
 			</div>
