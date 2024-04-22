@@ -96,7 +96,7 @@ inquirer
 				},
 				{
 					name: 'Resolvers',
-					value: 'ionic-vue',
+					value: 'resolvers',
 				},
 			],
 		},

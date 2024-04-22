@@ -174,6 +174,7 @@ export const PrimeVueResolver = (options: PrimeVueResolverOptions = {}) => {
 			}
 			if (formComponents.includes(name)) {
 				return {
+					name,
 					from: '@vue-formify/primevue',
 					sideEffects,
 				};
