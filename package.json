@@ -40,7 +40,7 @@
 	"scripts": {
 		"start": "vue-tsc && vite build --watch",
 		"build": "bun run lint && vue-tsc && vite build",
-		"build:packages": "bun build.ts",
+		"build:packages": "bun run lint && bun run vue-tsc && bun build.ts",
 		"build:local": "vite build",
 		"dev": "vite",
 		"lint": "eslint 'src/**/*.{ts,js,vue}' '*.{ts,js}' --no-fix",

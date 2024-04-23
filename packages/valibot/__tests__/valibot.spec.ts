@@ -1,8 +1,8 @@
 import { mount, flushPromises } from '@vue/test-utils';
+import * as v from 'valibot';
 import { describe, expect, it } from 'vitest';
 import { FormifyForm, FormifyInput } from 'vue-formify';
-import * as zod from 'zod';
-import { schemaFromZod } from '../index';
+import { schemaFromValibot } from '../index';
 
 const mountWithComponents = (component: Record<string, any>) => {
 	component.components = {
@@ -13,18 +13,20 @@ const mountWithComponents = (component: Record<string, any>) => {
 
 	return mount(component);
 };
-describe('Zod validation', () => {
-	it('Required field Zod', async () => {
+describe('Valibot validation', () => {
+	it('Required field Valibot', async () => {
 		const wrapper = mountWithComponents({
 			setup: () => {
-				const scema = schemaFromZod(zod.object({
-					email: zod.string({ required_error: 'Required field' }).min(1, { message: 'Required field' }),
+				const scema = schemaFromValibot(v.object({
+					email: v.string('Must be a string', [
+						v.minLength(1, 'Required field'),
+					]),
 				}));
-		
+
 				const send = (data: any) => {
 					console.log(data);
 				};
-		
+
 				return { scema, send };
 			},
 			template: `
@@ -36,7 +38,7 @@ describe('Zod validation', () => {
 		});
 		const form = wrapper.findComponent(FormifyForm);
 		const input = wrapper.find('input[name="email"]');
-		
+
 		expect(wrapper.find('input[name="email"]'));
 		await input.setValue('');
 		await form.trigger('submit');
@@ -46,14 +48,17 @@ describe('Zod validation', () => {
 	it('Email test', async () => {
 		const wrapper = mountWithComponents({
 			setup: () => {
-				const schema = schemaFromZod(zod.object({
-					email: zod.string().email('Invalid email'),
+				const schema = schemaFromValibot(v.object({
+					email: v.string('Must be a string', [
+						v.minLength(1, 'Required field'),
+						v.email('Invalid email'),
+					]),
 				}));
-		
+
 				const send = (data: any) => {
 					console.log(data);
 				};
-		
+
 				return { schema, send };
 			},
 			template: `
@@ -74,16 +79,19 @@ describe('Zod validation', () => {
 	it('Nested object', async () => {
 		const wrapper = mountWithComponents({
 			setup: () => {
-				const schema = schemaFromZod(zod.object({
-					social: zod.object({
-						github: zod.string().url({ message: 'Invalid url' }),
+				const schema = schemaFromValibot(v.object({
+					social: v.object({
+						github: v.string([
+							v.minLength(1, 'Required field'),
+							v.url('Invalid url'),
+						]),
 					}),
 				}));
-		
+
 				const send = (data: any) => {
 					console.log(data);
 				};
-		
+
 				return { schema, send };
 			},
 			template: `
@@ -104,16 +112,19 @@ describe('Zod validation', () => {
 	it('Nested array object', async () => {
 		const wrapper = mountWithComponents({
 			setup: () => {
-				const schema = schemaFromZod(zod.object({
-					social: zod.array(zod.object({
-						url: zod.string().url('Invalid url'),
+				const schema = schemaFromValibot(v.object({
+					social: v.array(v.object({
+						url: v.string([
+							v.minLength(1, 'Required field'),
+							v.url('Invalid url'),
+						]),
 					})),
 				}));
-		
+
 				const send = (data: any) => {
 					console.log(data);
 				};
-		
+
 				return { schema, send };
 			},
 			template: `
