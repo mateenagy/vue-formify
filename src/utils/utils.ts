@@ -1,8 +1,8 @@
-const BETWEEN_BRACKETS_REGEX = /^\[(.+?)\]$/gm;
-const REMOVE_BRACKETS_REGEX = /(^.*\[|\].*$)/g;
-const ARRAY_INDEX_FROM_STRING_REGEX = /\w\[(\d*)\]/gm;
-const GET_INDEX_FROM_STRING_REGEX = /\[(\d+)\]/;
-const REMOVE_ARRAY_INDEX_FROM_STRING_REGEX = /\[\d+\]/;
+export const BETWEEN_BRACKETS_REGEX = /^\[(.+?)\]$/gm;
+export const REMOVE_BRACKETS_REGEX = /(^.*\[|\].*$)/g;
+export const ARRAY_INDEX_FROM_STRING_REGEX = /\w\[(\d*)\]/gm;
+export const GET_INDEX_FROM_STRING_REGEX = /\[(\d+)\]/;
+export const REMOVE_ARRAY_INDEX_FROM_STRING_REGEX = /\[\d+\]/;
 
 export const stringToObject = (path: string, defaultValue: Record<string, any>) => {
 	const disable_matches = path.match(BETWEEN_BRACKETS_REGEX);
@@ -15,11 +15,23 @@ export const stringToObject = (path: string, defaultValue: Record<string, any>) 
 			[key]: defaultValue,
 		};
 	}
-
-	/* CREATE OBJECT FROM DOT NOTATION */
 	const paths = path.split('.');
 
-	const obj = paths.reduceRight((obj, next) => ({ [next]: obj } as any), defaultValue);
+	const obj = paths.reduceRight((obj, next) => {
+		const array_mathes = next.match(ARRAY_INDEX_FROM_STRING_REGEX);
+		const key = next.replace(REMOVE_ARRAY_INDEX_FROM_STRING_REGEX, '');
+		const index = next.match(GET_INDEX_FROM_STRING_REGEX)?.[1];
+
+		if (array_mathes) {
+			return {
+				[key]: {
+					[`[${index}]`]: obj,
+				},
+			};
+		}
+
+		return { [next]: obj };
+	}, defaultValue);
 
 	return obj;
 };
@@ -38,12 +50,32 @@ export const getValueByPath = (object: Record<string, any>, path: string) => {
 	let currentObject = object;
 	const parts = path.split('.');
 	const last = parts.pop();
+
 	for (const part of parts) {
-		currentObject = currentObject[part];
+		const array_mathes = part.match(ARRAY_INDEX_FROM_STRING_REGEX);
+		if (array_mathes) {
+			const key = part.replace(REMOVE_ARRAY_INDEX_FROM_STRING_REGEX, '');
+			const index = part.match(GET_INDEX_FROM_STRING_REGEX)?.[1];
+
+			currentObject = currentObject?.[key]?.[`[${index}]`];
+		} else {
+			currentObject = currentObject[part];
+		}
 		if (!currentObject) {
 			return;
 		}
 	}
+
+	if (last) {
+		const array_mathes = last.match(ARRAY_INDEX_FROM_STRING_REGEX);
+		if (array_mathes) {
+			const key = last.replace(REMOVE_ARRAY_INDEX_FROM_STRING_REGEX, '');
+			const index = last.match(GET_INDEX_FROM_STRING_REGEX)?.[1];
+	
+			return last && currentObject?.[key]?.[`[${index}]`];
+		}
+	}
+
 
 	return last && currentObject[last];
 };
@@ -76,27 +108,28 @@ export const deleteByPath = (object: Record<string, any>, path: string) => {
 };
 
 export const flattenObject = (obj: any, type: 'value' | 'error' = 'value'): Record<string, string> => {
-	const result: any = {};
-
+	let result: any = {};
 	for (const key in obj) {
-		/* ARRAY BEHAVIOUR */
-		const array_mathes = key.match(ARRAY_INDEX_FROM_STRING_REGEX);
-		if (array_mathes) {
-			const k = key.replace(REMOVE_ARRAY_INDEX_FROM_STRING_REGEX, '');
-			!Array.isArray(result[k]) && (result[k] = []);
-			const idx = key.match(GET_INDEX_FROM_STRING_REGEX)?.[1];
-			if (idx !== undefined) {
-				const id = parseInt(idx);
-				if (typeof obj[key] === 'object' && 'value' in obj[key]) {
-					obj[key].value && result[k].push(type === 'value' ? obj[key].value : obj[key].error);
-				} else if (typeof obj[key] === 'object') {
-					result[k][id] = flattenObject(obj[key], type);
+		const array_mathes = key.match(BETWEEN_BRACKETS_REGEX);
+		if (typeof obj[key] === 'object' && 'value' in obj[key]) {
+			if (array_mathes) {
+				if (type === 'value') {
+					!Array.isArray(result) && (result = []);
+					obj[key].value && result.push(obj[key].value);
+				} else {
+					result = obj.error;
 				}
+			} else {
+				!obj[key].ignore && (result[key] = type === 'value' ? obj[key].value : obj[key].error);
 			}
-		} else if (typeof obj[key] === 'object' && 'value' in obj[key]) {
-			!obj[key].ignore && (result[key] = type === 'value' ? obj[key].value : obj[key].error);
 		} else if (typeof obj[key] === 'object') {
-			result[key] = flattenObject(obj[key], type);
+			if (array_mathes) {
+				!Array.isArray(result) && (result = []);
+				console.log('obj[key]', key, obj[key]);
+				result.push(flattenObject(obj[key], type));
+			} else {
+				result[key] = flattenObject(obj[key], type);
+			}
 		}
 	}
 
@@ -127,9 +160,9 @@ export const mergeDeep = (...objects: any) => {
 export const createFormDataFromObject = (obj: Record<string, any>, formData: FormData, parentKey = '') => {
 	Object.keys(obj).reduce((acc, key) => {
 		const newKey = parentKey ? `${parentKey}.${key}` : key;
-		
+
 		if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key]) && !(obj[key] instanceof Date) && !(obj[key] instanceof File) && !(obj[key] instanceof Blob)) {
-			const nested = createFormDataFromObject(obj[key],formData, newKey);
+			const nested = createFormDataFromObject(obj[key], formData, newKey);
 			acc += nested;
 		} else {
 			if (Array.isArray(obj[key])) {
