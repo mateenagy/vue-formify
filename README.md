@@ -40,23 +40,28 @@ npm i vue-formify
 ## 💻 Usage
 ```vue
 <script lang="ts" setup>
+import { ref } from 'vue';
 import { FormifyForm, FormifyInput } from 'vue-formify';
 
 type SimpleForm = {
-	first_name: string;
-	last_name: string;
+	email: string;
 }
-const sendForm = (data: SimpleForm) => {
-	console.log('first_name', data.first_name);
-	console.log('last_name', data.last_name);
-};
 
+const form = ref()
+
+const sendForm = (data: SimpleForm) => {
+	if(!data.email) {
+		return form.setError('email', 'Email required')
+	}
+
+	console.log(data);
+};
 </script>
 
 <template>
-	<FormifyForm @submit="sendForm">
-		<FormifyInput name="first_name" />
-		<FormifyInput name="last_name" />
+	<FormifyForm @submit="sendForm" v-slot={errors}>
+		<FormifyInput name="email" />
+		<span class="error">{{ errors.email }}</span>
 		<button>Send</button>
 	</FormifyForm>
 </template>
