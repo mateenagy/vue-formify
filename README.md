@@ -59,7 +59,7 @@ const sendForm = (data: SimpleForm) => {
 </script>
 
 <template>
-	<FormifyForm @submit="sendForm" v-slot={errors}>
+	<FormifyForm @submit="sendForm" v-slot="{errors}">
 		<FormifyInput name="email" />
 		<span class="error">{{ errors.email }}</span>
 		<button>Send</button>
