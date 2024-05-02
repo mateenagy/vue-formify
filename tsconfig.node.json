@@ -6,5 +6,9 @@
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true
   },
-  "include": ["vite.config.ts"]
+  "include": [
+	"vite.config.ts",
+	"build.ts",
+	"packages/**/*.ts", "packages/**/*.d.ts", "packages/**/*.tsx", "packages/**/*.vue, packages/**/**/*.ts", "packages/**/**/*.d.ts",
+   ]
 }

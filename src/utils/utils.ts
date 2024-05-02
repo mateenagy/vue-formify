@@ -125,7 +125,6 @@ export const flattenObject = (obj: any, type: 'value' | 'error' = 'value'): Reco
 		} else if (typeof obj[key] === 'object') {
 			if (array_mathes) {
 				!Array.isArray(result) && (result = []);
-				console.log('obj[key]', key, obj[key]);
 				result.push(flattenObject(obj[key], type));
 			} else {
 				result[key] = flattenObject(obj[key], type);
