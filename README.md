@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://vue-formify.matenagy.me/" target="_blank">
-	<img src="https://raw.githubusercontent.com/mateenagy/vue-formify/main/logo.png"  width="250px"/>
+	<img src="https://raw.githubusercontent.com/mateenagy/vue-formify/main/logo.png"  width="200px"/>
   </a>
 </p>
 <p align="center" style="font-size: 20px">Unleash Form-Building Freedom! 🚀</p>
