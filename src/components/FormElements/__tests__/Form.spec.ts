@@ -24,7 +24,6 @@ const createWrapper = (template: string, errorField?: string, errorMessage?: str
 		const result = ref();
 		const form = ref();
 		const send = (data: any) => {
-			console.log(data);
 			errorField && form.value.setError(errorField, errorMessage);
 			result.value = data;
 		};

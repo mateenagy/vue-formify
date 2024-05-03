@@ -91,15 +91,32 @@ export const deleteByPath = (object: Record<string, any>, path: string) => {
 	let currentObject = object;
 	const parts = path.split('.');
 	const last = parts.pop();
+	
 	for (const part of parts) {
-		currentObject = currentObject[part];
+		const array_mathes = part.match(ARRAY_INDEX_FROM_STRING_REGEX);
+		if (array_mathes) {
+			const key = part.replace(REMOVE_ARRAY_INDEX_FROM_STRING_REGEX, '');
+			const index = part.match(GET_INDEX_FROM_STRING_REGEX)?.[1];
+
+			currentObject = currentObject?.[key]?.[`[${index}]`];
+		} else {
+			currentObject = currentObject[part];
+		}
 		if (!currentObject) {
 			return;
 		}
 	}
 
 	if (last) {
-		delete currentObject[last];
+		const array_mathes = last.match(ARRAY_INDEX_FROM_STRING_REGEX);
+		if (array_mathes) {
+			const key = last.replace(REMOVE_ARRAY_INDEX_FROM_STRING_REGEX, '');
+			const index = last.match(GET_INDEX_FROM_STRING_REGEX)?.[1];
+
+			delete currentObject?.[key]?.[`[${index}]`];
+		} else {
+			delete currentObject[last];
+		}
 
 		if (Object.keys(currentObject).length === 0) {
 			deleteByPath(object, parts.join('.'));
@@ -109,9 +126,11 @@ export const deleteByPath = (object: Record<string, any>, path: string) => {
 
 export const flattenObject = (obj: any, type: 'value' | 'error' = 'value'): Record<string, string> => {
 	let result: any = {};
+	
 	for (const key in obj) {
 		const array_mathes = key.match(BETWEEN_BRACKETS_REGEX);
-		if (typeof obj[key] === 'object' && 'value' in obj[key]) {
+
+		if (typeof obj[key] === 'object' && 'value' in obj[key] ) {
 			if (array_mathes) {
 				if (type === 'value') {
 					!Array.isArray(result) && (result = []);
