@@ -79,6 +79,10 @@ inquirer
 					value: 'valibot',
 				},
 				{
+					name: 'Joi',
+					value: 'joi',
+				},
+				{
 					name: 'Primevue',
 					value: 'primevue',
 				},
