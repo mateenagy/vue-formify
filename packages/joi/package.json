@@ -20,6 +20,9 @@
 	"files": [
 		"dist"
 	],
+	"peerDependencies": {
+		"joi": "^17.13"
+	},
 	"author": "Máté Nagy",
 	"license": "MIT",
 	"repository": {
