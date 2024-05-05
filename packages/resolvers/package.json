@@ -22,7 +22,7 @@
 		"dist"
 	],
 	"peerDependencies": {
-		"unplugin-vue-components": "^0.26"
+		"unplugin-vue-components": "^0.27"
 	},
 	"author": "Máté Nagy",
 	"license": "MIT",
