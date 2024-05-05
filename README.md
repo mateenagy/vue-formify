@@ -13,6 +13,7 @@
 	<li>Nested Objects and Arrays</li>
 	<li>Form level validation integration with (external modules)</li>
 		<ul>
+			<li>joi</li>
 			<li>yup</li>
 			<li>zod</li>
 			<li>valibot</li>
