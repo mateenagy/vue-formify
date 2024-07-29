@@ -17,20 +17,18 @@ describe('Valibot validation', () => {
 	it('Required field Valibot', async () => {
 		const wrapper = mountWithComponents({
 			setup: () => {
-				const scema = schemaFromValibot(v.object({
-					email: v.string('Must be a string', [
-						v.minLength(1, 'Required field'),
-					]),
+				const schema = schemaFromValibot(v.object({
+					email: v.pipe(v.string(), v.minLength(1, 'Required field')),
 				}));
 
 				const send = (data: any) => {
 					console.log(data);
 				};
 
-				return { scema, send };
+				return { schema, send };
 			},
 			template: `
-				<FormifyForm v-slot="{data, errors}" :validation-schema="scema" @submit="send">
+				<FormifyForm v-slot="{data, errors}" :validation-schema="schema" @submit="send">
 					<FormifyInput name="email" />
 					<span id="error">{{ errors.email }}</span>
 				</FormifyForm>
@@ -49,10 +47,7 @@ describe('Valibot validation', () => {
 		const wrapper = mountWithComponents({
 			setup: () => {
 				const schema = schemaFromValibot(v.object({
-					email: v.string('Must be a string', [
-						v.minLength(1, 'Required field'),
-						v.email('Invalid email'),
-					]),
+					email: v.pipe(v.string(), v.minLength(1, 'Required field'), v.email('Invalid email')),
 				}));
 
 				const send = (data: any) => {
@@ -81,10 +76,7 @@ describe('Valibot validation', () => {
 			setup: () => {
 				const schema = schemaFromValibot(v.object({
 					social: v.object({
-						github: v.string([
-							v.minLength(1, 'Required field'),
-							v.url('Invalid url'),
-						]),
+						github: v.pipe(v.string(), v.minLength(1, 'Required field'), v.url('Invalid url')),
 					}),
 				}));
 
@@ -114,10 +106,7 @@ describe('Valibot validation', () => {
 			setup: () => {
 				const schema = schemaFromValibot(v.object({
 					social: v.array(v.object({
-						url: v.string([
-							v.minLength(1, 'Required field'),
-							v.url('Invalid url'),
-						]),
+						url: v.pipe(v.string(), v.minLength(1, 'Required field'), v.url('Invalid url')),
 					})),
 				}));
 

@@ -6,7 +6,7 @@ import NamedVModelVue from './Views/NamedVModel.vue';
 import { FormifyForm, FormifyInput, createInput } from '@/components/main';
 
 const ColorPicker = createInput(CustomInputVue);
-const TitleInput = createInput(NamedVModelVue, { modelKey: 'title' });
+const TitleInput = createInput(NamedVModelVue, { modelKeys: 'title' });
 const mountWithComponents = (component: Record<string, any>) => {
 	component.components = {
 		...component.components,
@@ -141,6 +141,8 @@ describe('Form', () => {
 		`);
 		const form = wrapper.findComponent(FormifyForm);
 		const input = wrapper.find('input[name="title"]');
+		console.log('input', input);
+		
 		await input.setValue('Hi!');
 		await form.trigger('submit');
 		expect(wrapper.find('#result').text()).equals('Hi!');

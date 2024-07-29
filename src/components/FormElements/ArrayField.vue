@@ -1,24 +1,32 @@
 <script lang="ts" setup>
-import { inject } from 'vue';
-import { PluginOptions } from '..';
-import { getValueByPath } from '@/utils/utils';
+import { ref, toValue } from 'vue';
+
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
-defineOptions({
-	inheritAttrs: false,
-});
-defineProps<{
-	errorFor: string;
-}>();
-const form = inject<Record<string, any>>('formData', Object.create({}));
-const config: PluginOptions | undefined = inject('config', undefined);
+// withDefaults(
+// 	defineProps<{
+// 		default?: any;
+// 	}>(),
+// 	{
+// 		default: [],
+// 	},
+// );
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
+const fields = ref<any[]>([]);
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
+const add = () => {
+	fields.value.push({
+		id: Math.floor(Math.random() * Date.now()),
+	});
+};
+const remove = (idx: number) => {
+	fields.value = fields.value.filter((_, _idx) => _idx !== idx);
+};
 /*---------------------------------------------
 /  COMPUTED
 ---------------------------------------------*/
@@ -35,11 +43,8 @@ const config: PluginOptions | undefined = inject('config', undefined);
 <template>
 	<div>
 		<slot
-			name="error"
-			:error="getValueByPath(form, errorFor)?.error">
-			<small
-				:class="(config as any)?.globalErrorCSSClass"
-				v-bind="$attrs">{{ getValueByPath(form, errorFor)?.error }}</small>
-		</slot>
+			:fields="toValue(fields)"
+			:add="add"
+			:remove="remove" />
 	</div>
 </template>

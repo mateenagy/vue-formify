@@ -4,6 +4,14 @@ export const ARRAY_INDEX_FROM_STRING_REGEX = /\w\[(\d*)\]/gm;
 export const GET_INDEX_FROM_STRING_REGEX = /\[(\d+)\]/;
 export const REMOVE_ARRAY_INDEX_FROM_STRING_REGEX = /\[\d+\]/;
 
+export const getKey = (name: string, modelKey: string, useKey: boolean = false): string => {
+	if (name) {
+		return useKey ? `${name}.${modelKey}` : name;
+	}
+
+	return modelKey;
+};
+
 export const stringToObject = (path: string, defaultValue: Record<string, any>) => {
 	const disable_matches = path.match(BETWEEN_BRACKETS_REGEX);
 
@@ -36,7 +44,11 @@ export const stringToObject = (path: string, defaultValue: Record<string, any>) 
 	return obj;
 };
 
-export const getValueByPath = (object: Record<string, any>, path: string) => {
+export const getValueByPath = (object: Record<string, any>, path?: string) => {
+	if (!path) {
+		return;
+	}
+
 	const matches = path.match(BETWEEN_BRACKETS_REGEX);
 
 	/* DISABLE DOT NOTATION BEHAVIOUR */

@@ -21,7 +21,7 @@
 		"dist"
 	],
 	"peerDependencies": {
-		"valibot": "^0.30"
+		"valibot": "^0.36"
 	},
 	"author": "Máté Nagy",
 	"license": "MIT",

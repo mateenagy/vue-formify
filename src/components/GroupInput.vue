@@ -1,21 +1,16 @@
 <script lang="ts" setup>
-import { inject } from 'vue';
-import { PluginOptions } from '..';
-import { getValueByPath } from '@/utils/utils';
+import { ref } from 'vue';
+import { createInput } from '../composable/createInput';
+import Error from './FormElements/Error.vue';
+import Input from './FormElements/Input.vue';
+import { ComponentProps } from './main';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
-defineOptions({
-	inheritAttrs: false,
-});
-defineProps<{
-	errorFor: string;
-}>();
-const form = inject<Record<string, any>>('formData', Object.create({}));
-const config: PluginOptions | undefined = inject('config', undefined);
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
+const InputField = createInput<ComponentProps<typeof Input>>(Input);
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
@@ -31,15 +26,19 @@ const config: PluginOptions | undefined = inject('config', undefined);
 /*---------------------------------------------
 /  HOOKS
 ---------------------------------------------*/
+const toggle = ref<boolean>(true);
 </script>
 <template>
 	<div>
-		<slot
-			name="error"
-			:error="getValueByPath(form, errorFor)?.error">
-			<small
-				:class="(config as any)?.globalErrorCSSClass"
-				v-bind="$attrs">{{ getValueByPath(form, errorFor)?.error }}</small>
-		</slot>
+		<button @click="toggle = !toggle">
+			Toggle
+		</button>
+		<InputField
+			name="foo[0]" />
+		<InputField
+			name="foo[1]" />
+		<Error error-for="foo" />
+		<InputField name="baz" />
+		<button>send</button>
 	</div>
 </template>
