@@ -3,6 +3,7 @@ import Form from './components/FormElements/Form.vue';
 import { ref } from 'vue';
 import { FormType } from './components';
 import { ArrayField, Field } from './components/main';
+import Knob from 'primevue/knob';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
@@ -36,11 +37,18 @@ const send = (data: any) => {
 			@submit="send"
 			ref="form">
 			<Field
-				name="foo"
+				name="knob"
+				:default="11"
+				v-slot="{ field }">
+				<Knob
+					v-bind="field" />
+			</Field>
+			<Field
+				name="check"
 				v-slot="{ field }">
 				<input
 					type="text"
-					v-bind="field" />
+					v-bind="field">
 			</Field>
 			<ArrayField
 				name="users"
