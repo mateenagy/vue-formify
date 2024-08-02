@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { inject } from 'vue';
-import { PluginOptions } from '..';
 import { getValueByPath } from '@/utils/utils';
 /*---------------------------------------------
 /  PROPS & EMITS
@@ -12,7 +11,6 @@ defineProps<{
 	errorFor: string;
 }>();
 const form = inject<Record<string, any>>('formData', Object.create({}));
-const config: PluginOptions | undefined = inject('config', undefined);
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
@@ -38,7 +36,6 @@ const config: PluginOptions | undefined = inject('config', undefined);
 			name="error"
 			:error="getValueByPath(form, errorFor)?.error">
 			<small
-				:class="(config as any)?.globalErrorCSSClass"
 				v-bind="$attrs">{{ getValueByPath(form, errorFor)?.error }}</small>
 		</slot>
 	</div>

@@ -1,16 +1,37 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
-import { createInput } from '../composable/createInput';
-import Error from './FormElements/Error.vue';
-import Input from './FormElements/Input.vue';
-import { ComponentProps } from './main';
+import { getValueByPath } from '@/utils/utils';
+import { inject, Ref, useAttrs } from 'vue';
+//TODO: Checkbox & Radio type
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
+const props = withDefaults(
+	defineProps<{
+		name: string;
+		error?: any;
+		default?: any;
+	}>(),
+	{
+		error: undefined,
+		default: '',
+	},
+);
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
-const InputField = createInput<ComponentProps<typeof Input>>(Input);
+const attrs = useAttrs();
+const form = inject<Ref<Record<string, any>>>('form', Object.create({}));
+
+const field = {
+	...attrs,
+	name: props.name,
+	oninput: (event: any) => {
+		getValueByPath(form.value, props.name).value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
+	},
+	onfocus: () => {
+		getValueByPath(form.value, props.name).error = undefined;
+	},
+};
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
@@ -26,19 +47,11 @@ const InputField = createInput<ComponentProps<typeof Input>>(Input);
 /*---------------------------------------------
 /  HOOKS
 ---------------------------------------------*/
-const toggle = ref<boolean>(true);
 </script>
 <template>
 	<div>
-		<button @click="toggle = !toggle">
-			Toggle
-		</button>
-		<InputField
-			name="foo[0]" />
-		<InputField
-			name="foo[1]" />
-		<Error error-for="foo" />
-		<InputField name="baz" />
-		<button>send</button>
+		<slot
+			:field="field"
+			:error="error" />
 	</div>
 </template>

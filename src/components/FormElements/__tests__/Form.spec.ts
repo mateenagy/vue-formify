@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest';
 import { ref } from 'vue';
 import CustomInputVue from './Views/CustomInput.vue';
 import NamedVModelVue from './Views/NamedVModel.vue';
-import { FormifyForm, FormifyInput, createInput } from '@/components/main';
+import { FormifyForm, Field, createInput } from '@/components/main';
 
 const ColorPicker = createInput(CustomInputVue);
 const TitleInput = createInput(NamedVModelVue, { modelKeys: 'title' });
@@ -11,8 +11,8 @@ const mountWithComponents = (component: Record<string, any>) => {
 	component.components = {
 		...component.components,
 		FormifyForm,
-		FormifyInput,
 		ColorPicker,
+		Field,
 		TitleInput,
 	};
 
@@ -37,13 +37,15 @@ describe('Form', () => {
 	it('Basic input', async () => {
 		const wrapper = createWrapper(`
 			<FormifyForm v-slot={errors} @submit="send">
-				<FormifyInput name="email" />
+				<Field name="email" v-slot={field}>
+					<input type="text" v-bind="field" />
+				</Field>
 				<span id="result">{{ result?.email }}</span>
 				<button type="submit">Send</button>
 			</FormifyForm>
 		`);
 		const form = wrapper.findComponent(FormifyForm);
-		const input = wrapper.find('input[name="email"]');
+		const input = wrapper.find('input');
 		await input.setValue('test@test.com');
 		await form.trigger('submit');
 		expect(wrapper.find('#result').text()).equals('test@test.com');
@@ -52,13 +54,15 @@ describe('Form', () => {
 	it('Object input', async () => {
 		const wrapper = createWrapper(`
 			<FormifyForm v-slot={errors} @submit="send">
-				<FormifyInput name="user.email" />
+				<Field name="user.email" v-slot={field}>
+					<input type="text" v-bind="field" />
+				</Field>
 				<span id="result">{{ result?.user.email }}</span>
 				<button type="submit">Send</button>
 			</FormifyForm>
 		`);
 		const form = wrapper.findComponent(FormifyForm);
-		const input = wrapper.find('input[name="user.email"]');
+		const input = wrapper.find('input');
 		await input.setValue('test@test.com');
 		await form.trigger('submit');
 		expect(wrapper.find('#result').text()).equals('test@test.com');
@@ -67,8 +71,12 @@ describe('Form', () => {
 	it('Array input', async () => {
 		const wrapper = createWrapper(`
 			<FormifyForm v-slot={errors} @submit="send">
-				<FormifyInput name="links[0]" />
-				<FormifyInput name="links[1]" />
+				<Field name="links[0]" v-slot={field}>
+					<input type="text" v-bind="field" />
+				</Field>
+				<Field name="links[1]" v-slot={field}>
+					<input type="text" v-bind="field" />
+				</Field>
 				<span id="result">{{ result?.links }}</span>
 				<button type="submit">Send</button>
 			</FormifyForm>
@@ -86,8 +94,12 @@ describe('Form', () => {
 	it('Object with array input', async () => {
 		const wrapper = createWrapper(`
 			<FormifyForm v-slot={errors} @submit="send">
-				<FormifyInput name="favourite.links[0]" />
-				<FormifyInput name="favourite.links[1]" />
+				<Field name="favourite.links[0]" v-slot={field}>
+					<input type="text" v-bind="field" />
+				</Field>
+				<Field name="favourite.links[1]" v-slot={field}>
+					<input type="text" v-bind="field" />
+				</Field>
 				<span id="result">{{ result?.favourite.links }}</span>
 				<button type="submit">Send</button>
 			</FormifyForm>
@@ -105,7 +117,9 @@ describe('Form', () => {
 	it('Set error', async () => {
 		const wrapper = createWrapper(`
 			<FormifyForm ref="form" v-slot={errors} @submit="send">
-				<FormifyInput name="email" />
+				<Field name="email" v-slot={field}>
+					<input type="text" v-bind="field" />
+				</Field>
 				<span id="result">{{ result?.email }}</span>
 				<span id="error">{{ errors.email }}</span>
 				<button type="submit">Send</button>
@@ -134,13 +148,13 @@ describe('Form', () => {
 	it('Custom component with v-model arguments', async () => {
 		const wrapper = createWrapper(`
 			<FormifyForm v-slot={errors} @submit="send">
-				<TitleInput name="title" />
+				<TitleInput />
 				<span id="result">{{ result?.title }}</span>
 				<button type="submit">Send</button>
 			</FormifyForm>
 		`);
 		const form = wrapper.findComponent(FormifyForm);
-		const input = wrapper.find('input[name="title"]');
+		const input = wrapper.find('input[name]');
 		console.log('input', input);
 		
 		await input.setValue('Hi!');

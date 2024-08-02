@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed, onMounted, provide, ref } from 'vue';
-import { flattenObject, getValueByPath } from '@/utils/utils';
+import { flattenObject, getValueByPath, EventEmitter } from '@/utils/utils';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
@@ -13,7 +13,7 @@ const emits = defineEmits(['submit']);
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
-const data = ref(Object.create({}));
+const data = ref({});
 let originalForm = Object.create({});
 /*---------------------------------------------
 /  METHODS
@@ -25,6 +25,7 @@ const setError = (name: string, error: any) => {
 };
 
 const reset = () => {
+	EventEmitter.emit('reset');
 	data.value = JSON.parse(originalForm);
 };
 
@@ -44,7 +45,7 @@ const submit = async () => {
 	if (props.action) {
 		return;
 	}
-	
+
 	emits('submit', flattenObject(data.value));
 };
 /*---------------------------------------------
@@ -65,7 +66,7 @@ const errors = computed(() => {
 onMounted(() => {
 	originalForm = JSON.stringify(data.value);
 });
-provide('formData', data);
+provide('form', data);
 defineExpose({
 	setError,
 	values: data,
@@ -78,11 +79,11 @@ defineExpose({
 		@submit.prevent="submit"
 		:action="action"
 		v-bind="$attrs">
-		<pre>{{ data }}</pre>
-		<label>flatten</label>
-		<pre>{{ flattenObject(data) }}</pre>
 		<slot
 			:data="data"
 			:errors="errors" />
+		<pre>{{ data }}</pre>
+		<label>flatten</label>
+		<pre>{{ flattenObject(data) }}</pre>
 	</form>
 </template>

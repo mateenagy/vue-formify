@@ -33,7 +33,9 @@ export const stringToObject = (path: string, defaultValue: Record<string, any>) 
 		if (array_mathes) {
 			return {
 				[key]: {
-					[`[${index}]`]: obj,
+					value: {
+						[`[${index}]`]: obj,
+					},
 				},
 			};
 		}
@@ -65,11 +67,13 @@ export const getValueByPath = (object: Record<string, any>, path?: string) => {
 
 	for (const part of parts) {
 		const array_mathes = part.match(ARRAY_INDEX_FROM_STRING_REGEX);
+		
 		if (array_mathes) {
 			const key = part.replace(REMOVE_ARRAY_INDEX_FROM_STRING_REGEX, '');
 			const index = part.match(GET_INDEX_FROM_STRING_REGEX)?.[1];
+			
 
-			currentObject = currentObject?.[key]?.[`[${index}]`];
+			currentObject = currentObject?.[key]?.value?.[`[${index}]`];
 		} else {
 			currentObject = currentObject[part];
 		}
@@ -84,7 +88,7 @@ export const getValueByPath = (object: Record<string, any>, path?: string) => {
 			const key = last.replace(REMOVE_ARRAY_INDEX_FROM_STRING_REGEX, '');
 			const index = last.match(GET_INDEX_FROM_STRING_REGEX)?.[1];
 	
-			return last && currentObject?.[key]?.[`[${index}]`];
+			return last && currentObject?.[key]?.value?.[`[${index}]`];
 		}
 	}
 
@@ -110,7 +114,7 @@ export const deleteByPath = (object: Record<string, any>, path: string) => {
 			const key = part.replace(REMOVE_ARRAY_INDEX_FROM_STRING_REGEX, '');
 			const index = part.match(GET_INDEX_FROM_STRING_REGEX)?.[1];
 
-			currentObject = currentObject?.[key]?.[`[${index}]`];
+			currentObject = currentObject?.[key]?.value?.[`[${index}]`];
 		} else {
 			currentObject = currentObject[part];
 		}
@@ -125,7 +129,8 @@ export const deleteByPath = (object: Record<string, any>, path: string) => {
 			const key = last.replace(REMOVE_ARRAY_INDEX_FROM_STRING_REGEX, '');
 			const index = last.match(GET_INDEX_FROM_STRING_REGEX)?.[1];
 
-			delete currentObject?.[key]?.[`[${index}]`];
+			delete currentObject?.[key]?.value?.[`[${index}]`];
+			(currentObject?.[key]?.value && !Object.keys(currentObject?.[key]?.value).length) && (currentObject[key].value = []);
 		} else {
 			delete currentObject[last];
 		}
@@ -137,29 +142,24 @@ export const deleteByPath = (object: Record<string, any>, path: string) => {
 };
 
 export const flattenObject = (obj: any, type: 'value' | 'error' = 'value'): Record<string, string> => {
-	let result: any = {};
-	
+	const result: any = {};
 	for (const key in obj) {
-		const array_mathes = key.match(BETWEEN_BRACKETS_REGEX);
-
 		if (typeof obj[key] === 'object' && 'value' in obj[key] ) {
-			if (array_mathes) {
-				if (type === 'value') {
-					!Array.isArray(result) && (result = []);
-					obj[key].value && result.push(obj[key].value);
-				} else {
-					result = obj.error;
+			if (typeof obj[key].value === 'object') {
+				Array.isArray(obj[key].value) && (result[key] = []);
+				for (const arrayKey in obj[key].value) {
+					!result[key] && (result[key] = []);
+					if (type in obj[key].value[arrayKey]) {
+						obj[key].value[arrayKey][type] && result[key].push(obj[key].value[arrayKey][type]);
+					} else {
+						result[key].push(flattenObject(obj[key].value[arrayKey], type));
+					}
 				}
 			} else {
-				!obj[key].ignore && (result[key] = type === 'value' ? obj[key].value : obj[key].error);
+				result[key] = obj[key][type];
 			}
 		} else if (typeof obj[key] === 'object') {
-			if (array_mathes) {
-				!Array.isArray(result) && (result = []);
-				result.push(flattenObject(obj[key], type));
-			} else {
-				result[key] = flattenObject(obj[key], type);
-			}
+			result[key] = flattenObject(obj[key], type);
 		}
 	}
 
@@ -207,3 +207,35 @@ export const createFormDataFromObject = (obj: Record<string, any>, formData: For
 		return acc;
 	}, '');
 };
+
+/* Custom event handler */
+
+type EventHandler = (data?: any) => void;
+
+export class EventEmitter {
+	private static eventListeners: Record<string, EventHandler[]> = {};
+
+	static on(eventName: string, handler: EventHandler): void {
+		if (!this.eventListeners[eventName]) {
+			this.eventListeners[eventName] = [];
+		}
+
+		this.eventListeners[eventName].push(handler);
+	}
+
+	static off(eventName: string, handler: EventHandler): void {
+		const listeners = this.eventListeners[eventName];
+
+		if (listeners) {
+			this.eventListeners[eventName] = listeners.filter(h => h !== handler);
+		}
+	}
+
+	static emit(eventName: string, data?: any): void {
+		const listeners = this.eventListeners[eventName];
+
+		if (listeners) {
+			listeners.forEach(handler => handler(data));
+		}
+	}
+}

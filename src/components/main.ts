@@ -1,16 +1,19 @@
-import { FormifyForm, FormifyInput, FormifyCheckbox, FormifyRadio, FormifyError } from './VueFormify';
+import { default as ArrayComponent } from './FormElements/ArrayField.vue';
+import { default as FieldComponent } from './FormElements/Field.vue';
+import { default as FormifyForm } from './FormElements/Form.vue';
+import { default as FormifyError } from './FormElements/Error.vue';
 import { FormType, ComponentProps } from './index';
 import { createInput } from '@/composable/createInput';
-import VueFormify from '@/plugin/plugin';
+
+const ArrayField = createInput<ComponentProps<typeof ArrayComponent>>(ArrayComponent, { default: [] });
+const Field = createInput<ComponentProps<typeof FieldComponent>>(FieldComponent);
 
 export {
 	createInput,
-	VueFormify,
 	FormifyForm,
 	FormifyError,
-	FormifyInput,
-	FormifyCheckbox,
-	FormifyRadio,
+	ArrayField,
+	Field,
 };
 
 export type {

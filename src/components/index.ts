@@ -3,11 +3,6 @@ import { AllowedComponentProps, Component, VNodeProps } from 'vue';
 export type ComponentProps<C extends Component> = C extends new (...args: any) => any
 	? Omit<InstanceType<C>['$props'], keyof VNodeProps | keyof AllowedComponentProps>
 	: never;
-
-export type PluginOptions = {
-	useFocus?: boolean;
-	globalErrorCSSClass?: string;
-}
 export type FormValue = string | number | boolean | Date;
 export type FormElement = Record<string, {
 	value: FormValue;
@@ -45,5 +40,3 @@ export type HTMLInputAttributeType =
 | 'time'
 | 'url'
 | 'week';
-
-export { default as VueFormify } from '@/plugin/plugin';

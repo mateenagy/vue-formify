@@ -1,24 +1,20 @@
-import { Component, defineComponent, h, inject, resolveDynamicComponent, toRef } from 'vue';
-import { useInput } from './useInput';
-import { getKey, getValueByPath } from '@/utils/utils';
-
-
-type BaseInput = {
+import { getValueByPath } from '@/utils/utils';
+import { Component, defineComponent, h, inject, Ref, resolveDynamicComponent } from 'vue';
+import { useField } from './useField';
+//TODO: Custom default key
+export type BaseInput = {
 	name?: string;
-	id?: string;
 	default?: any;
-	value?: any;
-	error?: any;
-	onFocus?: void;
 	modelValue?: any;
+	error?: any;
 	ignore?: boolean;
 	preserve?: boolean;
 }
 
-type CreateInputOptions = {
+export type CreateInputOptions = {
+	default?: string | number | any[];
 	modelKeys?: string | string[];
-	useKey?: boolean;
-	defaultValueKey?: any;
+	// defaultValueKey?: any;
 }
 
 export const createInput = <T>(component: Component, options?: CreateInputOptions) => {
@@ -32,21 +28,16 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 	if (typeof options?.modelKeys === 'string') {
 		emitsArray.push(`update:${options.modelKeys}`);
 	}
-	
+
 	return defineComponent<BaseInput & T>({
 		name: 'Field',
-		inheritAttrs: false,
 		props: {
 			default: {
-				type: [String, Boolean, Number, Object, Array],
-				default: '',
+				type: [String, Number, Array],
+				default: options?.default ?? '',
 			},
 			...(component as Component & { props: any }).props,
 			name: {
-				type: String,
-				default: '',
-			},
-			id: {
 				type: String,
 				default: '',
 			},
@@ -58,10 +49,6 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 				type: Boolean,
 				default: false,
 			},
-			[options?.defaultValueKey]: {
-				type: [String, Boolean, Number, Object, Array],
-				default: '',
-			},
 			modelValue: {
 				type: [String, Boolean, Number, Object, Array],
 				default: undefined,
@@ -69,70 +56,82 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 		},
 		emits: ['update:modelValue', ...emitsArray],
 		setup: (props, { emit, slots, attrs }) => {
-			const form = inject<Record<string, any>>('formData', Object.create({}));
-			const name = toRef(props, 'name');
-			const inputs = new Map();			
+			const form = inject<Ref<Record<string, any>>>('form', Object.create({}));
+			const fields = new Map();
 
 			if (options?.modelKeys) {
-				if (Array.isArray(options?.modelKeys)) {
-					for (let index = 0; index < options?.modelKeys.length; index++) {
-						inputs.set(options.modelKeys[index], useInput(name.value, props, options.modelKeys[index], options.useKey));
-					}
+				if (Array.isArray(options.modelKeys)) {
+					options.modelKeys.forEach((modelKey: string) => {
+						fields.set(modelKey, useField(props, emit, options));
+					});
 				} else {
-					inputs.set(options.modelKeys, useInput(name.value, props, options.modelKeys, options.useKey));
+					fields.set(options?.modelKeys, useField(props, emit, options));
 				}
 			} else {
-				inputs.set('modelValue', useInput(name.value, props));
+				fields.set('modelValue', useField(props, emit, options));
 			}
-
-			const createModelBindings = () => {
-				if (Array.isArray(options?.modelKeys)) {
-					return options?.modelKeys?.reduce((bindingMethod: Record<string, any>, modelKey) => {
-						bindingMethod[`onUpdate:${modelKey}`] = (value: any) => {
-							emit(`update:${modelKey}`, value);
-							!props.ignore && inputs.get(modelKey).updateValue(value, modelKey);
-						};
-
-						return bindingMethod;
-					}, {});
-				} else {
-					return {
-						[`onUpdate:${options?.modelKeys}`]: (value: any) => {
-							emit(`update:${options?.modelKeys}`, value);
-							!props.ignore && inputs.get(options?.modelKeys).updateValue(value, options?.modelKeys);
-						},
-					};
-				}
-			};
 
 			const setDefaultValue = () => {
 				const obj: Record<string, any> = {
 					modelValue: props.modelValue || props.default || getValueByPath(form.value, props.name)?.value || '',
 				};
 
-				if (Array.isArray(options?.modelKeys) && typeof props.default === 'object') {
-					options?.modelKeys.forEach((key) => {
-						obj[key] = props.modelValue || props.default[key];
-					});
+				if (options?.modelKeys) {
+					if (Array.isArray(options.modelKeys)) {
+						options.modelKeys.forEach((key) => {
+							obj[key] = props.name ? getValueByPath(form.value, props.name)?.[key]?.value : key || props.modelValue || props.default[key];
+						});
+					} else {
+						obj[options.modelKeys] = props.name ? getValueByPath(form.value, props.name)?.[options.modelKeys]?.value : options.modelKeys;
+					}
 				}
 
 				return obj;
 			};
 
+			const createModelBindings = () => {
+				if (options?.modelKeys) {
+					if (Array.isArray(options.modelKeys)) {
+						return options.modelKeys?.reduce((bindingMethod: Record<string, any>, modelKey) => {
+							bindingMethod[`onUpdate:${modelKey}`] = (value: any) => {
+								emit(`update:${modelKey}`, value);
+								!props.ignore && fields.get(modelKey).updateValue(value, modelKey);
+							};
+
+							return bindingMethod;
+						}, {});
+					} else {
+						return {
+							[`onUpdate:${options.modelKeys}`]: (value: any) => {
+								emit(`update:${options.modelKeys}`, value);
+								!props.ignore && fields.get(options.modelKeys).updateValue(value, options.modelKeys);
+							},
+						};
+					}
+				} else {
+					return {
+						['onUpdate:modelValue']: (value: any) => {
+							emit('update:modelValue', value);
+							(!props.ignore && getValueByPath(form.value, props.name)) && (getValueByPath(form.value, props.name).value = value);
+						},
+					};
+				}
+			};
+
 			const getError = () => {
 				if (!options?.modelKeys) {
-					return getValueByPath(form.value, name.value)?.error;
+					return getValueByPath(form.value, props.name)?.error;
 				}
 
 				if (Array.isArray(options?.modelKeys)) {
 					return options.modelKeys.reduce((error: Record<string, any>, modelKey) => {
-						error[modelKey] = inputs.get(modelKey).getError(modelKey);
+						error[modelKey] = fields.get(modelKey).getError(modelKey);
 
 						return error;
 					}, {});
 				}
 
-				return inputs.get(options.modelKeys).getError(options.modelKeys);
+				return fields.get(options.modelKeys).getError(options.modelKeys);
 			};
 
 			return () => {
@@ -142,28 +141,21 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 					{
 						...props,
 						...attrs,
-						name: props.name,
-						id: props.id || Math.floor(Math.random() * Date.now()).toString(),
-						value: props.modelValue || props.default || form.value[props.name]?.value,
-						...{ ...setDefaultValue() },
-						error: getError() || props.error,
 						onFocus: (key?: string) => {
 							if (key && typeof key === 'string') {
-								const _key = getKey(name.value, key, options?.useKey);
+								const _key = props.name ? `${props.name}.${key}` : key;
 								getValueByPath(form.value, _key)?.error && (getValueByPath(form.value, _key).error = undefined);
-							} else if (name.value.match(/.\[/)) {
-								const _key = name.value.split(/\[/)[0];
+							} else if (props.name?.match(/.\[/)) {
+								const _key = props.name?.split(/\[/)[0];
 
 								getValueByPath(form.value, _key)?.error && (getValueByPath(form.value, _key).error = undefined);
 							} else {
-								getValueByPath(form.value, name.value)?.error && (getValueByPath(form.value, name.value).error = undefined);
+								getValueByPath(form.value, props.name)?.error && (getValueByPath(form.value, props.name).error = undefined);
 							}
 						},
-						...(options?.modelKeys && { ...createModelBindings() }),
-						'onUpdate:modelValue': (value: any) => {
-							emit('update:modelValue', value);
-							!props.ignore && inputs.get('modelValue')?.updateValue?.(value);
-						},
+						error: getError() || props?.error,
+						...{ ...setDefaultValue() },
+						...createModelBindings(),
 					},
 					{
 						...slots,
