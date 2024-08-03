@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { getValueByPath } from '@/utils/utils';
-import { inject, reactive, Ref, useAttrs } from 'vue';
+import { inject, onBeforeUpdate, reactive, Ref, useAttrs } from 'vue';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
@@ -25,15 +25,16 @@ const field = reactive({
 	name: props.name,
 	oninput: (event: any) => {
 		getValueByPath(form.value, props.name).value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
+		field.value = getValueByPath(form.value, props.name).value;
 	},
 	onfocus: () => {
 		getValueByPath(form.value, props.name).error = undefined;
 	},
-	'onUpdate:modelValue': (value: any) => {
-		field.modelValue = value;
-		getValueByPath(form.value, props.name).value = value;
+	'onUpdate:modelValue': (val: any) => {
+		field.modelValue = val;
+		getValueByPath(form.value, props.name).value = val;
 	},
-	checked: props?.default,
+	value: getValueByPath(form.value, props.name).value ?? props.default,
 	modelValue: getValueByPath(form.value, props.name).value ?? props.default,
 });
 /*---------------------------------------------
@@ -51,6 +52,9 @@ const field = reactive({
 /*---------------------------------------------
 /  HOOKS
 ---------------------------------------------*/
+onBeforeUpdate(() => {
+	field.value = getValueByPath(form.value, props.name).value;
+});
 </script>
 <template>
 	<div>
