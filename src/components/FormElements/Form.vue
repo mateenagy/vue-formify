@@ -68,9 +68,9 @@ onMounted(() => {
 });
 provide('form', data);
 defineExpose({
-	setError,
 	values: data,
 	errors,
+	setError,
 	reset,
 });
 </script>
@@ -80,10 +80,7 @@ defineExpose({
 		:action="action"
 		v-bind="$attrs">
 		<slot
-			:data="data"
+			:values="data"
 			:errors="errors" />
-		<pre>{{ data }}</pre>
-		<label>flatten</label>
-		<pre>{{ flattenObject(data) }}</pre>
 	</form>
 </template>

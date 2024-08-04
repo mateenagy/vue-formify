@@ -1,7 +1,7 @@
-import { getValueByPath } from '@/utils/utils';
+import { getKey, getValueByPath } from '@/utils/utils';
 import { Component, defineComponent, h, inject, Ref, resolveDynamicComponent } from 'vue';
 import { useField } from './useField';
-//TODO: Custom default key
+
 export type BaseInput = {
 	name?: string;
 	default?: any;
@@ -14,7 +14,8 @@ export type BaseInput = {
 export type CreateInputOptions = {
 	default?: string | number | any[];
 	modelKeys?: string | string[];
-	// defaultValueKey?: any;
+	useModelKeyAsState?: boolean;
+	defaultValueKey?: any;
 }
 
 export const createInput = <T>(component: Component, options?: CreateInputOptions) => {
@@ -49,6 +50,10 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 				type: Boolean,
 				default: false,
 			},
+			[options?.defaultValueKey]: {
+				type: [String, Boolean, Number, Object, Array],
+				default: '',
+			},
 			modelValue: {
 				type: [String, Boolean, Number, Object, Array],
 				default: undefined,
@@ -79,12 +84,19 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 				if (options?.modelKeys) {
 					if (Array.isArray(options.modelKeys)) {
 						options.modelKeys.forEach((key) => {
-							obj[key] = props.name ? getValueByPath(form.value, props.name)?.[key]?.value : key || props.modelValue || props.default[key];
+							obj[key] = getValueByPath(form.value, props.name)?.[key]?.value || props.modelValue || props.default[key];
 						});
 					} else {
-						obj[options.modelKeys] = props.name ? getValueByPath(form.value, props.name)?.[options.modelKeys]?.value : options.modelKeys;
+						options.useModelKeyAsState && (obj.modelValue = props[options.modelKeys as keyof typeof props] ?? getValueByPath(form.value, props.name)?.[options.modelKeys]?.value);
+						obj[options.modelKeys] = props[options.modelKeys as keyof typeof props] ?? getValueByPath(form.value, props.name)?.[options.modelKeys]?.value ?? props.modelValue ?? props.default;
+						const key = getKey(props.name, options.modelKeys, options.useModelKeyAsState);
+						getValueByPath(form.value, key).value = obj[options.modelKeys];
+						if (options.useModelKeyAsState) {
+							getValueByPath(form.value, props.name)[options.modelKeys].value = obj[options.modelKeys];
+						}
 					}
 				}
+
 
 				return obj;
 			};
@@ -104,7 +116,13 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 						return {
 							[`onUpdate:${options.modelKeys}`]: (value: any) => {
 								emit(`update:${options.modelKeys}`, value);
-								!props.ignore && fields.get(options.modelKeys).updateValue(value, options.modelKeys);
+								(!props.ignore) && fields.get(options.modelKeys).updateValue(value, options.modelKeys);
+							},
+							...options.useModelKeyAsState && {
+								['onUpdate:modelValue']: (value: any) => {
+									emit('update:modelValue', value);
+									(!props.ignore && getValueByPath(form.value, props.name)) && (getValueByPath(form.value, props.name).value = value);
+								},
 							},
 						};
 					}
@@ -119,7 +137,7 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 			};
 
 			const getError = () => {
-				if (!options?.modelKeys) {
+				if (!options?.modelKeys || options?.useModelKeyAsState) {
 					return getValueByPath(form.value, props.name)?.error;
 				}
 
@@ -141,9 +159,11 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 					{
 						...props,
 						...attrs,
+						name: props.name,
+						error: getError() || props?.error,
 						onFocus: (key?: string) => {
 							if (key && typeof key === 'string') {
-								const _key = props.name ? `${props.name}.${key}` : key;
+								const _key = getKey(props.name, key, options?.useModelKeyAsState);
 								getValueByPath(form.value, _key)?.error && (getValueByPath(form.value, _key).error = undefined);
 							} else if (props.name?.match(/.\[/)) {
 								const _key = props.name?.split(/\[/)[0];
@@ -153,7 +173,6 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 								getValueByPath(form.value, props.name)?.error && (getValueByPath(form.value, props.name).error = undefined);
 							}
 						},
-						error: getError() || props?.error,
 						...{ ...setDefaultValue() },
 						...createModelBindings(),
 					},

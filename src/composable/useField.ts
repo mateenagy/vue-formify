@@ -6,7 +6,7 @@ export const useField = (props: Record<string, any>, _emit: (event: string, ...a
 	const name = props.name;
 	const form = inject<Ref<Record<string, any>>>('form', Object.create({}));
 	const defaultValue = {
-		value: props.modelValue ?? props.default ?? options?.default ?? getValueByPath(form.value, props.name).value ?? '',
+		value: props.modelValue ?? (options?.defaultValueKey && props[options?.defaultValueKey as keyof typeof props]) ?? props.default ?? options?.default ?? getValueByPath(form.value, props.name).value ?? '',
 		error: undefined,
 	};
 
@@ -29,14 +29,23 @@ export const useField = (props: Record<string, any>, _emit: (event: string, ...a
 		if (options?.modelKeys) {
 			if (Array.isArray(options?.modelKeys)) {
 				options?.modelKeys.forEach((key: string) => {
-					const _key = name ? `${name}.${key}` : key;
+					const _key = getKey(props.name, key, options.useModelKeyAsState);
 					const obj = stringToObject(_key, defaultValue);
 					form.value = mergeDeep(form.value, obj);
 				});
 			} else {
-				const _key = name ? `${name}.${options.modelKeys}` : options.modelKeys;
-				const obj = stringToObject(_key, defaultValue);
-				form.value = mergeDeep(form.value, obj);
+				if (options.useModelKeyAsState) {
+					const key1 = getKey(props.name, options.modelKeys, true);
+					const key2 = getKey(props.name, options.modelKeys, false);
+					const obj1 = stringToObject(key1, defaultValue);
+					const obj2 = stringToObject(key2, defaultValue);
+					form.value = mergeDeep(form.value, obj1);
+					form.value = mergeDeep(form.value, obj2);
+				} else {
+					const key = getKey(props.name, options.modelKeys);
+					const obj = stringToObject(key, defaultValue);
+					form.value = mergeDeep(form.value, obj);
+				}
 			}
 		}
 	
@@ -59,10 +68,10 @@ export const useField = (props: Record<string, any>, _emit: (event: string, ...a
 		if (modelKey) {
 			const key = props.name ? `${props.name}.${getKey(name.value, modelKey)}` : getKey(name.value, modelKey);
 
-			return getValueByPath(form.value, key)?.error;
+			return options?.useModelKeyAsState ? getValueByPath(form.value, props.name)?.error : getValueByPath(form.value, key)?.error;
 		}
 
-		return getValueByPath(form.value, name.value).error;
+		return getValueByPath(form.value, props.name).error;
 	};
 
 	createFormInput();

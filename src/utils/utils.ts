@@ -4,9 +4,9 @@ export const ARRAY_INDEX_FROM_STRING_REGEX = /\w\[(\d*)\]/gm;
 export const GET_INDEX_FROM_STRING_REGEX = /\[(\d+)\]/;
 export const REMOVE_ARRAY_INDEX_FROM_STRING_REGEX = /\[\d+\]/;
 
-export const getKey = (name: string, modelKey: string, useKey: boolean = false): string => {
+export const getKey = (name: string = '', modelKey: string, useKey: boolean = false): string => {
 	if (name) {
-		return useKey ? `${name}.${modelKey}` : name;
+		return useKey ? name : `${name}.${modelKey}`;
 	}
 
 	return modelKey;

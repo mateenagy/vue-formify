@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { inject } from 'vue';
+import { inject, Ref } from 'vue';
 import { getValueByPath } from '@/utils/utils';
 /*---------------------------------------------
 /  PROPS & EMITS
@@ -10,7 +10,7 @@ defineOptions({
 defineProps<{
 	errorFor: string;
 }>();
-const form = inject<Record<string, any>>('formData', Object.create({}));
+const form = inject<Ref<Record<string, any>>>('form', Object.create({}));
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/

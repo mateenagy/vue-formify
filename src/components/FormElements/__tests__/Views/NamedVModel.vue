@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 defineProps<{
+	name?: string;
 	error?: string;
 	onFocus?: (a: string) => void;
 }>();

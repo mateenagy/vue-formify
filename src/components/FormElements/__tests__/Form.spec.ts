@@ -154,9 +154,7 @@ describe('Form', () => {
 			</FormifyForm>
 		`);
 		const form = wrapper.findComponent(FormifyForm);
-		const input = wrapper.find('input[name]');
-		console.log('input', input);
-		
+		const input = wrapper.find('input');
 		await input.setValue('Hi!');
 		await form.trigger('submit');
 		expect(wrapper.find('#result').text()).equals('Hi!');
