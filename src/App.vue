@@ -38,11 +38,11 @@ const Custom = createInput(NamedVModel, { modelKeys: 'title', useModelKeyAsState
 		<Form
 			@submit="send"
 			ref="form"
-			v-slot="{ values }">
+			v-slot="{ values, errors }">
 			<pre>{{ values }}</pre>
+			<pre>{{ errors }}</pre>
 			<Custom
-				name="foo"
-				default="lol" />
+				name="foo" />
 			<Field
 				name="bar"
 				default="bar"
@@ -52,14 +52,23 @@ const Custom = createInput(NamedVModel, { modelKeys: 'title', useModelKeyAsState
 					v-bind="field">
 				<p>{{ error }}</p>
 			</Field>
+			<Field
+				name="baz"
+				default="baz"
+				v-slot="{ field, error }">
+				<input
+					type="text"
+					v-bind="field">
+				<p>{{ error }}</p>
+			</Field>
 			<ArrayField
 				name="users"
-				v-slot="{ fields, add, remove }">
+				v-slot="{ fields, add, remove, error }">
 				<fieldset
 					v-for="(field, idx) of fields"
 					:key="field.id">
 					<Field
-						:name="`users[${idx}].username`"
+						:name="`users[${idx}]`"
 						v-slot="{ field: inputField }">
 						<input
 							type="text"
@@ -76,6 +85,7 @@ const Custom = createInput(NamedVModel, { modelKeys: 'title', useModelKeyAsState
 					@click="add">
 					Add
 				</button>
+				error: {{ error }}
 			</ArrayField>
 			<button>Send</button>
 			<button

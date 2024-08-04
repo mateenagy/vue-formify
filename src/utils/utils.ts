@@ -187,12 +187,14 @@ export const mergeDeep = (...objects: any) => {
 	}, {});
 };
 
-export const createFormDataFromObject = (obj: Record<string, any>, formData: FormData, parentKey = '') => {
+export const createFormDataFromObject = (obj: Record<string, any>, parentKey = '') => {
+	const formData: FormData = new FormData();
+
 	Object.keys(obj).reduce((acc, key) => {
 		const newKey = parentKey ? `${parentKey}.${key}` : key;
 
 		if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key]) && !(obj[key] instanceof Date) && !(obj[key] instanceof File) && !(obj[key] instanceof Blob)) {
-			const nested = createFormDataFromObject(obj[key], formData, newKey);
+			const nested = createFormDataFromObject(obj[key], newKey);
 			acc += nested;
 		} else {
 			if (Array.isArray(obj[key])) {
@@ -206,6 +208,8 @@ export const createFormDataFromObject = (obj: Record<string, any>, formData: For
 
 		return acc;
 	}, '');
+
+	return formData;
 };
 
 /* Custom event handler */

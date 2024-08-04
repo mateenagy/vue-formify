@@ -50,13 +50,6 @@ export default defineConfig({
 				'vue',
 			],
 			output: {
-				// assetFileNames: (assetInfo) => {
-				// 	if (assetInfo.name === 'main.css') {
-				// 		return 'vue-formify.css';
-				// 	}
-
-				// 	return assetInfo.name;
-				// },
 				exports: 'named',
 				globals: {
 					vue: 'Vue',

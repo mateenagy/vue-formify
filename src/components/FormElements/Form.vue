@@ -1,12 +1,11 @@
 <script lang="ts" setup>
 import { computed, onMounted, provide, ref } from 'vue';
-import { flattenObject, getValueByPath, EventEmitter } from '@/utils/utils';
+import { flattenObject, getValueByPath, EventEmitter, createFormDataFromObject } from '@/utils/utils';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
 const props = defineProps<{
 	enctype?: 'application/x-www-form-urlencoded' | 'multipart/form-data';
-	action?: string;
 	validationSchema?: any;
 }>();
 const emits = defineEmits(['submit']);
@@ -30,6 +29,7 @@ const reset = () => {
 };
 
 const submit = async () => {
+	let _value: any = values.value;
 	if (props.validationSchema) {
 		const result = await props.validationSchema.parse(flattenObject(data.value));
 
@@ -42,11 +42,11 @@ const submit = async () => {
 		}
 	}
 
-	if (props.action) {
-		return;
+	if (props?.enctype === 'multipart/form-data') {
+		_value = createFormDataFromObject(flattenObject(data.value));
 	}
 
-	emits('submit', flattenObject(data.value));
+	emits('submit', _value);
 };
 /*---------------------------------------------
 /  COMPUTED
@@ -80,7 +80,6 @@ defineExpose({
 <template>
 	<form
 		@submit.prevent="submit"
-		:action="action"
 		v-bind="$attrs">
 		<slot
 			:values="values"
