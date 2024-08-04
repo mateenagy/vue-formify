@@ -54,6 +54,9 @@ const submit = async () => {
 const errors = computed(() => {
 	return flattenObject(data.value, 'error');
 });
+const values = computed(() => {
+	return flattenObject(data.value);
+});
 /*---------------------------------------------
 /  WATCHERS
 ---------------------------------------------*/
@@ -80,7 +83,7 @@ defineExpose({
 		:action="action"
 		v-bind="$attrs">
 		<slot
-			:values="data"
+			:values="values"
 			:errors="errors" />
 	</form>
 </template>

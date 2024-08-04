@@ -87,13 +87,13 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 							obj[key] = getValueByPath(form.value, props.name)?.[key]?.value || props.modelValue || props.default[key];
 						});
 					} else {
-						options.useModelKeyAsState && (obj.modelValue = props[options.modelKeys as keyof typeof props] ?? getValueByPath(form.value, props.name)?.[options.modelKeys]?.value);
 						obj[options.modelKeys] = props[options.modelKeys as keyof typeof props] ?? getValueByPath(form.value, props.name)?.[options.modelKeys]?.value ?? props.modelValue ?? props.default;
+						options.useModelKeyAsState && (
+							obj.modelValue = props[options.modelKeys as keyof typeof props] ?? getValueByPath(form.value, props.name)?.[options.modelKeys]?.value,
+							getValueByPath(form.value, props.name)[options.modelKeys].value = obj[options.modelKeys]
+						);
 						const key = getKey(props.name, options.modelKeys, options.useModelKeyAsState);
 						getValueByPath(form.value, key).value = obj[options.modelKeys];
-						if (options.useModelKeyAsState) {
-							getValueByPath(form.value, props.name)[options.modelKeys].value = obj[options.modelKeys];
-						}
 					}
 				}
 
