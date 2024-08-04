@@ -3,7 +3,7 @@ import Form from './components/FormElements/Form.vue';
 import { ref } from 'vue';
 import { FormType } from './components';
 import { createInput } from './composable/createInput';
-import { Field } from '@/components/main';
+import { ArrayField, Field } from '@/components/main';
 import NamedVModel from './components/FormElements/__tests__/Views/NamedVModel.vue';
 /*---------------------------------------------
 /  PROPS & EMITS
@@ -13,7 +13,6 @@ import NamedVModel from './components/FormElements/__tests__/Views/NamedVModel.v
 ---------------------------------------------*/
 const form = ref<FormType>();
 const send = (data: any) => {
-	form.value?.setError('bar', 'Required field');
 	console.log('[form data]: ', data);
 };
 const Custom = createInput(NamedVModel, { modelKeys: 'title', useModelKeyAsState: true });
@@ -53,6 +52,31 @@ const Custom = createInput(NamedVModel, { modelKeys: 'title', useModelKeyAsState
 					v-bind="field">
 				<p>{{ error }}</p>
 			</Field>
+			<ArrayField
+				name="users"
+				v-slot="{ fields, add, remove }">
+				<fieldset
+					v-for="(field, idx) of fields"
+					:key="field.id">
+					<Field
+						:name="`users[${idx}].username`"
+						v-slot="{ field: inputField }">
+						<input
+							type="text"
+							v-bind="inputField">
+					</Field>
+					<button
+						type="button"
+						@click="remove(idx)">
+						Remove
+					</button>
+				</fieldset>
+				<button
+					type="button"
+					@click="add">
+					Add
+				</button>
+			</ArrayField>
 			<button>Send</button>
 			<button
 				type="button"

@@ -32,6 +32,10 @@ export default defineConfig({
 	],
 	build: {
 		cssCodeSplit: true,
+		terserOptions: {
+			compress: true,
+			mangle: true,
+		},
 		lib: {
 			entry: 'src/components/main.ts',
 			name: 'VueFormify',
@@ -46,13 +50,13 @@ export default defineConfig({
 				'vue',
 			],
 			output: {
-				assetFileNames: (assetInfo) => {
-					if (assetInfo.name === 'main.css') {
-						return 'vue-formify.css';
-					}
+				// assetFileNames: (assetInfo) => {
+				// 	if (assetInfo.name === 'main.css') {
+				// 		return 'vue-formify.css';
+				// 	}
 
-					return assetInfo.name;
-				},
+				// 	return assetInfo.name;
+				// },
 				exports: 'named',
 				globals: {
 					vue: 'Vue',

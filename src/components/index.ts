@@ -10,11 +10,10 @@ export type FormElement = Record<string, {
 }>
 
 export type FormType<T = unknown> = {
+	values: T;
+	errors: T;
 	setError: (name: string, error: any) => void;
-	errorHandler: any;
-	hideInputError: (name: string) => void;
 	reset: () => void;
-	formData: T;
 }
 
 export type HTMLInputAttributeType =
