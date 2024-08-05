@@ -21,7 +21,7 @@
 		"dist"
 	],
 	"peerDependencies": {
-		"@ionic/vue": "^7"
+		"@ionic/vue": "^8.2"
 	},
 	"author": "Máté Nagy",
 	"license": "MIT",
