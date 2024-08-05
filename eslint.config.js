@@ -51,7 +51,6 @@ export default [
 			"func-style": ["error", "declaration", {
 				"allowArrowFunctions": true
 			}],
-			"@typescript-eslint/indent": ["error", "tab"],
 			"key-spacing": ["error", {
 				"afterColon": true,
 				"mode": "minimum"
@@ -138,11 +137,10 @@ export default [
 			"@typescript-eslint/array-type": "error",
 			"@typescript-eslint/consistent-type-assertions": "error",
 			"@typescript-eslint/explicit-module-boundary-types": 0,
-			"@typescript-eslint/member-delimiter-style": "error",
 			"@typescript-eslint/no-explicit-any": 0,
 			"@typescript-eslint/no-inferrable-types": 0,
 			"@typescript-eslint/prefer-optional-chain": "error",
-			"@typescript-eslint/type-annotation-spacing": "error"
+			"@typescript-eslint/no-unused-expressions": 0,
 		}
     }
 ];
