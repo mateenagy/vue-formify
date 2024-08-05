@@ -147,13 +147,17 @@ export const flattenObject = (obj: any, type: 'value' | 'error' = 'value'): Reco
 		if (typeof obj[key] === 'object' && 'value' in obj[key] ) {
 			if (typeof obj[key].value === 'object') {
 				Array.isArray(obj[key].value) && (result[key] = []);
-				for (const arrayKey in obj[key].value) {
-					!result[key] && (result[key] = []);
-					if (type in obj[key].value[arrayKey]) {
-						obj[key].value[arrayKey][type] && result[key].push(obj[key].value[arrayKey][type]);
-					} else {
-						result[key].push(flattenObject(obj[key].value[arrayKey], type));
+				if (Object.keys(obj[key].value)?.[0]?.match?.(BETWEEN_BRACKETS_REGEX)) {
+					for (const arrayKey in obj[key].value) {
+						!result[key] && (result[key] = []);
+						if (type in obj[key].value[arrayKey]) {
+							obj[key].value[arrayKey][type] && result[key].push(obj[key].value[arrayKey][type]);
+						} else {
+							result[key].push(flattenObject(obj[key].value[arrayKey], type));
+						}
 					}
+				} else {
+					result[key] = obj[key].value;
 				}
 			} else {
 				result[key] = obj[key][type];

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { getValueByPath } from '@/utils/utils';
+import { EventEmitter, getValueByPath } from '@/utils/utils';
 import { inject, onBeforeUpdate, reactive, Ref, useAttrs } from 'vue';
 /*---------------------------------------------
 /  PROPS & EMITS
@@ -49,6 +49,10 @@ const field = reactive({
 /*---------------------------------------------
 /  CREATED
 ---------------------------------------------*/
+EventEmitter.on('reset', () => {
+	field.value = props.default;
+	field.modelValue = props.default;
+});
 /*---------------------------------------------
 /  HOOKS
 ---------------------------------------------*/
