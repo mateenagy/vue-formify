@@ -14,7 +14,7 @@ const props = withDefaults(
 	{
 		error: undefined,
 		default: '',
-		type: undefined,
+		as: undefined,
 	},
 );
 /*---------------------------------------------
