@@ -9,10 +9,12 @@ const props = withDefaults(
 		name: string;
 		error?: any;
 		default?: any;
+		as?: 'input' | 'select' | undefined;
 	}>(),
 	{
 		error: undefined,
 		default: '',
+		type: undefined,
 	},
 );
 /*---------------------------------------------
@@ -62,8 +64,17 @@ onBeforeUpdate(() => {
 </script>
 <template>
 	<div>
-		<slot
-			:field="field"
-			:error="error" />
+		<template v-if="!as">
+			<slot
+				:field="field"
+				:error="error" />
+		</template>
+		<template v-else>
+			<component
+				:is="props.as"
+				v-bind="field">
+				<slot />
+			</component>
+		</template>
 	</div>
 </template>

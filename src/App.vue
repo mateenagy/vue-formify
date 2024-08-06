@@ -3,7 +3,7 @@ import Form from './components/FormElements/Form.vue';
 import { ref } from 'vue';
 import { FormType } from './components';
 import { createInput } from './composable/createInput';
-import { ArrayField, Field } from '@/components/main';
+import { ArrayField, Field, Error } from '@/components/main';
 import NamedVModel from './components/FormElements/__tests__/Views/NamedVModel.vue';
 /*---------------------------------------------
 /  PROPS & EMITS
@@ -13,6 +13,8 @@ import NamedVModel from './components/FormElements/__tests__/Views/NamedVModel.v
 ---------------------------------------------*/
 const form = ref<FormType>();
 const send = (data: any) => {
+	form.value?.setError('baz', 'Required');
+	form.value?.setError('faz', 'Required');
 	console.log('[form data]: ', data);
 };
 const Custom = createInput(NamedVModel, { modelKeys: 'title', useModelKeyAsState: true });
@@ -43,25 +45,28 @@ const Custom = createInput(NamedVModel, { modelKeys: 'title', useModelKeyAsState
 			<Field
 				name="baz"
 				default="baza"
-				v-slot="{ field, error }">
+				as="input"
+				type="password" />
+			<Error error-for="baz" />
+			<Field
+				name="faz"
+				default="faz"
+				v-slot="{ field }">
 				<input
 					type="text"
 					v-bind="field">
-				<p>{{ error }}</p>
 			</Field>
+			<Error error-for="faz" />
 			<ArrayField
 				name="users"
 				v-slot="{ fields, add, remove, error }">
 				<fieldset
 					v-for="(field, idx) of fields"
 					:key="field.id">
+					<legend>user #{{ idx }}</legend>
 					<Field
 						:name="`users[${idx}].name`"
-						v-slot="{ field: inputField }">
-						<input
-							type="text"
-							v-bind="inputField">
-					</Field>
+						type="input" />
 					<button
 						type="button"
 						@click="remove(idx)">

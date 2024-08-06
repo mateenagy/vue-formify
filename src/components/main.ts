@@ -1,7 +1,7 @@
 import { default as ArrayComponent } from './FormElements/ArrayField.vue';
 import { default as FieldComponent } from './FormElements/Field.vue';
 import { default as FormifyForm } from './FormElements/Form.vue';
-import { default as FormifyError } from './FormElements/Error.vue';
+import { default as Error } from './FormElements/Error.vue';
 import { FormType, ComponentProps } from './index';
 import { createInput } from '@/composable/createInput';
 // import { createSchema } from '@/composable/createSchema';
@@ -13,7 +13,7 @@ export {
 	createInput,
 	// createSchema,
 	FormifyForm,
-	FormifyError,
+	Error,
 	ArrayField,
 	Field,
 };
