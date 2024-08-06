@@ -33,7 +33,7 @@ npm i vue-formify
 ## 💻 Usage
 ```vue
 <script lang="ts" setup>
-import { FormifyForm, Field } from 'vue-formify';
+import { FormifyForm, Field, Error } from 'vue-formify';
 
 const sendForm = (data) => {
 	console.log(data);
@@ -42,10 +42,8 @@ const sendForm = (data) => {
 
 <template>
 	<FormifyForm @submit="sendForm">
-		<Field name="email" v-slot="{field, error}">
-			<input v-bind="field" />
-			<span class="error">{{ error }}</span>
-		<Field/>
+		<Field name="email" as="input" />
+		<Error error-for="email" />
 		<button>Send</button>
 	</FormifyForm>
 </template>
