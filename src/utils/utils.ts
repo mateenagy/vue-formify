@@ -141,7 +141,7 @@ export const deleteByPath = (object: Record<string, any>, path: string) => {
 	}
 };
 
-export const flattenObject = (obj: any, type: 'value' | 'error' = 'value'): Record<string, string> => {
+export const flattenObject = (obj: any, type: 'value' | 'error' = 'value'): Record<string, any> => {
 	const result: any = {};
 	for (const key in obj) {
 		if (typeof obj[key] === 'object' && 'value' in obj[key] ) {
@@ -157,7 +157,7 @@ export const flattenObject = (obj: any, type: 'value' | 'error' = 'value'): Reco
 						}
 					}
 				} else {
-					result[key] = obj[key].value;
+					result[key] = obj[key][type];
 				}
 			} else {
 				result[key] = obj[key][type];
