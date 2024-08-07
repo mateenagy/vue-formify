@@ -53,6 +53,8 @@ export const useField = (props: Record<string, any>, _emit: (event: string, ...a
 			const obj = stringToObject(name, defaultValue);
 			form.value = mergeDeep(form.value, obj);
 		}
+
+		console.log(form.value);
 	};
 
 	const updateValue = (value: any, modelKey: string) => {

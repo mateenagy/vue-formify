@@ -12,7 +12,7 @@ export type BaseInput = {
 }
 
 export type CreateInputOptions = {
-	default?: string | number | any[];
+	default?: any;
 	modelKeys?: string | string[];
 	useModelKeyAsState?: boolean;
 	defaultValueKey?: any;
@@ -34,7 +34,7 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 		name: 'Field',
 		props: {
 			default: {
-				type: [String, Number, Array],
+				type: [String, Number, Array, Object],
 				default: options?.default ?? '',
 			},
 			...(component as Component & { props: any }).props,
@@ -78,7 +78,7 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 
 			const setDefaultValue = () => {
 				const obj: Record<string, any> = {
-					modelValue: props.modelValue || props.default || getValueByPath(form.value, props.name)?.value || '',
+					modelValue: props.modelValue || getValueByPath(form.value, props.name)?.value || props.default || '',
 				};
 
 				if (options?.modelKeys) {
@@ -96,8 +96,7 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 						getValueByPath(form.value, key).value = obj[options.modelKeys];
 					}
 				}
-
-
+				
 				return obj;
 			};
 
@@ -130,6 +129,7 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 					return {
 						['onUpdate:modelValue']: (value: any) => {
 							emit('update:modelValue', value);
+							
 							(!props.ignore && getValueByPath(form.value, props.name)) && (getValueByPath(form.value, props.name).value = value);
 						},
 					};
