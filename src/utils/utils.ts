@@ -137,7 +137,7 @@ export const deleteByPath = (object: Record<string, any>, path: string) => {
 
 		if (Object.keys(currentObject).length === 0) {
 			deleteByPath(object, parts.join('.'));
-		}
+		} 
 	}
 };
 

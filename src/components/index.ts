@@ -14,6 +14,7 @@ export type FormType<T = unknown> = {
 	errors: T;
 	setError: (name: string, error: any) => void;
 	reset: () => void;
+	flush: () => void;
 }
 
 export type HTMLInputAttributeType =

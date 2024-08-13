@@ -1,12 +1,13 @@
-import { deleteByPath, getKey, getValueByPath, mergeDeep, stringToObject } from '@/utils/utils';
-import { inject, onBeforeUnmount, Ref, toValue, watch } from 'vue';
+import { deleteByPath, EventEmitter, getKey, getValueByPath, mergeDeep, stringToObject } from '@/utils/utils';
+import { inject, onBeforeUnmount, toValue, watch } from 'vue';
 import { CreateInputOptions } from './createInput';
+import { forms } from '@/utils/store';
 
 export const useField = (props: Record<string, any>, _emit: (event: string, ...args: any[]) => void, options?: CreateInputOptions) => {
+	const { uid, preserve: preserveForm } = inject('formData', Object.create({}));
 	const name = props.name;
-	const form = inject<Ref<Record<string, any>>>('form', Object.create({}));
 	const defaultValue = {
-		value: props.modelValue ?? (options?.defaultValueKey && props[options?.defaultValueKey as keyof typeof props]) ?? props.default ?? options?.default ?? getValueByPath(form.value, props.name).value ?? '',
+		value: (forms[uid].initialValues && getValueByPath(forms[uid].initialValues, props.name)) ?? props.modelValue ?? (options?.defaultValueKey && props[options?.defaultValueKey as keyof typeof props]) ?? props.default ?? options?.default ?? getValueByPath(forms[uid].values, props.name).value ?? '',
 		error: undefined,
 	};
 
@@ -17,9 +18,9 @@ export const useField = (props: Record<string, any>, _emit: (event: string, ...a
 	watch(() => [props.name, props.ignore], (curr, prev) => {
 		const [name, ignore] = curr;
 		const [prevName] = prev;
-
-		deleteByPath(form.value, prevName);
-
+		
+		deleteByPath(forms[uid].values, prevName);
+ 
 		if (!ignore) {
 			createFormInput(name);
 		}
@@ -31,55 +32,55 @@ export const useField = (props: Record<string, any>, _emit: (event: string, ...a
 				options?.modelKeys.forEach((key: string) => {
 					const _key = getKey(props.name, key, options.useModelKeyAsState);
 					const obj = stringToObject(_key, defaultValue);
-					form.value = mergeDeep(form.value, obj);
+					forms[uid].values = mergeDeep(forms[uid].values, obj);
 				});
 			} else {
 				if (options.useModelKeyAsState) {
 					const key1 = getKey(props.name, options.modelKeys, true);
 					const key2 = getKey(props.name, options.modelKeys, false);
-					const obj1 = stringToObject(key1, defaultValue);
-					const obj2 = stringToObject(key2, defaultValue);
-					form.value = mergeDeep(form.value, obj1);
-					form.value = mergeDeep(form.value, obj2);
+					const obj = { ...stringToObject(key1, defaultValue), ... stringToObject(key2, defaultValue) };
+					forms[uid].values = mergeDeep(forms[uid].values, obj);
 				} else {
 					const key = getKey(props.name, options.modelKeys);
 					const obj = stringToObject(key, defaultValue);
-					form.value = mergeDeep(form.value, obj);
+					forms[uid].values = mergeDeep(forms[uid].values, obj);
 				}
 			}
 		}
-	
+
 		if (name && !options?.modelKeys) {
 			const obj = stringToObject(name, defaultValue);
-			form.value = mergeDeep(form.value, obj);
+			forms[uid].values = mergeDeep(forms[uid].values, obj);
 		}
-
-		console.log(form.value);
 	};
 
 	const updateValue = (value: any, modelKey: string) => {
 		if (modelKey) {
 			const key = props.name ? `${props.name}.${getKey(name.value, modelKey)}` : getKey(name.value, modelKey);
-			getValueByPath(form.value, key).value = toValue(value);
+			getValueByPath(forms[uid].values, key).value = toValue(value);
 		} else {
-			getValueByPath(form.value, name.value).value = value;
+			getValueByPath(forms[uid].values, name.value).value = value;
 		}
+		EventEmitter.emit('value-change');
 	};
 
 	const getError = (modelKey?: string) => {
 		if (modelKey) {
 			const key = props.name ? `${props.name}.${getKey(name.value, modelKey)}` : getKey(name.value, modelKey);
 
-			return options?.useModelKeyAsState ? getValueByPath(form.value, props.name)?.error : getValueByPath(form.value, key)?.error;
+			return options?.useModelKeyAsState ? getValueByPath(forms[uid].values, props.name)?.error : getValueByPath(forms[uid].values, key)?.error;
 		}
 
-		return getValueByPath(form.value, props.name).error;
+		return getValueByPath(forms[uid].values, props.name).error;
 	};
 
-	createFormInput();
-
+	if (!getValueByPath(forms[uid].values, props.name)) {
+		createFormInput();
+	}
 	onBeforeUnmount(() => {
-		!props.preserve && deleteByPath(form.value, props.name);
+		if (!props.preserve && !preserveForm) {
+			deleteByPath(forms[uid].values, props.name);
+		};
 	});
 
 	return {

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { inject, Ref } from 'vue';
+import { inject } from 'vue';
 import { getValueByPath } from '@/utils/utils';
+import { forms } from '@/utils/store';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
@@ -10,7 +11,7 @@ defineOptions({
 defineProps<{
 	errorFor: string;
 }>();
-const form = inject<Ref<Record<string, any>>>('form', Object.create({}));
+const { uid } = inject('formData', Object.create({}));
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
@@ -34,9 +35,9 @@ const form = inject<Ref<Record<string, any>>>('form', Object.create({}));
 	<div>
 		<slot
 			name="error"
-			:error="getValueByPath(form, errorFor)?.error">
+			:error="getValueByPath(forms[uid].values, errorFor)?.error">
 			<small
-				v-bind="$attrs">{{ getValueByPath(form, errorFor)?.error }}</small>
+				v-bind="$attrs">{{ getValueByPath(forms[uid].values, errorFor)?.error }}</small>
 		</slot>
 	</div>
 </template>

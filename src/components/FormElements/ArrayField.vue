@@ -1,7 +1,8 @@
 <script lang="ts" setup>
+import { forms } from '@/utils/store';
 import { deleteByPath, EventEmitter, getValueByPath } from '@/utils/utils';
 import { nextTick } from 'vue';
-import { inject, Ref, ref, toValue } from 'vue';
+import { inject, ref, toValue } from 'vue';
 
 /*---------------------------------------------
 /  PROPS & EMITS
@@ -9,35 +10,36 @@ import { inject, Ref, ref, toValue } from 'vue';
 const props = defineProps<{
 	name: string;
 	error?: any;
+	ignore?: boolean;
 	initialValues?: any[];
 }>();
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
 const fields = ref<any[]>([]);
-const form = inject<Ref<Record<string, any>>>('form', Object.create({}));
+const { uid } = inject('formData', Object.create({}));
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
 const add = () => {
-	getValueByPath(form.value, props.name).error = undefined;
-	
+	!props.ignore && (getValueByPath(forms[uid].values, props.name).error = undefined);
+
 	fields.value.push({
 		id: fields.value.length,
 	});
 };
 
 const remove = (idx: number) => {
-	getValueByPath(form.value, props.name).error = undefined;
-	
+	getValueByPath(forms[uid].values, props.name).error = undefined;
+
 	const removedIndex = fields.value.findIndex(field => field.id === idx);
 	for (let index = removedIndex + 1; index < fields.value.length; index++) {
-		const tmp = JSON.parse(JSON.stringify(getValueByPath(form.value, `${props.name}[${index}]`)));
-		if (getValueByPath(form.value, `${props.name}[${index - 1}]`)) {
-			getValueByPath(form.value, `${props.name}`).value[`[${index - 1}]`] = tmp;
+		const tmp = JSON.parse(JSON.stringify(getValueByPath(forms[uid].values, `${props.name}[${index}]`)));
+		if (getValueByPath(forms[uid].values, `${props.name}[${index - 1}]`)) {
+			getValueByPath(forms[uid].values, `${props.name}`).value[`[${index - 1}]`] = tmp;
 		}
 	}
-	deleteByPath(form.value, `${fields.value[fields.value.length - 1].name}[${fields.value.length - 1}]`);
+	deleteByPath(forms[uid].values, `${fields.value[fields.value.length - 1].name}[${fields.value.length - 1}]`);
 	fields.value.splice(-1);
 };
 
@@ -55,10 +57,10 @@ const init = () => {
 				props.initialValues.forEach((value, idx) => {
 					if (typeof value === 'object') {
 						Object.keys(value).forEach((key) => {
-							getValueByPath(form.value, `${props.name}`).value[`[${idx}]`][key].value = value[key];
+							getValueByPath(forms[uid].values, `${props.name}`).value[`[${idx}]`][key].value = value[key];
 						});
 					} else {
-						getValueByPath(form.value, `${props.name}`).value[`[${idx}]`].value = value;
+						getValueByPath(forms[uid].values, `${props.name}`).value[`[${idx}]`].value = value;
 					}
 				});
 			}

@@ -1,37 +1,47 @@
 <script lang="ts" setup>
-import { computed, onMounted, provide, ref } from 'vue';
+import { computed, onMounted, provide } from 'vue';
 import { flattenObject, getValueByPath, EventEmitter, createFormDataFromObject } from '@/utils/utils';
+import { forms } from '@/utils/store';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
 const props = defineProps<{
 	enctype?: 'application/x-www-form-urlencoded' | 'multipart/form-data';
 	validationSchema?: any;
+	initialValues?: any;
+	name?: string;
+	preserve?: boolean;
 }>();
-const emits = defineEmits(['submit']);
+const emits = defineEmits(['submit', 'value-change']);
+const uid = props.name || Math.floor(Math.random() * Date.now());
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
-const data = ref({});
 let originalForm = Object.create({});
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
 const setError = (name: string, error: any) => {
-	if (getValueByPath(data.value, name)) {
-		getValueByPath(data.value, name).error = error;
+	console.log(name, getValueByPath(forms[uid].values, name));
+	
+	if (getValueByPath(forms[uid].values, name)) {
+		getValueByPath(forms[uid].values, name).error = error;
 	}
 };
 
 const reset = () => {
 	EventEmitter.emit('reset');
-	data.value = JSON.parse(originalForm);
+	forms[uid].values = JSON.parse(originalForm);
 };
+
+EventEmitter.on('value-change', () => {
+	emits('value-change', values.value);
+});
 
 const submit = async () => {
 	let _value: any = values.value;
 	if (props.validationSchema) {
-		const result = await props.validationSchema.parse(flattenObject(data.value));
+		const result = await props.validationSchema.parse(flattenObject(forms[uid].values));
 
 		if (result.errors.length) {
 			result.errors.forEach((err: any) => {
@@ -43,19 +53,25 @@ const submit = async () => {
 	}
 
 	if (props?.enctype === 'multipart/form-data') {
-		_value = createFormDataFromObject(flattenObject(data.value));
+		_value = createFormDataFromObject(flattenObject(forms[uid].values));
 	}
 
 	emits('submit', _value);
+};
+
+const flush = () => {
+	forms[uid].initialValues = Object.create({});
+	forms[uid].values = Object.create({});
+	forms[uid].key++;
 };
 /*---------------------------------------------
 /  COMPUTED
 ---------------------------------------------*/
 const errors = computed(() => {
-	return flattenObject(data.value, 'error');
+	return flattenObject(forms[uid].values, 'error');
 });
 const values = computed(() => {
-	return flattenObject(data.value);
+	return flattenObject(forms[uid].values);
 });
 /*---------------------------------------------
 /  WATCHERS
@@ -63,22 +79,35 @@ const values = computed(() => {
 /*---------------------------------------------
 /  CREATED
 ---------------------------------------------*/
+if (!forms[uid]) {
+	forms[uid] = {
+		values: Object.create({}),
+		initialValues: props.initialValues,
+		key: 0,
+	};
+}
 /*---------------------------------------------
 /  HOOKS
 ---------------------------------------------*/
 onMounted(() => {
-	originalForm = JSON.stringify(data.value);
+	originalForm = JSON.stringify(forms[uid].values);
 });
-provide('form', data);
+
+provide('formData', {
+	uid,
+	preserve: props.preserve,
+});
 defineExpose({
-	values: data,
+	values,
 	errors,
 	setError,
 	reset,
+	flush,
 });
 </script>
 <template>
 	<form
+		:key="forms[uid].key"
 		@submit.prevent="submit"
 		v-bind="$attrs">
 		<slot

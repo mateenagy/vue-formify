@@ -1,6 +1,7 @@
 <script lang="ts" setup>
+import { forms } from '@/utils/store';
 import { EventEmitter, getValueByPath } from '@/utils/utils';
-import { inject, onBeforeUpdate, reactive, Ref, useAttrs } from 'vue';
+import { inject, onBeforeUpdate, reactive, ref, Ref, useAttrs } from 'vue';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
@@ -9,11 +10,13 @@ const props = withDefaults(
 		name: string;
 		error?: any;
 		default?: any;
+		ignore?: any;
 		as?: 'input' | 'select' | undefined;
 	}>(),
 	{
 		error: undefined,
 		default: '',
+		ignore: false,
 		as: undefined,
 	},
 );
@@ -21,23 +24,28 @@ const props = withDefaults(
 /  VARIABLES
 ---------------------------------------------*/
 const attrs = useAttrs();
-const form = inject<Ref<Record<string, any>>>('form', Object.create({}));
+const formData = inject('formData', Object.create({}));
+
 const field = reactive({
 	...attrs,
 	name: props.name,
 	oninput: (event: any) => {
-		getValueByPath(form.value, props.name).value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
-		field.value = getValueByPath(form.value, props.name).value;
+		if (!props.ignore) {
+			getValueByPath(forms[formData.uid].values, props.name).value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
+			field.value = getValueByPath(forms[formData.uid].values, props.name)?.value;
+		}
 	},
 	onfocus: () => {
-		getValueByPath(form.value, props.name).error = undefined;
+		!props.ignore && (getValueByPath(forms[formData.uid].values, props.name).error = undefined);
 	},
 	'onUpdate:modelValue': (val: any) => {
-		field.modelValue = val;
-		getValueByPath(form.value, props.name).value = val;
+		if (!props.ignore) {
+			getValueByPath(forms[formData.uid].values, props.name).value = val;
+			field.modelValue = getValueByPath(forms[formData.uid].values, props.name).value;
+		}
 	},
-	value: getValueByPath(form.value, props.name).value ?? props.default,
-	modelValue: getValueByPath(form.value, props.name).value ?? props.default,
+	value: (forms[formData.uid]?.initialValues && getValueByPath(forms[formData.uid].initialValues, props.name)) ?? getValueByPath(forms[formData.uid].values, props.name)?.value ?? props.default,
+	modelValue: (forms[formData.uid]?.initialValues && getValueByPath(forms[formData.uid].initialValues, props.name)) ?? getValueByPath(forms[formData.uid].values, props.name)?.value ?? props.default,
 });
 /*---------------------------------------------
 /  METHODS
@@ -52,14 +60,21 @@ const field = reactive({
 /  CREATED
 ---------------------------------------------*/
 EventEmitter.on('reset', () => {
-	field.value = props.default;
-	field.modelValue = props.default;
+	if (field) {
+		field.value = props.default;
+		field.modelValue = props.default;
+	}
 });
 /*---------------------------------------------
 /  HOOKS
 ---------------------------------------------*/
 onBeforeUpdate(() => {
-	field.value = getValueByPath(form.value, props.name).value;
+	if (field && !props.ignore) {
+		field.value = getValueByPath(forms[formData.uid].values, props.name)?.value;
+		field.modelValue = getValueByPath(forms[formData.uid].values, props.name)?.value;
+	}
+	
+	EventEmitter.emit('value-change');
 });
 </script>
 <template>

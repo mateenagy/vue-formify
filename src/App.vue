@@ -15,6 +15,7 @@ const form = ref<FormType>();
 const send = (data: any) => {
 	form.value?.setError('baz', 'Required');
 	form.value?.setError('faz', 'Required');
+	form.value?.setError('users', 'Required');
 	console.log('[form data]: ', data);
 };
 const Custom = createInput(NamedVModel, { modelKeys: 'title', useModelKeyAsState: true });
@@ -40,10 +41,10 @@ const Custom = createInput(NamedVModel, { modelKeys: 'title', useModelKeyAsState
 		<Form
 			@submit="send"
 			ref="form">
-			<Custom
-				name="foo.name" />
+			<Custom name="foo.name" />
 			<Field
 				name="baz"
+				ignore
 				default="baza"
 				as="input"
 				type="password" />
@@ -59,14 +60,16 @@ const Custom = createInput(NamedVModel, { modelKeys: 'title', useModelKeyAsState
 			<Error error-for="faz" />
 			<ArrayField
 				name="users"
+				ignore
 				v-slot="{ fields, add, remove, error }">
 				<fieldset
 					v-for="(field, idx) of fields"
 					:key="field.id">
 					<legend>user #{{ idx }}</legend>
 					<Field
+						ignore
 						:name="`users[${idx}].name`"
-						type="input" />
+						as="input" />
 					<button
 						type="button"
 						@click="remove(idx)">
