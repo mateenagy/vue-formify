@@ -29,6 +29,14 @@ const setError = (name: string, error: any) => {
 	}
 };
 
+const updateField = (name: string, value: any) => {
+	console.log(name, getValueByPath(forms[uid].values, name));
+	
+	if (getValueByPath(forms[uid].values, name)) {
+		getValueByPath(forms[uid].values, name).value = value;
+	}
+};
+
 const reset = () => {
 	EventEmitter.emit('reset');
 	forms[uid].values = JSON.parse(originalForm);
@@ -101,6 +109,7 @@ defineExpose({
 	values,
 	errors,
 	setError,
+	updateField,
 	reset,
 	flush,
 });

@@ -2,9 +2,7 @@
 import Form from './components/FormElements/Form.vue';
 import { ref } from 'vue';
 import { FormType } from './components';
-import { createInput } from './composable/createInput';
 import { ArrayField, Field, Error } from '@/components/main';
-import NamedVModel from './components/FormElements/__tests__/Views/NamedVModel.vue';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
@@ -15,10 +13,9 @@ const form = ref<FormType>();
 const send = (data: any) => {
 	form.value?.setError('baz', 'Required');
 	form.value?.setError('faz', 'Required');
-	form.value?.setError('users', 'Required');
+	form.value?.setError('first_name', 'Required');
 	console.log('[form data]: ', data);
 };
-const Custom = createInput(NamedVModel, { modelKeys: 'title', useModelKeyAsState: true });
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
@@ -40,15 +37,8 @@ const Custom = createInput(NamedVModel, { modelKeys: 'title', useModelKeyAsState
 		<h2>Form</h2>
 		<Form
 			@submit="send"
+			:initial-values="{ foo: { name: 'lol' } }"
 			ref="form">
-			<Custom name="foo.name" />
-			<Field
-				name="baz"
-				ignore
-				default="baza"
-				as="input"
-				type="password" />
-			<Error error-for="baz" />
 			<Field
 				name="faz"
 				default="faz"
@@ -58,7 +48,35 @@ const Custom = createInput(NamedVModel, { modelKeys: 'title', useModelKeyAsState
 					v-bind="field">
 			</Field>
 			<Error error-for="faz" />
+			<Field
+				name="first_name"
+				v-slot="{ field, error }">
+				<label>Firstname</label>
+				<input v-bind="field" />
+				<small>{{ error }}</small>
+			</Field>
 			<ArrayField
+				name="links"
+				v-slot="{ fields, add, remove }">
+				<fieldset
+					v-for="(field, idx) of fields"
+					:key="field.id">
+					<Field
+						:name="`links[${idx}]`"
+						as="input" />
+					<button
+						type="button"
+						@click="remove(idx)">
+						Remove
+					</button>
+				</fieldset>
+				<button
+					type="button"
+					@click="add">
+					Add
+				</button>
+			</ArrayField>
+			<!-- <ArrayField
 				name="users"
 				ignore
 				v-slot="{ fields, add, remove, error }">
@@ -82,7 +100,7 @@ const Custom = createInput(NamedVModel, { modelKeys: 'title', useModelKeyAsState
 					Add
 				</button>
 				error: {{ error }}
-			</ArrayField>
+			</ArrayField> -->
 			<button>Send</button>
 			<button
 				type="button"

@@ -13,6 +13,7 @@ export type FormType<T = unknown> = {
 	values: T;
 	errors: T;
 	setError: (name: string, error: any) => void;
+	updateField: (name: string, value: any) => void;
 	reset: () => void;
 	flush: () => void;
 }
