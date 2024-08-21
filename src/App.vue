@@ -2,7 +2,7 @@
 import Form from './components/FormElements/Form.vue';
 import { ref } from 'vue';
 import { FormType } from './components';
-import { ArrayField, Field, Error } from '@/components/main';
+import { ArrayField, Field } from '@/components/main';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
@@ -37,9 +37,40 @@ const send = (data: any) => {
 		<h2>Form</h2>
 		<Form
 			@submit="send"
-			:initial-values="{ foo: { name: 'lol' } }"
+			:initial-values="{ foo: 'test' }"
 			ref="form">
 			<Field
+				name="faz"
+				default="faz"
+				v-slot="{ field, error }">
+				<input
+					type="text"
+					v-bind="field">
+				<small>{{ error }}</small>
+			</Field>
+			<ArrayField
+				name="links"
+				:initial-values="['1', '2', '3']"
+				v-slot="{ fields, add, remove }">
+				<fieldset
+					v-for="(field, idx) of fields"
+					:key="field.id">
+					<Field
+						:name="`links[${idx}]`"
+						as="input" />
+					<button
+						type="button"
+						@click="remove(idx)">
+						Remove
+					</button>
+				</fieldset>
+				<button
+					type="button"
+					@click="add">
+					Add
+				</button>
+			</ArrayField>
+			<!-- <Field
 				name="faz"
 				default="faz"
 				v-slot="{ field }">
@@ -75,31 +106,6 @@ const send = (data: any) => {
 					@click="add">
 					Add
 				</button>
-			</ArrayField>
-			<!-- <ArrayField
-				name="users"
-				ignore
-				v-slot="{ fields, add, remove, error }">
-				<fieldset
-					v-for="(field, idx) of fields"
-					:key="field.id">
-					<legend>user #{{ idx }}</legend>
-					<Field
-						ignore
-						:name="`users[${idx}].name`"
-						as="input" />
-					<button
-						type="button"
-						@click="remove(idx)">
-						Remove
-					</button>
-				</fieldset>
-				<button
-					type="button"
-					@click="add">
-					Add
-				</button>
-				error: {{ error }}
 			</ArrayField> -->
 			<button>Send</button>
 			<button

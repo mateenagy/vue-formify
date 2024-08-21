@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { useSimpleField } from '@/composable/useSimpleField';
 import { forms } from '@/utils/store';
 import { deleteByPath, EventEmitter, getValueByPath } from '@/utils/utils';
 import { nextTick } from 'vue';
@@ -7,16 +8,25 @@ import { inject, ref, toValue } from 'vue';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
-const props = defineProps<{
-	name: string;
-	error?: any;
-	ignore?: boolean;
-	initialValues?: any[];
-}>();
+const props = withDefaults(
+	defineProps<{
+		name: string;
+		error?: any;
+		ignore?: boolean;
+		initialValues?: any[];
+		default?: any[];
+	}>(),
+	{
+		error: undefined,
+		initialValues: () => [],
+		default: () => [],
+	},
+);
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
 const fields = ref<any[]>([]);
+const { updateValue } = useSimpleField(props);
 const { uid } = inject('formData', Object.create({}));
 /*---------------------------------------------
 /  METHODS
@@ -26,6 +36,7 @@ const add = () => {
 
 	fields.value.push({
 		id: fields.value.length,
+		name: props.name,
 	});
 };
 
@@ -36,7 +47,9 @@ const remove = (idx: number) => {
 	for (let index = removedIndex + 1; index < fields.value.length; index++) {
 		const tmp = JSON.parse(JSON.stringify(getValueByPath(forms[uid].values, `${props.name}[${index}]`)));
 		if (getValueByPath(forms[uid].values, `${props.name}[${index - 1}]`)) {
-			getValueByPath(forms[uid].values, `${props.name}`).value[`[${index - 1}]`] = tmp;
+			updateValue({
+				[`[${index - 1}]`]: tmp,
+			});
 		}
 	}
 	deleteByPath(forms[uid].values, `${fields.value[fields.value.length - 1].name}[${fields.value.length - 1}]`);
@@ -49,6 +62,7 @@ const init = () => {
 		props.initialValues.forEach(() => {
 			fields.value.push({
 				id: fields.value.length,
+				name: props.name,
 			});
 		});
 
@@ -57,10 +71,20 @@ const init = () => {
 				props.initialValues.forEach((value, idx) => {
 					if (typeof value === 'object') {
 						Object.keys(value).forEach((key) => {
-							getValueByPath(forms[uid].values, `${props.name}`).value[`[${idx}]`][key].value = value[key];
+							updateValue({
+								[`[${idx}]`]: {
+									[key]: {
+										value: value[key],
+									},
+								},
+							});
 						});
 					} else {
-						getValueByPath(forms[uid].values, `${props.name}`).value[`[${idx}]`].value = value;
+						updateValue({
+							[`[${idx}]`]: {
+								value,
+							},
+						});
 					}
 				});
 			}

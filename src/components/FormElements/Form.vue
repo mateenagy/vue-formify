@@ -22,16 +22,12 @@ let originalForm = Object.create({});
 /  METHODS
 ---------------------------------------------*/
 const setError = (name: string, error: any) => {
-	console.log(name, getValueByPath(forms[uid].values, name));
-	
 	if (getValueByPath(forms[uid].values, name)) {
 		getValueByPath(forms[uid].values, name).error = error;
 	}
 };
 
 const updateField = (name: string, value: any) => {
-	console.log(name, getValueByPath(forms[uid].values, name));
-	
 	if (getValueByPath(forms[uid].values, name)) {
 		getValueByPath(forms[uid].values, name).value = value;
 	}
