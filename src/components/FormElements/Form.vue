@@ -89,6 +89,8 @@ if (!forms[uid]) {
 		initialValues: props.initialValues,
 		key: 0,
 	};
+} else {
+	props.initialValues && (forms[uid].initialValues = props.initialValues);
 }
 /*---------------------------------------------
 /  HOOKS

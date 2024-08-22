@@ -24,6 +24,12 @@ export const useSimpleField = (props: Record<string, any>) => {
 			field.modelValue = evt.target.value;
 			getValueByPath(forms[formData.uid].values, props.name).value = field.modelValue;
 		},
+		'onUpdate:modelValue': (val: any) => {
+			if (!props.ignore) {
+				getValueByPath(forms[formData.uid].values, props.name).value = val;
+				field.modelValue = getValueByPath(forms[formData.uid].values, props.name).value;
+			}
+		},
 		onfocus: () => {
 			!props.ignore && (getValueByPath(forms[formData.uid].values, props.name).error = undefined);
 		},
@@ -52,6 +58,8 @@ export const useSimpleField = (props: Record<string, any>) => {
 	onBeforeUpdate(() => {
 		field.value = getValueByPath(forms[formData.uid].values, props.name)?.value;
 		field.modelValue = getValueByPath(forms[formData.uid].values, props.name)?.value;
+
+		EventEmitter.emit('value-change');
 	});
 
 	return {
