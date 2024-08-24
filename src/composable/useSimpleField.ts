@@ -4,12 +4,12 @@ import { inject, onBeforeUpdate, reactive, watch } from 'vue';
 
 export const useSimpleField = (props: Record<string, any>) => {
 	const formData = inject('formData', Object.create({}));
-	const defaultValue = JSON.stringify({
+	const defaultValue = {
 		value: (forms[formData.uid].initialValues && getValueByPath(forms[formData.uid].initialValues, props.name)) ?? props.modelValue ?? props.default ?? getValueByPath(forms[formData.uid].values, props.name)?.value ?? '',
 		error: undefined,
-	});
+	};
 
-	const obj = stringToObject(props.name, JSON.parse(defaultValue));
+	const obj = stringToObject(props.name, defaultValue);
 	forms[formData.uid].values = mergeDeep(forms[formData.uid].values, obj);
 
 	const field = reactive({
@@ -23,11 +23,14 @@ export const useSimpleField = (props: Record<string, any>) => {
 			field.value = evt.target.value;
 			field.modelValue = evt.target.value;
 			getValueByPath(forms[formData.uid].values, props.name).value = field.modelValue;
+			EventEmitter.emit('value-change');
 		},
 		'onUpdate:modelValue': (val: any) => {
 			if (!props.ignore) {
 				getValueByPath(forms[formData.uid].values, props.name).value = val;
 				field.modelValue = getValueByPath(forms[formData.uid].values, props.name).value;
+				
+				EventEmitter.emit('value-change');
 			}
 		},
 		onfocus: () => {
@@ -49,7 +52,7 @@ export const useSimpleField = (props: Record<string, any>) => {
 
 	EventEmitter.on('reset', () => {
 		if (field && getValueByPath(forms[formData.uid].values, props.name)) {
-			getValueByPath(forms[formData.uid].values, props.name).value = JSON.parse(defaultValue).value;
+			getValueByPath(forms[formData.uid].values, props.name).value = defaultValue.value;
 			field.value = getValueByPath(forms[formData.uid].values, props.name)?.value;
 			field.modelValue = getValueByPath(forms[formData.uid].values, props.name)?.value;
 		}
@@ -58,8 +61,6 @@ export const useSimpleField = (props: Record<string, any>) => {
 	onBeforeUpdate(() => {
 		field.value = getValueByPath(forms[formData.uid].values, props.name)?.value;
 		field.modelValue = getValueByPath(forms[formData.uid].values, props.name)?.value;
-
-		EventEmitter.emit('value-change');
 	});
 
 	return {
