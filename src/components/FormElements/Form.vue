@@ -42,7 +42,7 @@ EventEmitter.on('value-change', () => {
 	emits('value-change', values.value);
 });
 
-const submit = async () => {
+const submit = async ($event: any) => {
 	let _value: any = values.value;
 	if (props.validationSchema) {
 		const result = await props.validationSchema.parse(flattenObject(forms[uid].values));
@@ -60,7 +60,7 @@ const submit = async () => {
 		_value = createFormDataFromObject(flattenObject(forms[uid].values));
 	}
 
-	emits('submit', _value);
+	emits('submit', _value, $event);
 };
 
 const flush = () => {
@@ -115,7 +115,7 @@ defineExpose({
 <template>
 	<form
 		:key="forms[uid].key"
-		@submit.prevent="submit"
+		@submit.prevent="submit($event)"
 		v-bind="$attrs">
 		<slot
 			:values="values"
