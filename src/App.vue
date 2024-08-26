@@ -38,7 +38,36 @@ const send = (data: any) => {
 		<Form
 			@submit="send"
 			:initial-values="{ foo: 'test' }"
-			ref="form">
+			ref="form"
+			v-slot="{ values }">
+			<pre>{{ values }}</pre>
+			<div>
+				<Field
+					name="test"
+					value="foo"
+					checked
+					type="radio"
+					as="input" />
+				<Field
+					name="test"
+					default="foo"
+					value="bar"
+					type="radio"
+					as="input" />
+			</div>
+			<Field
+				name="check"
+				type="checkbox"
+				as="input" />
+			<Field
+				v-if="values.check"
+				name="check-custom"
+				type="checkbox"
+				true-value="yes"
+				false-value="no"
+				as="input" />
+
+
 			<Field
 				name="faz"
 				default="faz"

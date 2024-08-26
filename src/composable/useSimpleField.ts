@@ -1,6 +1,6 @@
 import { forms } from '@/utils/store';
-import { EventEmitter, getValueByPath, mergeDeep, stringToObject } from '@/utils/utils';
-import { inject, onBeforeUpdate, reactive, watch } from 'vue';
+import { deleteByPath, EventEmitter, getValueByPath, mergeDeep, stringToObject } from '@/utils/utils';
+import { inject, onBeforeUnmount, onBeforeUpdate, reactive, watch } from 'vue';
 
 export const useSimpleField = (props: Record<string, any>) => {
 	const formData = inject('formData', Object.create({}));
@@ -20,8 +20,9 @@ export const useSimpleField = (props: Record<string, any>) => {
 			if (props.ignore) {
 				return;
 			}
-			field.value = evt.target.value;
-			field.modelValue = evt.target.value;
+			
+			field.value = getValueByInputType(evt.target);
+			field.modelValue = field.value;
 			getValueByPath(forms[formData.uid].values, props.name).value = field.modelValue;
 			EventEmitter.emit('value-change');
 		},
@@ -40,6 +41,22 @@ export const useSimpleField = (props: Record<string, any>) => {
 
 	const updateValue = (value: any, key: any = props.name) => {
 		getValueByPath(forms[formData.uid].values, key).value = mergeDeep(getValueByPath(forms[formData.uid].values, key).value, value);
+	};
+
+	const getValueByInputType = (target: HTMLInputElement) => {
+		if (target.type === 'checkbox') {
+			return getCheckValue(target.checked);
+		}
+
+		if (target.type === 'radio') {
+			return props.value;
+		}
+
+		return target.value;
+	};
+
+	const getCheckValue = (checked: boolean) => {
+		return checked ? props.trueValue : props.falseValue;
 	};
 
 	watch(() => getValueByPath(forms[formData.uid].values, props.name)?.value, () => {
@@ -61,6 +78,12 @@ export const useSimpleField = (props: Record<string, any>) => {
 	onBeforeUpdate(() => {
 		field.value = getValueByPath(forms[formData.uid].values, props.name)?.value;
 		field.modelValue = getValueByPath(forms[formData.uid].values, props.name)?.value;
+	});
+
+	onBeforeUnmount(() => {
+		if (!props.preserve && !formData.preserve) {
+			deleteByPath(forms[formData.uid].values, props.name);
+		};
 	});
 
 	return {

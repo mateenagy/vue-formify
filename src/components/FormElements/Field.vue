@@ -9,13 +9,19 @@ const props = withDefaults(
 		error?: any;
 		default?: any;
 		ignore?: any;
+		value?: any;
+		trueValue?: any;
+		falseValue?: any;
 		as?: 'input' | 'select' | undefined;
 	}>(),
 	{
 		error: undefined,
 		default: '',
+		value: '',
 		ignore: false,
 		as: undefined,
+		trueValue: true,
+		falseValue: false,
 	},
 );
 defineSlots<{
@@ -51,7 +57,7 @@ const { field } = useSimpleField(props);
 		<template v-else>
 			<component
 				:is="props.as"
-				v-bind="field">
+				v-bind="{ ...$attrs, ...field }">
 				<slot />
 			</component>
 		</template>
