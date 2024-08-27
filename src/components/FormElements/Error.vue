@@ -11,6 +11,9 @@ defineOptions({
 defineProps<{
 	errorFor: string;
 }>();
+defineSlots<{
+	error(props: {error?: any}): any;
+}>();
 const { uid } = inject('formData', Object.create({}));
 /*---------------------------------------------
 /  VARIABLES

@@ -20,7 +20,7 @@ export const useSimpleField = (props: Record<string, any>) => {
 			if (props.ignore) {
 				return;
 			}
-			
+
 			field.value = getValueByInputType(evt.target);
 			field.modelValue = field.value;
 			getValueByPath(forms[formData.uid].values, props.name).value = field.modelValue;
@@ -30,7 +30,7 @@ export const useSimpleField = (props: Record<string, any>) => {
 			if (!props.ignore) {
 				getValueByPath(forms[formData.uid].values, props.name).value = val;
 				field.modelValue = getValueByPath(forms[formData.uid].values, props.name).value;
-				
+
 				EventEmitter.emit('value-change');
 			}
 		},
@@ -66,6 +66,19 @@ export const useSimpleField = (props: Record<string, any>) => {
 		field.value = getValueByPath(forms[formData.uid].values, props.name)?.value;
 		field.modelValue = getValueByPath(forms[formData.uid].values, props.name)?.value;
 	});
+
+	watch(() => [props.name, props.ignore], (curr, prev) => {
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const [name, ignore] = curr;
+		const [prevName] = prev;
+
+		deleteByPath(forms[formData.uid].values, prevName);
+
+		if (!ignore) {
+			const obj = stringToObject(props.name, defaultValue);
+			forms[formData.uid].values = mergeDeep(forms[formData.uid].values, obj);
+		}
+	}, { deep: true });
 
 	EventEmitter.on('reset', () => {
 		if (field && getValueByPath(forms[formData.uid].values, props.name)) {
