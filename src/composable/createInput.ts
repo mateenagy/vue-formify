@@ -122,7 +122,7 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 								['onUpdate:modelValue']: (value: any) => {
 									emit('update:modelValue', value);
 									(!props.ignore && getValueByPath(forms[uid].values, props.name)) && (getValueByPath(forms[uid].values, props.name).value = value);
-									EventEmitter.emit('value-change');
+									EventEmitter.emit('value-change', uid);
 								},
 							},
 						};
@@ -132,7 +132,7 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 						['onUpdate:modelValue']: (value: any) => {
 							emit('update:modelValue', value);
 							(!props.ignore && getValueByPath(forms[uid].values, props.name)) && (getValueByPath(forms[uid].values, props.name).value = value);
-							EventEmitter.emit('value-change');
+							EventEmitter.emit('value-change', uid);
 						},
 					};
 				}

@@ -30,6 +30,8 @@ const setError = (name: string, error: any) => {
 const updateField = (name: string, value: any) => {
 	if (getValueByPath(forms[uid].values, name)) {
 		getValueByPath(forms[uid].values, name).value = value;
+
+		EventEmitter.emit('value-change', uid);
 	}
 };
 
@@ -38,8 +40,10 @@ const reset = () => {
 	forms[uid].values = JSON.parse(originalForm);
 };
 
-EventEmitter.on('value-change', () => {
-	emits('value-change', values.value);
+EventEmitter.on('value-change', (id: string) => {
+	if (id === uid) {
+		emits('value-change', values.value);
+	}
 });
 
 const submit = async ($event: any) => {

@@ -26,7 +26,7 @@ const props = withDefaults(
 /  VARIABLES
 ---------------------------------------------*/
 const fields = ref<any[]>([]);
-const { updateValue } = useSimpleField(props);
+const { updateValue, getError } = useSimpleField(props);
 const { uid } = inject('formData', Object.create({}));
 /*---------------------------------------------
 /  METHODS
@@ -115,6 +115,6 @@ init();
 			:fields="toValue(fields)"
 			:add="add"
 			:remove="remove"
-			:error="error" />
+			:error="getError()" />
 	</div>
 </template>

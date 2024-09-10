@@ -61,7 +61,7 @@ export const useField = (props: Record<string, any>, _emit: (event: string, ...a
 		} else {
 			getValueByPath(forms[uid].values, name.value).value = value;
 		}
-		EventEmitter.emit('value-change');
+		EventEmitter.emit('value-change', uid);
 	};
 
 	const getError = (modelKey?: string) => {

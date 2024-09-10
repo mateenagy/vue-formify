@@ -30,7 +30,7 @@ defineSlots<{
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
-const { field } = useSimpleField(props);
+const { field, getError } = useSimpleField(props);
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
@@ -52,13 +52,13 @@ const { field } = useSimpleField(props);
 		<template v-if="!as">
 			<slot
 				:field="field"
-				:error="error" />
+				:error="getError()" />
 		</template>
 		<template v-else>
 			<component
 				:is="props.as"
 				v-bind="{ ...$attrs, ...field }">
-				<slot />
+				<slot :error="getError()" />
 			</component>
 		</template>
 	</div>
