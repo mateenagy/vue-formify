@@ -61,7 +61,7 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 			},
 		},
 		emits: ['update:modelValue', ...emitsArray],
-		setup: (props, { emit, slots, attrs }) => {
+		setup: (props: BaseInput, { emit, slots, attrs }) => {
 			const { uid } = inject('formData', Object.create({}));
 			const fields = new Map();
 
@@ -97,7 +97,7 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 						getValueByPath(forms[uid].values, key).value = obj[options.modelKeys];
 					}
 				}
-				
+
 				return obj;
 			};
 
