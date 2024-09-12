@@ -11,8 +11,10 @@ const props = defineProps<{
 	initialValues?: any;
 	name?: string;
 	preserve?: boolean;
+	onValueChange?: () => void;
 }>();
 const emits = defineEmits(['submit', 'value-change']);
+
 const uid = props.name || Math.floor(Math.random() * Date.now());
 /*---------------------------------------------
 /  VARIABLES
@@ -41,7 +43,7 @@ const reset = () => {
 };
 
 EventEmitter.on('value-change', (id: string) => {
-	if (id === uid) {
+	if (id === uid && props?.onValueChange) {
 		emits('value-change', values.value);
 	}
 });

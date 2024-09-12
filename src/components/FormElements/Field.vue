@@ -19,7 +19,7 @@ const props = withDefaults(
 		default: '',
 		value: '',
 		ignore: false,
-		as: undefined,
+		as: 'input',
 		trueValue: true,
 		falseValue: false,
 	},

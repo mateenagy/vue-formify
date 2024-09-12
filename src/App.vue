@@ -46,26 +46,22 @@ const send = (data: any) => {
 					name="test"
 					value="foo"
 					checked
-					type="radio"
-					as="input" />
+					type="radio" />
 				<Field
 					name="test"
 					default="foo"
 					value="bar"
-					type="radio"
-					as="input" />
+					type="radio" />
 			</div>
 			<Field
 				name="check"
-				type="checkbox"
-				as="input" />
+				type="checkbox" />
 			<Field
 				v-if="values.check"
 				name="check-custom"
 				type="checkbox"
 				true-value="yes"
-				false-value="no"
-				as="input" />
+				false-value="no" />
 
 
 			<Field
