@@ -11,7 +11,7 @@ const props = defineProps<{
 	initialValues?: any;
 	name?: string;
 	preserve?: boolean;
-	onValueChange?: () => void;
+	onValueChange?: (value?: any) => void;
 }>();
 const emits = defineEmits(['submit', 'value-change']);
 
