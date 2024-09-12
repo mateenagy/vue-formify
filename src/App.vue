@@ -41,6 +41,9 @@ const send = (data: any) => {
 			ref="form"
 			v-slot="{ values }">
 			<pre>{{ values }}</pre>
+			<Field
+				name="hali"
+				placeholder="asd" />
 			<div>
 				<Field
 					name="test"
@@ -55,6 +58,8 @@ const send = (data: any) => {
 			</div>
 			<Field
 				name="check"
+				:default="true"
+				checked
 				type="checkbox" />
 			<Field
 				v-if="values.check"

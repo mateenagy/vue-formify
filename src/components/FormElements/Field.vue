@@ -11,26 +11,29 @@ const props = withDefaults(
 		ignore?: any;
 		value?: any;
 		trueValue?: any;
+		modelValue?: any;
 		falseValue?: any;
-		as?: 'input' | 'select' | undefined;
+		as?: 'input' | 'select' | 'div';
 	}>(),
 	{
 		error: undefined,
+		modelValue: undefined,
 		default: '',
 		value: '',
-		ignore: false,
 		as: 'input',
+		ignore: false,
 		trueValue: true,
 		falseValue: false,
 	},
 );
+const emits = defineEmits(['update:modelValue']);
 defineSlots<{
-	default(props: {field?: any, error?: any}): any;
+	default(props: {field?: {value: any; }, error?: any}): any;
 }>();
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
-const { field, getError } = useSimpleField(props);
+const { field, getError } = useSimpleField(props, emits);
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
@@ -49,7 +52,7 @@ const { field, getError } = useSimpleField(props);
 </script>
 <template>
 	<div>
-		<template v-if="!as">
+		<template v-if="as === 'div'">
 			<slot
 				:field="field"
 				:error="getError()" />

@@ -2,7 +2,7 @@ import { forms } from '@/utils/store';
 import { deleteByPath, EventEmitter, getValueByPath, mergeDeep, stringToObject } from '@/utils/utils';
 import { inject, onBeforeUnmount, onBeforeUpdate, reactive, watch } from 'vue';
 
-export const useSimpleField = (props: Record<string, any>) => {
+export const useSimpleField = (props: Record<string, any>, emits?: any) => {
 	const formData = inject('formData', Object.create({}));
 	const defaultValue = {
 		value: (forms[formData.uid].initialValues && getValueByPath(forms[formData.uid].initialValues, props.name)) ?? props.modelValue ?? props.default ?? getValueByPath(forms[formData.uid].values, props.name)?.value ?? '',
@@ -24,12 +24,14 @@ export const useSimpleField = (props: Record<string, any>) => {
 			field.value = getValueByInputType(evt.target);
 			field.modelValue = field.value;
 			getValueByPath(forms[formData.uid].values, props.name).value = field.modelValue;
+			emits?.('update:modelValue', getValueByPath(forms[formData.uid].values, props.name).value);
 			EventEmitter.emit('value-change', formData.uid);
 		},
 		'onUpdate:modelValue': (val: any) => {
 			if (!props.ignore) {
 				getValueByPath(forms[formData.uid].values, props.name).value = val;
 				field.modelValue = getValueByPath(forms[formData.uid].values, props.name).value;
+				emits?.('update:modelValue', getValueByPath(forms[formData.uid].values, props.name).value);
 				EventEmitter.emit('value-change', formData.uid);
 			}
 		},
@@ -59,7 +61,7 @@ export const useSimpleField = (props: Record<string, any>) => {
 	};
 
 	const getError = () => {
-		return getValueByPath(forms[formData.uid].values, props.name).error;
+		return getValueByPath(forms[formData.uid].values, props.name)?.error;
 	};
 
 	watch(() => getValueByPath(forms[formData.uid].values, props.name)?.value, () => {

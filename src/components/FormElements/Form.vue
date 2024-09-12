@@ -40,6 +40,7 @@ const updateField = (name: string, value: any) => {
 const reset = () => {
 	EventEmitter.emit('reset');
 	forms[uid].values = JSON.parse(originalForm);
+	forms[uid].key++;
 };
 
 EventEmitter.on('value-change', (id: string) => {
