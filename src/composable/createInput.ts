@@ -2,9 +2,10 @@ import { EventEmitter, getKey, getValueByPath } from '@/utils/utils';
 import { Component, defineComponent, h, inject, resolveDynamicComponent } from 'vue';
 import { useField } from './useField';
 import { forms } from '@/utils/store';
+import { GetKeys } from './useForm';
 
-export type BaseInput = {
-	name?: string;
+export type BaseInput<T extends Record<string, any>> = {
+	name?: GetKeys<T>;
 	default?: any;
 	modelValue?: any;
 	error?: any;
@@ -19,7 +20,7 @@ export type CreateInputOptions = {
 	defaultValueKey?: any;
 }
 
-export const createInput = <T>(component: Component, options?: CreateInputOptions) => {
+export const createInput = <T, K extends Record<string, any> = Record<string, any>>(component: Component, options?: CreateInputOptions) => {
 	const emitsArray: string[] = [];
 	if (Array.isArray(options?.modelKeys)) {
 		options?.modelKeys.forEach((key) => {
@@ -31,7 +32,7 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 		emitsArray.push(`update:${options.modelKeys}`);
 	}
 
-	return defineComponent<BaseInput & T>({
+	return defineComponent<BaseInput<K> & T>({
 		name: 'Field',
 		props: {
 			default: {
@@ -51,20 +52,19 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 				type: Boolean,
 				default: false,
 			},
-			[options?.defaultValueKey]: {
+			...options?.defaultValueKey && { [options?.defaultValueKey]: {
 				type: [String, Boolean, Number, Object, Array],
 				default: '',
-			},
+			} },
 			modelValue: {
 				type: [String, Boolean, Number, Object, Array],
 				default: undefined,
 			},
 		},
 		emits: ['update:modelValue', ...emitsArray],
-		setup: (props: BaseInput, { emit, slots, attrs }) => {
+		setup: (props: BaseInput<K>, { emit, slots, attrs }) => {
 			const { uid } = inject('formData', Object.create({}));
 			const fields = new Map();
-
 			if (options?.modelKeys) {
 				if (Array.isArray(options.modelKeys)) {
 					options.modelKeys.forEach((modelKey: string) => {
@@ -79,21 +79,21 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 
 			const setDefaultValue = () => {
 				const obj: Record<string, any> = {
-					modelValue: props.modelValue || getValueByPath(forms[uid].values, props.name)?.value || props.default || '',
+					modelValue: props.modelValue || getValueByPath(forms[uid].values, props.name as string)?.value || props.default || '',
 				};
 
 				if (options?.modelKeys) {
 					if (Array.isArray(options.modelKeys)) {
 						options.modelKeys.forEach((key) => {
-							obj[key] = getValueByPath(forms[uid].values, props.name)?.[key]?.value || props.modelValue || props.default[key];
+							obj[key] = getValueByPath(forms[uid].values, props.name as string)?.[key]?.value || props.modelValue || props.default[key];
 						});
 					} else {
-						obj[options.modelKeys] = props[options.modelKeys as keyof typeof props] ?? getValueByPath(forms[uid].values, props.name)?.[options.modelKeys]?.value ?? props.modelValue ?? props.default;
+						obj[options.modelKeys] = props[options.modelKeys as keyof typeof props] ?? getValueByPath(forms[uid].values, props.name as string)?.[options.modelKeys]?.value ?? props.modelValue ?? props.default;
 						options.useModelKeyAsState && (
-							obj.modelValue = props[options.modelKeys as keyof typeof props] ?? getValueByPath(forms[uid].values, props.name)?.[options.modelKeys]?.value,
-							getValueByPath(forms[uid].values, props.name)[options.modelKeys].value = obj[options.modelKeys]
+							obj.modelValue = props[options.modelKeys as keyof typeof props] ?? getValueByPath(forms[uid].values, props.name as string)?.[options.modelKeys]?.value,
+							getValueByPath(forms[uid].values, props.name as string)[options.modelKeys].value = obj[options.modelKeys]
 						);
-						const key = getKey(props.name, options.modelKeys, options.useModelKeyAsState);
+						const key = getKey(props.name as string, options.modelKeys, options.useModelKeyAsState);
 						getValueByPath(forms[uid].values, key).value = obj[options.modelKeys];
 					}
 				}
@@ -121,7 +121,7 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 							...options.useModelKeyAsState && {
 								['onUpdate:modelValue']: (value: any) => {
 									emit('update:modelValue', value);
-									(!props.ignore && getValueByPath(forms[uid].values, props.name)) && (getValueByPath(forms[uid].values, props.name).value = value);
+									(!props.ignore && getValueByPath(forms[uid].values, props.name as string)) && (getValueByPath(forms[uid].values, props.name as string).value = value);
 									EventEmitter.emit('value-change', uid);
 								},
 							},
@@ -131,7 +131,7 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 					return {
 						['onUpdate:modelValue']: (value: any) => {
 							emit('update:modelValue', value);
-							(!props.ignore && getValueByPath(forms[uid].values, props.name)) && (getValueByPath(forms[uid].values, props.name).value = value);
+							(!props.ignore && getValueByPath(forms[uid].values, props.name as string)) && (getValueByPath(forms[uid].values, props.name as string).value = value);
 							EventEmitter.emit('value-change', uid);
 						},
 					};
@@ -140,7 +140,7 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 
 			const getError = () => {
 				if (!options?.modelKeys || options?.useModelKeyAsState) {
-					return getValueByPath(forms[uid].values, props.name)?.error;
+					return getValueByPath(forms[uid].values, props.name as string)?.error;
 				}
 
 				if (Array.isArray(options?.modelKeys)) {
@@ -161,18 +161,18 @@ export const createInput = <T>(component: Component, options?: CreateInputOption
 					{
 						...props,
 						...attrs,
-						name: props.name,
+						name: props.name as string,
 						error: getError() || props?.error,
 						onFocus: (key?: string) => {
 							if (key && typeof key === 'string') {
-								const _key = getKey(props.name, key, options?.useModelKeyAsState);
+								const _key = getKey(props.name as string, key, options?.useModelKeyAsState);
 								getValueByPath(forms[uid].values, _key)?.error && (getValueByPath(forms[uid].values, _key).error = undefined);
-							} else if (props.name?.match(/.\[/)) {
-								const _key = props.name?.split(/\[/)[0];
+							} else if ((props.name as string)?.match(/.\[/)) {
+								const _key = (props.name as string)?.split(/\[/)[0];
 
 								getValueByPath(forms[uid].values, _key)?.error && (getValueByPath(forms[uid].values, _key).error = undefined);
 							} else {
-								getValueByPath(forms[uid].values, props.name)?.error && (getValueByPath(forms[uid].values, props.name).error = undefined);
+								getValueByPath(forms[uid].values, props.name as string)?.error && (getValueByPath(forms[uid].values, props.name as string).error = undefined);
 							}
 						},
 						...{ ...setDefaultValue() },

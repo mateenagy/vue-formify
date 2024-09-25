@@ -1,3 +1,4 @@
+import { GetKeys } from '@/composable/useForm';
 import { AllowedComponentProps, Component, VNodeProps } from 'vue';
 
 export type ComponentProps<C extends Component> = C extends new (...args: any) => any
@@ -9,11 +10,11 @@ export type FormElement = Record<string, {
 	error: string | undefined;
 }>
 
-export type FormType<T = unknown> = {
+export type FormType<T extends Record<string, any> = Record<string, any>> = {
 	values: T;
 	errors: T;
-	setError: (name: string, error: any) => void;
-	updateField: (name: string, value: any) => void;
+	setError: (name: GetKeys<T>, error: any) => void;
+	updateField: (name: GetKeys<T>, value: any) => void;
 	reset: () => void;
 	flush: () => void;
 }

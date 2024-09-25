@@ -1,21 +1,37 @@
+<!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script lang="ts" setup>
-import Form from './components/FormElements/Form.vue';
 import { ref } from 'vue';
-import { FormType } from './components';
-import { ArrayField, Field } from '@/components/main';
+import { ComponentProps, FormType } from './components';
+import { useForm } from './composable/useForm';
+import CustomInput from './CustomInput.vue';
+import { createInput } from './composable/createInput';
+import { object, string, number, date, InferType, array } from 'yup';
+import CustomInputVue from '@/components/FormElements/__tests__/Views/CustomInput.vue';
+/*---------------------------------------------
+/  TYPES
+---------------------------------------------*/
+const schema = object({
+	age: number().required().positive().integer(),
+	createdOn: date(),
+	name: string().required(),
+	email: string().email(),
+	website: string().url().nullable(),
+	links: array().of(string()),
+});
+type User = InferType<typeof schema>;
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
-const form = ref<FormType>();
-const send = (data: any) => {
-	form.value?.setError('baz', 'Required');
-	form.value?.setError('faz', 'Required');
-	form.value?.setError('first_name', 'Required');
+const ColorPicker = createInput(CustomInputVue);
+const form = ref<FormType<User>>();
+const send = (data: User) => {
+	form.value?.setError('name', 'Required');
 	console.log('[form data]: ', data);
 };
+const { Form, Field, FieldArray, Error } = useForm<User>();
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
@@ -31,103 +47,49 @@ const send = (data: any) => {
 /*---------------------------------------------
 /  HOOKS
 ---------------------------------------------*/
+const foo = ref<string>('asdasd');
+const show = ref<boolean>(true);
 </script>
 <template>
 	<div>
 		<h2>Form</h2>
 		<Form
-			@submit="send"
-			:initial-values="{ foo: 'test' }"
 			ref="form"
-			v-slot="{ values }">
+			name="foo"
+			v-slot="{ values }"
+			@submit="send">
 			<pre>{{ values }}</pre>
+			<button
+				type="button"
+				@click="show = !show">
+				Toggle
+			</button>
 			<Field
-				name="hali"
-				placeholder="asd" />
-			<div>
-				<Field
-					name="test"
-					value="foo"
-					checked
-					type="radio" />
-				<Field
-					name="test"
-					default="foo"
-					value="bar"
-					type="radio" />
-			</div>
-			<Field
-				name="check"
-				:default="true"
-				checked
-				type="checkbox" />
-			<Field
-				v-if="values.check"
-				name="check-custom"
-				type="checkbox"
-				true-value="yes"
-				false-value="no" />
-
-
-			<Field
-				name="faz"
-				default="faz"
-				v-slot="{ field, error }">
-				<input
-					type="text"
-					v-bind="field">
-				<small>{{ error }}</small>
-			</Field>
-			<ArrayField
-				name="links"
-				:initial-values="['1', '2', '3']"
-				v-slot="{ fields, add, remove }">
-				<fieldset
-					v-for="(field, idx) of fields"
-					:key="field.id">
-					<Field
-						:name="`links[${idx}]`"
-						as="input" />
-					<button
-						type="button"
-						@click="remove(idx)">
-						Remove
-					</button>
-				</fieldset>
-				<button
-					type="button"
-					@click="add">
-					Add
-				</button>
-			</ArrayField>
-			<!-- <Field
-				name="faz"
-				default="faz"
+				as="div"
+				name="website"
+				v-if="show"
+				preserve
 				v-slot="{ field }">
 				<input
 					type="text"
 					v-bind="field">
 			</Field>
-			<Error error-for="faz" />
 			<Field
-				name="first_name"
-				v-slot="{ field, error }">
-				<label>Firstname</label>
-				<input v-bind="field" />
-				<small>{{ error }}</small>
-			</Field>
-			<ArrayField
+				name="name"
+				v-model="foo" />
+			<Error error-for="name" />
+			<FieldArray
+				v-if="show"
 				name="links"
 				v-slot="{ fields, add, remove }">
 				<fieldset
-					v-for="(field, idx) of fields"
+					v-for="(field, index) of fields"
 					:key="field.id">
 					<Field
-						:name="`links[${idx}]`"
-						as="input" />
+						:name="`links[${index}]`" />
 					<button
 						type="button"
-						@click="remove(idx)">
+						@click="remove(index)">
 						Remove
 					</button>
 				</fieldset>
@@ -136,13 +98,8 @@ const send = (data: any) => {
 					@click="add">
 					Add
 				</button>
-			</ArrayField> -->
+			</FieldArray>
 			<button>Send</button>
-			<button
-				type="button"
-				@click="form?.reset">
-				Reset
-			</button>
 		</Form>
 	</div>
 </template>

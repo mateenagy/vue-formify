@@ -1,18 +1,15 @@
-import ArrayField from './FormElements/ArrayField.vue';
-import Field from './FormElements/Field.vue';
-import { default as FormifyForm } from './FormElements/Form.vue';
-import { default as Error } from './FormElements/Error.vue';
 import { FormType, ComponentProps } from './index';
 import { createInput } from '@/composable/createInput';
-// import { createSchema } from '@/composable/createSchema';
+import { useForm, Form, Field, FieldArray, Error } from '@/composable/useForm';
 
 export {
 	createInput,
-	// createSchema,
-	FormifyForm,
+	Form as FormifyForm,
+	Form,
 	Error,
-	ArrayField,
+	FieldArray,
 	Field,
+	useForm,
 };
 
 export type {

@@ -1,17 +1,15 @@
 import { forms } from '@/utils/store';
-import { deleteByPath, EventEmitter, getValueByPath, mergeDeep, stringToObject } from '@/utils/utils';
+import { deleteByPath, EventEmitter, getPropBooleanValue, getValueByPath, mergeDeep, stringToObject } from '@/utils/utils';
 import { inject, onBeforeUnmount, onBeforeUpdate, reactive, watch } from 'vue';
 
-export const useSimpleField = (props: Record<string, any>, emits?: any) => {
-	const formData = inject('formData', Object.create({}));
+export const useSimpleField = (props: Record<string, any>, emits?: any, isArrayField: boolean = false) => {
+	const formData = inject('formData', Object.create({}));	
 	const defaultValue = {
-		value: (forms[formData.uid].initialValues && getValueByPath(forms[formData.uid].initialValues, props.name)) ?? props.modelValue ?? props.default ?? getValueByPath(forms[formData.uid].values, props.name)?.value ?? '',
+		value: ((forms[formData.uid].initialValues && !isArrayField) && getValueByPath(forms[formData.uid].initialValues, props.name)) ?? props.modelValue ?? props.default ?? getValueByPath(forms[formData.uid].values, props.name)?.value ?? (isArrayField ? [] : ''),
 		error: undefined,
 	};
-
 	const obj = stringToObject(props.name, defaultValue);
 	forms[formData.uid].values = mergeDeep(forms[formData.uid].values, obj);
-
 	const field = reactive({
 		name: props.name,
 		modelValue: getValueByPath(forms[formData.uid].values, props.name)?.value,
@@ -57,7 +55,7 @@ export const useSimpleField = (props: Record<string, any>, emits?: any) => {
 	};
 
 	const getCheckValue = (checked: boolean) => {
-		return checked ? props.trueValue : props.falseValue;
+		return checked ? props.trueValue || true : props.falseValue || false;
 	};
 
 	const getError = () => {
@@ -99,7 +97,7 @@ export const useSimpleField = (props: Record<string, any>, emits?: any) => {
 	});
 
 	onBeforeUnmount(() => {
-		if (!props.preserve && !formData.preserve) {
+		if (!getPropBooleanValue(formData.preserve) && !getPropBooleanValue(props.preserve)) {
 			deleteByPath(forms[formData.uid].values, props.name);
 		};
 	});

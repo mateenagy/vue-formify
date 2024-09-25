@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AnyObjectSchema, ObjectSchema, ValidationError } from 'yup';
 
 const processError = (error: any[]) => {

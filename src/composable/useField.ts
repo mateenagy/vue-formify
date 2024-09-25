@@ -1,4 +1,4 @@
-import { deleteByPath, EventEmitter, getKey, getValueByPath, mergeDeep, stringToObject } from '@/utils/utils';
+import { deleteByPath, EventEmitter, getKey, getPropBooleanValue, getValueByPath, mergeDeep, stringToObject } from '@/utils/utils';
 import { inject, onBeforeUnmount, toValue, watch } from 'vue';
 import { CreateInputOptions } from './createInput';
 import { forms } from '@/utils/store';
@@ -78,7 +78,7 @@ export const useField = (props: Record<string, any>, _emit: (event: string, ...a
 		createFormInput();
 	}
 	onBeforeUnmount(() => {
-		if (!props.preserve && !preserveForm) {
+		if (!getPropBooleanValue(props.preserve) && !getPropBooleanValue(preserveForm)) {
 			deleteByPath(forms[uid].values, props.name);
 		};
 	});

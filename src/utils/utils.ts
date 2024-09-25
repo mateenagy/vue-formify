@@ -12,6 +12,14 @@ export const getKey = (name: string = '', modelKey: string, useKey: boolean = fa
 	return modelKey;
 };
 
+export const getPropBooleanValue = (props: any) => {
+	if (typeof props === 'string' && props === '') {
+		return true;
+	}
+
+	return !!props;
+};
+
 export const stringToObject = (path: string, defaultValue: Record<string, any>) => {
 	const disable_matches = path.match(BETWEEN_BRACKETS_REGEX);
 
