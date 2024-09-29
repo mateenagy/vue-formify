@@ -17,6 +17,7 @@ const schema = object({
 	email: string().email(),
 	website: string().url().nullable(),
 	links: array().of(string()),
+	countries: array().of(string()),
 });
 type User = InferType<typeof schema>;
 /*---------------------------------------------
@@ -58,14 +59,34 @@ const show = ref<boolean>(true);
 			name="foo"
 			v-slot="{ values }"
 			@submit="send">
-			<pre>{{ values }}</pre>
 			<button
 				type="button"
 				@click="show = !show">
 				Toggle
 			</button>
 			<Field
-				as="div"
+				name="countries"
+				multiple
+				default="en"
+				as="select"
+				v-slot="{ field }">
+				<option
+					value="hu"
+					:selected="field.value.includes('hu')">
+					Hungary
+				</option>
+				<option
+					value="en"
+					:selected="field.value.includes('en')">
+					England
+				</option>
+				<option
+					value="au"
+					:selected="field.value.includes('au')">
+					Austria
+				</option>
+			</Field>
+			<Field
 				name="website"
 				v-if="show"
 				preserve
@@ -99,6 +120,7 @@ const show = ref<boolean>(true);
 					Add
 				</button>
 			</FieldArray>
+			<pre>{{ values }}</pre>
 			<button>Send</button>
 		</Form>
 	</div>

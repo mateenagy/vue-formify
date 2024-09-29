@@ -1,7 +1,7 @@
 /* eslint-disable vue/one-component-per-file */
 /* eslint-disable vue/require-prop-types */
 import { createFormDataFromObject, deleteByPath, EventEmitter, flattenObject, getValueByPath } from '@/utils/utils';
-import { computed, defineComponent, h, inject, nextTick, onMounted, provide, ref, SlotsType, toValue } from 'vue';
+import { computed, defineComponent, h, inject, InputHTMLAttributes, nextTick, onMounted, provide, ref, SlotsType, toValue } from 'vue';
 import { forms } from '@/utils/store';
 import { useSimpleField } from './useSimpleField';
 
@@ -43,8 +43,8 @@ type FieldType<T extends Record<string, any>> = {
 	modelValue?: any;
 	falseValue?: any;
 	preserve?: boolean;
-	as?: 'input' | 'select' | 'div';
-}
+	as?: 'input' | 'select';
+} & InputHTMLAttributes
 
 type FieldArrayType<T extends Record<string, any>> = {
 	name: GetKeys<T>;
@@ -185,9 +185,9 @@ const FormComp = <T extends Record<string, any> = Record<string, any>>() => defi
 const FieldComp = <T extends Record<string, any> = Record<string, any>>() => defineComponent(
 	(props: FieldType<T>, { slots, emit, attrs }) => {
 		const { field, getError } = useSimpleField(props, emit);
-
+		
 		return () => {
-			return h(props.as === 'div' ? 'div' : props.as || 'input',
+			return h((Object.keys(slots).length && props.as !== 'select') ? 'div' : props.as || 'input',
 				{
 					...props,
 					...attrs,

@@ -11,6 +11,8 @@ export type BaseInput<T extends Record<string, any>> = {
 	error?: any;
 	ignore?: boolean;
 	preserve?: boolean;
+	trueValue?: any;
+	falseValue?: any;
 }
 
 export type CreateInputOptions = {
@@ -32,7 +34,7 @@ export const createInput = <T, K extends Record<string, any> = Record<string, an
 		emitsArray.push(`update:${options.modelKeys}`);
 	}
 
-	return defineComponent<BaseInput<K> & T>({
+	return defineComponent<T & BaseInput<K>>({
 		name: 'Field',
 		props: {
 			default: {
@@ -60,11 +62,20 @@ export const createInput = <T, K extends Record<string, any> = Record<string, an
 				type: [String, Boolean, Number, Object, Array],
 				default: undefined,
 			},
+			trueValue: {
+				type: [String, Number, Array, Object, Boolean],
+				default: true,
+			},
+			falseValue: {
+				type: [String, Number, Array, Object, Boolean],
+				default: false,
+			},
 		},
 		emits: ['update:modelValue', ...emitsArray],
 		setup: (props: BaseInput<K>, { emit, slots, attrs }) => {
 			const { uid } = inject('formData', Object.create({}));
 			const fields = new Map();
+			
 			if (options?.modelKeys) {
 				if (Array.isArray(options.modelKeys)) {
 					options.modelKeys.forEach((modelKey: string) => {

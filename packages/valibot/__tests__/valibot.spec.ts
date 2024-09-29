@@ -1,14 +1,14 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import * as v from 'valibot';
 import { describe, expect, it } from 'vitest';
-import { FormifyForm, FormifyInput } from 'vue-formify';
+import { FormifyForm, Field } from 'vue-formify';
 import { schemaFromValibot } from '../index';
 
 const mountWithComponents = (component: Record<string, any>) => {
 	component.components = {
 		...component.components,
 		FormifyForm,
-		FormifyInput,
+		Field,
 	};
 
 	return mount(component);
@@ -29,7 +29,7 @@ describe('Valibot validation', () => {
 			},
 			template: `
 				<FormifyForm v-slot="{data, errors}" :validation-schema="schema" @submit="send">
-					<FormifyInput name="email" />
+					<Field name="email" />
 					<span id="error">{{ errors.email }}</span>
 				</FormifyForm>
 			`,
@@ -58,7 +58,7 @@ describe('Valibot validation', () => {
 			},
 			template: `
 				<FormifyForm v-slot={errors} :validation-schema="schema" @submit="send">
-					<FormifyInput name="email" />
+					<Field name="email" />
 					<span id="error">{{ errors.email }}</span>
 					<button type="submit">Send</button>
 				</FormifyForm>
@@ -88,7 +88,7 @@ describe('Valibot validation', () => {
 			},
 			template: `
 				<FormifyForm v-slot={errors} :validation-schema="schema" @submit="send">
-					<FormifyInput name="social.github" />
+					<Field name="social.github" />
 					<span id="error">{{ errors.social?.github }}</span>
 					<button type="submit">Send</button>
 				</FormifyForm>
@@ -118,7 +118,7 @@ describe('Valibot validation', () => {
 			},
 			template: `
 				<FormifyForm v-slot={errors} :validation-schema="schema" @submit="send">
-					<FormifyInput name="social[0].url" />
+					<Field name="social[0].url" />
 					<span id="error">{{ errors.social?.[0]?.url }}</span>
 					<button type="submit">Send</button>
 				</FormifyForm>

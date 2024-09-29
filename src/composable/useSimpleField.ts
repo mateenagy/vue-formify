@@ -20,7 +20,7 @@ export const useSimpleField = (props: Record<string, any>, emits?: any, isArrayF
 			}
 
 			field.value = getValueByInputType(evt.target);
-			field.modelValue = field.value;
+			field.modelValue = getValueByInputType(evt.target);
 			getValueByPath(forms[formData.uid].values, props.name).value = field.modelValue;
 			emits?.('update:modelValue', getValueByPath(forms[formData.uid].values, props.name).value);
 			EventEmitter.emit('value-change', formData.uid);
@@ -49,6 +49,20 @@ export const useSimpleField = (props: Record<string, any>, emits?: any, isArrayF
 
 		if (target.type === 'radio') {
 			return props.value;
+		}
+
+		if (target.type === 'select-multiple') {
+			const select = target as unknown as HTMLSelectElement;
+			const selectedValues: any[] = [];
+			
+			for (let index = 0; index < select.options.length; index++) {
+				const element = select.options[index];
+				if (element.selected) {
+					selectedValues.push(element.value);
+				}
+			}
+
+			return selectedValues;
 		}
 
 		return target.value;

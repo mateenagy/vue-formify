@@ -32,7 +32,8 @@ export default [
 			},
 		},
 		files: [
-			'src/**/*.{ts,js,vue}'
+			'src/**/*.{ts,js,vue}',
+			'packages/**/*.{ts,js,vue}'
 		],
         rules: {
 			"array-bracket-spacing": ["error", "never"],
