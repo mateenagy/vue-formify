@@ -1,7 +1,7 @@
 /* eslint-disable vue/one-component-per-file */
 /* eslint-disable vue/require-prop-types */
-import { createFormDataFromObject, deleteByPath, EventEmitter, flattenObject, getValueByPath } from '@/utils/utils';
-import { computed, defineComponent, h, inject, InputHTMLAttributes, nextTick, onMounted, provide, ref, SlotsType, toValue } from 'vue';
+import { createFormDataFromObject, deleteByPath, EventEmitter, flattenObject, getPropBooleanValue, getValueByPath, normalizeChildren, resolveTag } from '@/utils/utils';
+import { computed, defineComponent, h, inject, InputHTMLAttributes, nextTick, onMounted, provide, ref, resolveDynamicComponent, SlotsType, toValue } from 'vue';
 import { forms } from '@/utils/store';
 import { useSimpleField } from './useSimpleField';
 
@@ -103,7 +103,6 @@ const FormComp = <T extends Record<string, any> = Record<string, any>>() => defi
 			if (props?.enctype === 'multipart/form-data') {
 				_value = createFormDataFromObject(flattenObject(forms[uid].values));
 			}
-
 			emit('submit', _value, $event);
 		};
 
@@ -159,7 +158,6 @@ const FormComp = <T extends Record<string, any> = Record<string, any>>() => defi
 
 
 		return () => {
-			// render function or JSX
 			return h('form',
 				{ ...props, ...attrs, ...emit, key: forms[uid].key, onSubmit: submit },
 				slots.default?.({ values: values.value, errors: errors.value }),
@@ -167,6 +165,7 @@ const FormComp = <T extends Record<string, any> = Record<string, any>>() => defi
 		};
 	},
 	{
+		name: 'FormifyForm',
 		props: [
 			'enctype',
 			'validationSchema',
@@ -183,22 +182,61 @@ const FormComp = <T extends Record<string, any> = Record<string, any>>() => defi
 );
 
 const FieldComp = <T extends Record<string, any> = Record<string, any>>() => defineComponent(
-	(props: FieldType<T>, { slots, emit, attrs }) => {
-		const { field, getError } = useSimpleField(props, emit);
-		
+	(props: FieldType<T>, { slots, attrs, emit }) => {
+		const { value, onInput, onFocus, getError } = useSimpleField(props, emit, getPropBooleanValue(attrs?.multiple) ? true : false);
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const { modelValue, value: propValue, ...propsProxy } = props;
+
+		const sharedProps = computed(() => {
+			const $attrs: Record<string, any> = {
+				name: props.name,
+				onInput,
+				onChange: onInput,
+				onFocus,
+				...!getPropBooleanValue(attrs?.multiple) && { value: value.value },
+			};
+
+			return $attrs;
+		});
+
+		const fieldProps = computed(() => {
+			const $attrs = {
+				...sharedProps.value,
+				value: value.value,
+				modelValue: value.value,
+			};
+
+			return $attrs;
+		});
+
+		const slotProps = () => {
+			return {
+				field: fieldProps.value,
+				value: value.value,
+				modelValue: value.value,
+				error: getError(),
+			};
+		};
+
 		return () => {
-			return h((Object.keys(slots).length && props.as !== 'select') ? 'div' : props.as || 'input',
-				{
-					...props,
-					...attrs,
-					...emit,
-					...field,
-				},
-				slots.default?.({ field, error: getError() }) as SlotsType<{ field: { value: any } }>,
-			);
+			const tag = resolveDynamicComponent(resolveTag(props, slots)) as string;
+			const children = normalizeChildren(tag, slots, slotProps);
+			if (tag) {
+				return h(tag,
+					{
+						...attrs,
+						...propsProxy,
+						...sharedProps.value,
+					},
+					children,
+				);
+			} else {
+				return children;
+			}
 		};
 	},
 	{
+		name: 'Field',
 		inheritAttrs: false,
 		props: [
 			'name',
@@ -206,14 +244,13 @@ const FieldComp = <T extends Record<string, any> = Record<string, any>>() => def
 			'default',
 			'ignore',
 			'preserve',
-			'value',
 			'trueValue',
 			'modelValue',
 			'falseValue',
 			'as',
 		],
 		slots: Object as SlotsType<{
-			default: { field: { value: any }; error: any }
+			default: { field: { value: any }, error: any }
 		}>,
 		emits: ['update:modelValue'],
 	},
@@ -302,7 +339,7 @@ const FieldArrayComp = <T extends Record<string, any> = Record<string, any>>() =
 
 		return () => {
 			return h('div',
-				{ ...props, ...attrs, ...emit },
+				{ ...props,...attrs, ...emit },
 				slots.default?.({ fields: toValue(fields), add, remove, error: getError() }),
 			);
 		};

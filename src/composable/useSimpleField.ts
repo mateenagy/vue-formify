@@ -1,48 +1,31 @@
 import { forms } from '@/utils/store';
 import { deleteByPath, EventEmitter, getPropBooleanValue, getValueByPath, mergeDeep, stringToObject } from '@/utils/utils';
-import { inject, onBeforeUnmount, onBeforeUpdate, reactive, watch } from 'vue';
+import { ref, inject, watch, onBeforeUnmount, computed, getCurrentInstance, onMounted } from 'vue';
 
-export const useSimpleField = (props: Record<string, any>, emits?: any, isArrayField: boolean = false) => {
-	const formData = inject('formData', Object.create({}));	
+export const useSimpleField = (props: any, emit: any, isArrayField: boolean = false) => {
+	const formData = inject('formData', Object.create({}));
+	const instance = getCurrentInstance();
 	const defaultValue = {
 		value: ((forms[formData.uid].initialValues && !isArrayField) && getValueByPath(forms[formData.uid].initialValues, props.name)) ?? props.modelValue ?? props.default ?? getValueByPath(forms[formData.uid].values, props.name)?.value ?? (isArrayField ? [] : ''),
 		error: undefined,
 	};
+	const tmpDefaultValue = JSON.stringify(defaultValue.value);
+	const value = ref(defaultValue.value);
 	const obj = stringToObject(props.name, defaultValue);
 	forms[formData.uid].values = mergeDeep(forms[formData.uid].values, obj);
-	const field = reactive({
-		name: props.name,
-		modelValue: getValueByPath(forms[formData.uid].values, props.name)?.value,
-		value: getValueByPath(forms[formData.uid].values, props.name)?.value,
-		oninput(evt: any) {
-			if (props.ignore) {
-				return;
-			}
 
-			field.value = getValueByInputType(evt.target);
-			field.modelValue = getValueByInputType(evt.target);
-			getValueByPath(forms[formData.uid].values, props.name).value = field.modelValue;
-			emits?.('update:modelValue', getValueByPath(forms[formData.uid].values, props.name).value);
-			EventEmitter.emit('value-change', formData.uid);
-		},
-		'onUpdate:modelValue': (val: any) => {
-			if (!props.ignore) {
-				getValueByPath(forms[formData.uid].values, props.name).value = val;
-				field.modelValue = getValueByPath(forms[formData.uid].values, props.name).value;
-				emits?.('update:modelValue', getValueByPath(forms[formData.uid].values, props.name).value);
-				EventEmitter.emit('value-change', formData.uid);
-			}
-		},
-		onfocus: () => {
-			!props.ignore && (getValueByPath(forms[formData.uid].values, props.name).error = undefined);
-		},
-	});
+	const onInput = (evt: any) => {
+		value.value = (typeof evt === 'object') ? getValueByInputType(evt.target) : evt;
+		getValueByPath(forms[formData.uid].values, props.name).value = value.value;
+		// emit('update:modelValue', value.value);
+	};
 
-	const updateValue = (value: any, key: any = props.name) => {
-		getValueByPath(forms[formData.uid].values, key).value = mergeDeep(getValueByPath(forms[formData.uid].values, key).value, value);
+	const onFocus = () => {
+		getValueByPath(forms[formData.uid].values, props.name).error = undefined;
 	};
 
 	const getValueByInputType = (target: HTMLInputElement) => {
+		console.log('asf');
 		if (target.type === 'checkbox') {
 			return getCheckValue(target.checked);
 		}
@@ -52,17 +35,10 @@ export const useSimpleField = (props: Record<string, any>, emits?: any, isArrayF
 		}
 
 		if (target.type === 'select-multiple') {
-			const select = target as unknown as HTMLSelectElement;
-			const selectedValues: any[] = [];
-			
-			for (let index = 0; index < select.options.length; index++) {
-				const element = select.options[index];
-				if (element.selected) {
-					selectedValues.push(element.value);
-				}
-			}
+			const options = Array.from((target as unknown as HTMLSelectElement).options);
+			const selectedOptions = options.filter(option => option.selected).map(opt => opt.value);
 
-			return selectedValues;
+			return selectedOptions;
 		}
 
 		return target.value;
@@ -76,13 +52,17 @@ export const useSimpleField = (props: Record<string, any>, emits?: any, isArrayF
 		return getValueByPath(forms[formData.uid].values, props.name)?.error;
 	};
 
-	watch(() => getValueByPath(forms[formData.uid].values, props.name)?.value, () => {
-		if (props.ignore) {
-			return;
-		}
-		field.value = getValueByPath(forms[formData.uid].values, props.name)?.value;
-		field.modelValue = getValueByPath(forms[formData.uid].values, props.name)?.value;
+	const valueProxy = computed(() => {
+		return value.value;
 	});
+
+	// watch(() => getValueByPath(forms[formData.uid].values, props.name)?.value, () => {
+	// 	if (props.ignore) {
+	// 		return;
+	// 	}
+	// 	value.value = getValueByPath(forms[formData.uid].values, props.name)?.value;
+	// 	emit('update:modelValue', getValueByPath(forms[formData.uid].values, props.name)?.value);
+	// });
 
 	watch(() => [props.name, props.ignore], (curr, prev) => {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -97,17 +77,16 @@ export const useSimpleField = (props: Record<string, any>, emits?: any, isArrayF
 		}
 	}, { deep: true });
 
-	EventEmitter.on('reset', () => {
-		if (field && getValueByPath(forms[formData.uid].values, props.name)) {
-			getValueByPath(forms[formData.uid].values, props.name).value = defaultValue.value;
-			field.value = getValueByPath(forms[formData.uid].values, props.name)?.value;
-			field.modelValue = getValueByPath(forms[formData.uid].values, props.name)?.value;
-		}
-	});
+	const updateValue = (value: any, key: any = props.name) => {
+		getValueByPath(forms[formData.uid].values, key).value = mergeDeep(getValueByPath(forms[formData.uid].values, key).value, value);
+	};
 
-	onBeforeUpdate(() => {
-		field.value = getValueByPath(forms[formData.uid].values, props.name)?.value;
-		field.modelValue = getValueByPath(forms[formData.uid].values, props.name)?.value;
+	EventEmitter.on('reset', () => {
+		if (value.value && getValueByPath(forms[formData.uid].values, props.name)) {
+			getValueByPath(forms[formData.uid].values, props.name).value = JSON.parse(tmpDefaultValue);
+			value.value = JSON.parse(tmpDefaultValue);
+			emit('update:modelValue', JSON.parse(tmpDefaultValue));
+		}
 	});
 
 	onBeforeUnmount(() => {
@@ -116,9 +95,24 @@ export const useSimpleField = (props: Record<string, any>, emits?: any, isArrayF
 		};
 	});
 
+	onMounted(() => {
+		if (instance?.subTree?.el) {
+			if (props.as === 'select') {
+				const options = Array.from((instance?.subTree?.el as unknown as HTMLSelectElement).options);
+				options.forEach((op) => {
+					if (JSON.parse(tmpDefaultValue)?.includes?.(op.value)) {
+						op.selected = true;
+					}
+				});
+			}
+		}
+	});
+
 	return {
-		field,
-		updateValue,
+		value: valueProxy,
+		onInput,
+		onFocus,
 		getError,
+		updateValue,
 	};
 };

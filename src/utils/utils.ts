@@ -12,6 +12,34 @@ export const getKey = (name: string = '', modelKey: string, useKey: boolean = fa
 	return modelKey;
 };
 
+export const resolveTag = (props: Record<string, any>, slots: any) => {
+	let tag = props.as || '';
+
+	if (!props.as && !slots.default) {
+		tag = 'input';
+	}
+
+	return tag;
+};
+
+export const normalizeChildren = (
+	tag: string | undefined | null,
+	slots: any,
+	slotProps: () => Record<string, unknown>,
+) => {
+	if (!slots.default) {
+		return slots.default;
+	}
+
+	if (typeof tag === 'string' || !tag) {
+		return slots.default(slotProps());
+	}
+
+	return {
+		default: () => slots.default?.(slotProps()),
+	};
+};
+
 export const getPropBooleanValue = (props: any) => {
 	if (typeof props === 'string' && props === '') {
 		return true;
@@ -75,11 +103,11 @@ export const getValueByPath = (object: Record<string, any>, path?: string) => {
 
 	for (const part of parts) {
 		const array_mathes = part.match(ARRAY_INDEX_FROM_STRING_REGEX);
-		
+
 		if (array_mathes) {
 			const key = part.replace(REMOVE_ARRAY_INDEX_FROM_STRING_REGEX, '');
 			const index = part.match(GET_INDEX_FROM_STRING_REGEX)?.[1];
-			
+
 
 			currentObject = currentObject?.[key]?.value?.[`[${index}]`];
 		} else {
@@ -95,7 +123,7 @@ export const getValueByPath = (object: Record<string, any>, path?: string) => {
 		if (array_mathes) {
 			const key = last.replace(REMOVE_ARRAY_INDEX_FROM_STRING_REGEX, '');
 			const index = last.match(GET_INDEX_FROM_STRING_REGEX)?.[1];
-	
+
 			return last && currentObject?.[key]?.value?.[`[${index}]`];
 		}
 	}
@@ -115,7 +143,7 @@ export const deleteByPath = (object: Record<string, any>, path: string) => {
 	let currentObject = object;
 	const parts = path.split('.');
 	const last = parts.pop();
-	
+
 	for (const part of parts) {
 		const array_mathes = part.match(ARRAY_INDEX_FROM_STRING_REGEX);
 		if (array_mathes) {
@@ -145,14 +173,14 @@ export const deleteByPath = (object: Record<string, any>, path: string) => {
 
 		if (Object.keys(currentObject).length === 0) {
 			deleteByPath(object, parts.join('.'));
-		} 
+		}
 	}
 };
 
 export const flattenObject = (obj: any, type: 'value' | 'error' = 'value'): Record<string, any> => {
 	const result: any = {};
 	for (const key in obj) {
-		if (typeof obj[key] === 'object' && 'value' in obj[key] ) {
+		if (typeof obj[key] === 'object' && 'value' in obj[key]) {
 			if (typeof obj[key].value === 'object') {
 				Array.isArray(obj[key].value) && (result[key] = []);
 				if (Object.keys(obj[key].value)?.[0]?.match?.(BETWEEN_BRACKETS_REGEX)) {
