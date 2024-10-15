@@ -6,7 +6,7 @@ import NamedVModelVue from './Views/NamedVModel.vue';
 import { Form, Field, FieldArray, createInput } from '@/components/main';
 
 const ColorPicker = createInput(CustomInputVue);
-const TitleInput = createInput(NamedVModelVue, { modelKeys: 'title' });
+const TitleInput = createInput(NamedVModelVue, { modelKey: 'title' });
 const mountWithComponents = (component: Record<string, any>) => {
 	component.components = {
 		...component.components,

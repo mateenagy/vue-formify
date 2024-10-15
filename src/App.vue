@@ -1,6 +1,6 @@
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { ComponentProps, FormType } from './components';
 import { useForm } from './composable/useForm';
 import CustomInput from './CustomInput.vue';
@@ -10,6 +10,9 @@ import CustomInputVue from '@/components/FormElements/__tests__/Views/CustomInpu
 import InputText from 'primevue/inputtext';
 import Knob from 'primevue/knob';
 import Checkbox from 'primevue/checkbox';
+import { forms } from './utils/store';
+import NamedVModel from './components/FormElements/__tests__/Views/NamedVModel.vue';
+import NamedVModelAsState from './components/FormElements/__tests__/Views/NamedVModelAsState.vue';
 /*---------------------------------------------
 /  TYPES
 ---------------------------------------------*/
@@ -31,22 +34,16 @@ type User = InferType<typeof schema>;
 /  VARIABLES
 ---------------------------------------------*/
 const ColorPicker = createInput(CustomInputVue);
+const TitleInput = createInput(NamedVModel, { modelKey: 'title' });
+const CheckInput = createInput(NamedVModelAsState, { modelKey: 'checked', useModelKeyAsState: true });
 const form = ref<FormType<User>>();
-const send = (data: User) => {
+const send = (_data: User) => {
 	form.value?.setError('name', 'Required');
+	form.value?.setError('email', 'Required');
+	form.value?.setError('website', 'Required');
 	form.value?.setError('countries', 'Required');
-	console.log('[form data]: ', data);
-	fetch('https://jsonplaceholder.typicode.com/posts', {
-		method: 'POST',
-		body: JSON.stringify(data),
-		headers: {
-			'Content-type': 'application/json; charset=UTF-8',
-		},
-	})
-		.then(response => response.json())
-		.then(json => console.log(json));
 };
-const { Form, Field, FieldArray } = useForm<User>();
+const { Form, Field, FieldArray, Error } = useForm<User>();
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
@@ -62,10 +59,10 @@ const { Form, Field, FieldArray } = useForm<User>();
 /*---------------------------------------------
 /  HOOKS
 ---------------------------------------------*/
-const foo = ref<string>('foo');
+const foo = ref<string>('#b77171');
 const bar = ref<string[]>(['hu', 'au']);
 const show = ref<boolean>(true);
-const check = ref<boolean>(true);
+const check = ref<boolean>(false);
 </script>
 <template>
 	<div>
@@ -73,6 +70,7 @@ const check = ref<boolean>(true);
 		<Form
 			ref="form"
 			name="foo"
+			:initial-values="{ website: 'asd' }"
 			v-slot="{ values }"
 			@submit="send">
 			<button
@@ -80,62 +78,10 @@ const check = ref<boolean>(true);
 				@click="show = !show">
 				Toggle
 			</button>
-			<div>
-				{{ bar }}
-				<Field
-					name="countries"
-					multiple
-					:default="['hu', 'au']"
-					as="select">
-					<option value="hu">
-						Hungary
-					</option>
-					<option value="en">
-						England
-					</option>
-					<option value="au">
-						Austria
-					</option>
-				</Field>
-			</div>
-			<div>
-				{{ foo }}
-				<Field
-					name="name"
-					v-model="foo" />
-				<Field
-					name="website"
-					v-model="foo"
-					v-slot="{ field }">
-					<label>Website</label>
-					<input v-bind="field" />
-				</Field>
-				{{ check }}
-				<Field
-					name="check"
-					:default="check"
-					v-slot="{ field }">
-					<label>Check</label>
-					<Checkbox
-						v-bind="field"
-						binary />
-				</Field>
-				<Field
-					name="email"
-					default="heloka"
-					v-slot="{ field }">
-					<div>
-						<InputText v-bind="field" />
-					</div>
-				</Field>
-				<Field
-					name="age"
-					:default="50"
-					v-slot="{ field }">
-					<Knob v-bind="field" />
-				</Field>
-			</div>
-			<!-- {{ bar }}
+			<pre>{{ values }}</pre>
+			<Field
+				name="website"
+				default="loo" />
 			<Field
 				name="countries"
 				multiple
@@ -151,41 +97,6 @@ const check = ref<boolean>(true);
 					Austria
 				</option>
 			</Field>
-			<Error
-				error-for="countries"
-				v-slot="{ error }">
-				<small>{{ error }}</small>
-			</Error>
-			<Field
-				name="website"
-				v-if="show"
-				v-slot="{ field }">
-				<input
-					type="text"
-					v-bind="field">
-			</Field>
-			<Error error-for="name" />
-			<FieldArray
-				v-if="show"
-				name="links"
-				v-slot="{ fields, add, remove }">
-				<fieldset
-					v-for="(field, index) of fields"
-					:key="field.id">
-					<Field :name="`links[${index}]`" />
-					<button
-						type="button"
-						@click="remove(index)">
-						Remove
-					</button>
-				</fieldset>
-				<button
-					type="button"
-					@click="add">
-					Add
-				</button>
-			</FieldArray> -->
-			<!-- <pre>{{ values }}</pre> -->
 			<button>Send</button>
 			<button
 				type="button"

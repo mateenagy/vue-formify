@@ -1,9 +1,9 @@
 /* eslint-disable vue/one-component-per-file */
-/* eslint-disable vue/require-prop-types */
-import { createFormDataFromObject, deleteByPath, EventEmitter, flattenObject, getPropBooleanValue, getValueByPath, normalizeChildren, resolveTag } from '@/utils/utils';
-import { computed, defineComponent, h, inject, InputHTMLAttributes, nextTick, onMounted, provide, ref, resolveDynamicComponent, SlotsType, toValue } from 'vue';
+
+import { createFormDataFromObject, deleteByPath, EventEmitter, flattenObject, getValueByPath, normalizeChildren, resolveTag } from '@/utils/utils';
+import { computed, defineComponent, h, inject, InputHTMLAttributes, nextTick, onMounted, PropType, provide, ref, resolveDynamicComponent, SlotsType, toValue } from 'vue';
 import { forms } from '@/utils/store';
-import { useSimpleField } from './useSimpleField';
+import { useField } from './useField';
 
 type GetNestedArray<T> = T extends (infer U)[]
 	? `${GetNestedArray<U>}[]` | `${GetNestedArray<U>}[${number}]`
@@ -38,7 +38,6 @@ type FieldType<T extends Record<string, any>> = {
 	error?: any;
 	default?: any;
 	ignore?: any;
-	value?: any;
 	trueValue?: any;
 	modelValue?: any;
 	falseValue?: any;
@@ -166,14 +165,32 @@ const FormComp = <T extends Record<string, any> = Record<string, any>>() => defi
 	},
 	{
 		name: 'FormifyForm',
-		props: [
-			'enctype',
-			'validationSchema',
-			'initialValues',
-			'name',
-			'preserve',
-			'onValueChange',
-		],
+		props: {
+			enctype: {
+				type: String as PropType<'application/x-www-form-urlencoded' | 'multipart/form-data'>,
+				default: undefined,
+			},
+			validationSchema: {
+				type: Object as PropType<Record<string, any>>,
+				default: undefined,
+			},
+			initialValues: {
+				type: Object as PropType<Record<string, any>>,
+				default: undefined,
+			},
+			name: {
+				type: String as PropType<string>,
+				default: undefined,
+			},
+			preserve: {
+				type: Boolean as PropType<boolean>,
+				default: undefined,
+			},
+			onValueChange: {
+				type: Function as PropType<(value?: any) => void>,
+				default: undefined,
+			},
+		},
 		slots: Object as SlotsType<{
 			default: { values: T, errors: any }
 		}>,
@@ -182,36 +199,63 @@ const FormComp = <T extends Record<string, any> = Record<string, any>>() => defi
 );
 
 const FieldComp = <T extends Record<string, any> = Record<string, any>>() => defineComponent(
-	(props: FieldType<T>, { slots, attrs, emit }) => {
-		const { value, onInput, onFocus, getError } = useSimpleField(props, emit, getPropBooleanValue(attrs?.multiple) ? true : false);
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const { modelValue, value: propValue, ...propsProxy } = props;
+	(props: FieldType<T>, { emit, slots, attrs: baseAttrs }) => {
+		const {
+			value,
+			onInput,
+			onFocus,
+			getError,
+		} = useField(props, emit);
 
 		const sharedProps = computed(() => {
-			const $attrs: Record<string, any> = {
+			const attrs: Record<string, any> = {
+				...baseAttrs,
 				name: props.name,
-				onInput,
-				onChange: onInput,
-				onFocus,
-				...!getPropBooleanValue(attrs?.multiple) && { value: value.value },
+				onInput: (evt: any) => {
+					onInput(evt);
+					if (typeof baseAttrs.onInput === 'function') {
+						baseAttrs.onInput();
+					}
+				},
+				onChange: (evt: any) => {
+					onInput(evt);
+					if (typeof baseAttrs.onChange === 'function') {
+						baseAttrs.onChange();
+					}
+				},
+				onFocus: () => {
+					onFocus();
+					if (typeof baseAttrs.onFocus === 'function') {
+						baseAttrs.onFocus();
+					}
+				},
+				onBlur: () => {
+					if (typeof baseAttrs.onBlur === 'function') {
+						baseAttrs.onBlur();
+					}
+				},
 			};
 
-			return $attrs;
-		});
+			if (attrs.type === 'checkbox' && value.value) {
+				attrs.checked = true;
+			}
 
-		const fieldProps = computed(() => {
-			const $attrs = {
-				...sharedProps.value,
-				value: value.value,
-				modelValue: value.value,
-			};
+			if (props.as !== 'select' && !attrs.multiple) {
+				attrs.value = value.value;
+			}
 
-			return $attrs;
+			return attrs;
 		});
 
 		const slotProps = () => {
 			return {
-				field: fieldProps.value,
+				field: {
+					...sharedProps.value,
+					modelValue: value.value,
+				},
+				componentField: {
+					value: value.value,
+				},
 				value: value.value,
 				modelValue: value.value,
 				error: getError(),
@@ -224,8 +268,7 @@ const FieldComp = <T extends Record<string, any> = Record<string, any>>() => def
 			if (tag) {
 				return h(tag,
 					{
-						...attrs,
-						...propsProxy,
+						...props,
 						...sharedProps.value,
 					},
 					children,
@@ -238,21 +281,48 @@ const FieldComp = <T extends Record<string, any> = Record<string, any>>() => def
 	{
 		name: 'Field',
 		inheritAttrs: false,
-		props: [
-			'name',
-			'error',
-			'default',
-			'ignore',
-			'preserve',
-			'trueValue',
-			'modelValue',
-			'falseValue',
-			'as',
-		],
+		props: {
+			name: {
+				type: String as PropType<any>,
+				required: true,
+			},
+			default: {
+				type: [String, Array, Boolean, Number, Object] as PropType<any>,
+				default: '',
+			},
+			error: {
+				type: String,
+				default: undefined,
+			},
+			ignore: {
+				type: Boolean,
+				default: false,
+			},
+			preserve: {
+				type: Boolean,
+				default: false,
+			},
+			trueValue: {
+				type: [Boolean, String, Number],
+				default: true,
+			},
+			falseValue: {
+				type: [Boolean, String, Number],
+				default: false,
+			},
+			modelValue: {
+				type: [String, Array, Boolean, Number, Object] as PropType<any>,
+				default: undefined,
+			},
+			as: {
+				type: String as PropType<'input' | 'select' | undefined>,
+				default: undefined,
+			},
+		},
+		emits: ['update:modelValue'],
 		slots: Object as SlotsType<{
 			default: { field: { value: any }, error: any }
 		}>,
-		emits: ['update:modelValue'],
 	},
 );
 
@@ -262,7 +332,7 @@ const FieldArrayComp = <T extends Record<string, any> = Record<string, any>>() =
 		/  VARIABLES
 		---------------------------------------------*/
 		const fields = ref<any[]>([]);
-		const { updateValue, getError } = useSimpleField(props, emit, true);
+		const { setArrayValue, getError } = useField(props, emit, true);
 		const { uid } = inject('formData', Object.create({}));
 
 		/*---------------------------------------------
@@ -284,7 +354,7 @@ const FieldArrayComp = <T extends Record<string, any> = Record<string, any>>() =
 			for (let index = removedIndex + 1; index < fields.value.length; index++) {
 				const tmp = JSON.parse(JSON.stringify(getValueByPath(forms[uid].values, `${props.name as string}[${index}]`)));
 				if (getValueByPath(forms[uid].values, `${props.name as string}[${index - 1}]`)) {
-					updateValue({
+					setArrayValue({
 						[`[${index - 1}]`]: tmp,
 					});
 				}
@@ -309,7 +379,7 @@ const FieldArrayComp = <T extends Record<string, any> = Record<string, any>>() =
 						initials.forEach((value: any, idx: any) => {
 							if (typeof value === 'object') {
 								Object.keys(value).forEach((key) => {
-									updateValue({
+									setArrayValue({
 										[`[${idx}]`]: {
 											[key]: {
 												value: value[key],
@@ -318,7 +388,7 @@ const FieldArrayComp = <T extends Record<string, any> = Record<string, any>>() =
 									});
 								});
 							} else {
-								updateValue({
+								setArrayValue({
 									[`[${idx}]`]: {
 										value,
 									},
@@ -339,20 +409,39 @@ const FieldArrayComp = <T extends Record<string, any> = Record<string, any>>() =
 
 		return () => {
 			return h('div',
-				{ ...props,...attrs, ...emit },
+				{ ...props, ...attrs, ...emit },
 				slots.default?.({ fields: toValue(fields), add, remove, error: getError() }),
 			);
 		};
 	},
 	{
-		props: [
-			'name',
-			'error',
-			'ignore',
-			'initialValues',
-			'default',
-			'preserve',
-		],
+		name: 'FieldArray',
+		props: {
+			name: {
+				type: String as PropType<any>,
+				required: true,
+			},
+			error: {
+				type: String as PropType<string>,
+				default: undefined,
+			},
+			ignore: {
+				type: Boolean as PropType<boolean>,
+				default: undefined,
+			},
+			initialValues: {
+				type: Object as PropType<any>,
+				default: undefined,
+			},
+			default: {
+				type: Array as PropType<any[]>,
+				default: undefined,
+			},
+			preserve: {
+				type: Boolean as PropType<boolean>,
+				default: undefined,
+			},
+		},
 		slots: Object as SlotsType<{
 			default: { fields: any[], add: () => void, remove: (idx: number) => void, error: any }
 		}>,
@@ -376,9 +465,15 @@ const ErrorComp = <T extends Record<string, any> = Record<string, any>>() => def
 		};
 	},
 	{
-		props: [
-			'errorFor',
-		],
+		props: {
+			errorFor: {
+				type: String as PropType<any>,
+				default: undefined,
+			},
+		},
+		// props: [
+		// 	'errorFor',
+		// ],
 		slots: Object as SlotsType<{
 			default: { error: any }
 		}>,
