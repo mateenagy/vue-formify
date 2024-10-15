@@ -11,6 +11,7 @@ import InputText from 'primevue/inputtext';
 import Knob from 'primevue/knob';
 import Checkbox from 'primevue/checkbox';
 import { forms } from './utils/store';
+import ToggleSwitch from 'primevue/toggleswitch';
 import NamedVModel from './components/FormElements/__tests__/Views/NamedVModel.vue';
 import NamedVModelAsState from './components/FormElements/__tests__/Views/NamedVModelAsState.vue';
 /*---------------------------------------------
@@ -70,7 +71,6 @@ const check = ref<boolean>(false);
 		<Form
 			ref="form"
 			name="foo"
-			:initial-values="{ website: 'asd' }"
 			v-slot="{ values }"
 			@submit="send">
 			<button
@@ -80,8 +80,9 @@ const check = ref<boolean>(false);
 			</button>
 			<pre>{{ values }}</pre>
 			<Field
+				v-if="show"
 				name="website"
-				default="loo" />
+				preserve />
 			<Field
 				name="countries"
 				multiple
@@ -96,6 +97,24 @@ const check = ref<boolean>(false);
 				<option value="au">
 					Austria
 				</option>
+			</Field>
+			<Field
+				name="name"
+				v-slot="{ field }">
+				<InputText v-bind="field" />
+			</Field>
+			<Field
+				name="check"
+				:default="false"
+				v-slot="{ field }">
+				<ToggleSwitch v-bind="field" />
+			</Field>
+			<Field
+				v-if="values.check"
+				name="age"
+				:default="0"
+				v-slot="{ field }">
+				<Knob v-bind="field" />
 			</Field>
 			<button>Send</button>
 			<button

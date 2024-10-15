@@ -26,7 +26,7 @@ export const useField = (props: Record<string, any>, emit: any, isArrayField: bo
 		value: setInitialValues(),
 		error: undefined,
 	};
-	
+
 	const defaultValueCopy = JSON.parse(JSON.stringify(defaultValue.value));
 
 	/* COMPUTED */
@@ -61,7 +61,9 @@ export const useField = (props: Record<string, any>, emit: any, isArrayField: bo
 	};
 
 	const onInput = (evt: any) => {
-		(!isCustom && 'target' in evt && typeof evt.target === 'object') && setValue(getValueByInputType(evt.target));
+		if (!isCustom) {
+			(typeof evt === 'object' && 'target' in evt) ? setValue(getValueByInputType(evt.target)) : setValue(evt);
+		}
 	};
 
 	const onFocus = () => {
