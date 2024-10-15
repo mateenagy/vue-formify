@@ -210,6 +210,7 @@ const FieldComp = <T extends Record<string, any> = Record<string, any>>() => def
 			const attrs: Record<string, any> = {
 				...baseAttrs,
 				name: props.name,
+				error: getError(),
 				onInput: (evt: any) => {
 					onInput(evt);
 					if (typeof baseAttrs.onInput === 'function') {

@@ -28,12 +28,14 @@ export const createInput = <T, K extends Record<string, any> = Record<string, an
 			onInput,
 			onFocus,
 			setValue,
+			getError,
 		} = useField(props, emit, false, options, true);
 
 		const sharedProps = computed(() => {
 			const attrs: Record<string, any> = {
 				...baseAttrs,
 				name: props.name,
+				error: getError(),
 				modelValue: value.value,
 
 				onInput: (evt: any) => {
