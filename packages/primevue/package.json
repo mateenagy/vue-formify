@@ -21,7 +21,7 @@
 		"dist"
 	],
 	"peerDependencies": {
-		"primevue": "^3"
+		"primevue": "^4"
 	},
 	"author": "Máté Nagy",
 	"license": "MIT",
