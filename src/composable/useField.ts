@@ -1,90 +1,134 @@
-import { deleteByPath, EventEmitter, getKey, getPropBooleanValue, getValueByPath, mergeDeep, stringToObject } from '@/utils/utils';
-import { inject, onBeforeUnmount, toValue, watch } from 'vue';
-import { CreateInputOptions } from './createInput';
+// Get and Set input value either in store and in input
+// Handle v-model logic
+// Set default value
+// Implement OnInput, OnFocus, OnBlur events
+// Handle checkbox, radiobox, select and multiple select values and UI states
 import { forms } from '@/utils/store';
+import { deleteByPath, EventEmitter, getPropBooleanValue, getValueByPath, mergeDeep, stringToObject } from '@/utils/utils';
+import { computed, getCurrentInstance, inject, onBeforeUnmount, onMounted } from 'vue';
+import { CreateInputOptions } from './createInput';
 
-export const useField = (props: Record<string, any>, _emit: (event: string, ...args: any[]) => void, options?: CreateInputOptions) => {
-	const { uid, preserve: preserveForm } = inject('formData', Object.create({}));
-	const name = props.name;
+
+export const useField = (props: Record<string, any>, emit: any, isArrayField: boolean = false, options?: CreateInputOptions, isCustom: boolean = false) => {
+	/* VARIABLES */
+	const form = inject<{ uid: number | string, preserve: boolean }>('formData', Object.create({}));
+	const name = (!options?.useModelKeyAsState && options?.modelKey) || props.name;
+	const vm = getCurrentInstance();
+
+	const setInitialValues = () => {
+		if (forms[form.uid].initialValues && getValueByPath(forms[form.uid].initialValues, name) && !isArrayField) {
+			return getValueByPath(forms[form.uid].initialValues, name);
+		}
+
+		return (options?.modelKey && props[options.modelKey]) ?? props.modelValue ?? props.default ?? options?.default ?? (isArrayField ? [] : '');
+	};
 	const defaultValue = {
-		value: (forms[uid].initialValues && getValueByPath(forms[uid].initialValues, props.name)) ?? props.modelValue ?? (options?.defaultValueKey && props[options?.defaultValueKey as keyof typeof props]) ?? props.default ?? options?.default ?? getValueByPath(forms[uid].values, props.name).value ?? '',
+		value: setInitialValues(),
 		error: undefined,
 	};
 
-	if (props.ignore) {
-		return;
-	}
+	const defaultValueCopy = JSON.parse(JSON.stringify(defaultValue.value));
 
-	watch(() => [props.name, props.ignore], (curr, prev) => {
-		const [name, ignore] = curr;
-		const [prevName] = prev;
-		
-		deleteByPath(forms[uid].values, prevName);
- 
-		if (!ignore) {
-			createFormInput(name);
-		}
-	}, { deep: true });
-
-	const createFormInput = (name: string = props.name) => {
-		if (options?.modelKeys) {
-			if (Array.isArray(options?.modelKeys)) {
-				options?.modelKeys.forEach((key: string) => {
-					const _key = getKey(props.name, key, options.useModelKeyAsState);
-					const obj = stringToObject(_key, defaultValue);
-					forms[uid].values = mergeDeep(forms[uid].values, obj);
-				});
-			} else {
-				if (options.useModelKeyAsState) {
-					const key1 = getKey(props.name, options.modelKeys, true);
-					const key2 = getKey(props.name, options.modelKeys, false);
-					const obj = { ...stringToObject(key1, defaultValue), ... stringToObject(key2, defaultValue) };
-					forms[uid].values = mergeDeep(forms[uid].values, obj);
-				} else {
-					const key = getKey(props.name, options.modelKeys);
-					const obj = stringToObject(key, defaultValue);
-					forms[uid].values = mergeDeep(forms[uid].values, obj);
-				}
+	/* COMPUTED */
+	const value = computed({
+		get() {
+			if (!getValueByPath(forms[form.uid].values, name)) {
+				return;
 			}
+
+			return getValueByPath(forms[form.uid].values, name).value;
+		},
+		set(newVal) {
+			getValueByPath(forms[form.uid].values, name).value = newVal;
+			emit((options?.modelKey) ? `update:${options.modelKey}` : 'update:modelValue', newVal);
+		},
+	});
+
+	/* METHODS */
+	const getValueByInputType = (target: HTMLInputElement) => {
+		if (target.type === 'checkbox') {
+			return getCheckValue(target.checked);
 		}
 
-		if (name && !options?.modelKeys) {
+		if (target.type === 'select-multiple') {
+			const options = Array.from((target as unknown as HTMLSelectElement).options);
+			const selectedOptions = options.filter(option => option.selected).map(opt => opt.value);
+
+			return selectedOptions;
+		}
+
+		return target.value;
+	};
+
+	const onInput = (evt: any) => {
+		if (!isCustom) {
+			(typeof evt === 'object' && 'target' in evt) ? setValue(getValueByInputType(evt.target)) : setValue(evt);
+		}
+	};
+
+	const onFocus = () => {
+		getValueByPath(forms[form.uid].values, name).error = undefined;
+	};
+
+	const getCheckValue = (checked: boolean) => {
+		return checked ? props.trueValue || true : props.falseValue || false;
+	};
+
+	const getError = () => {
+		return getValueByPath(forms[form.uid].values, name)?.error;
+	};
+
+	const setValue = (newValue: any) => {
+		value.value = newValue;
+		EventEmitter.emit('value-change', form.uid);
+	};
+
+	const setArrayValue = (value: any, key: any = name) => {
+		getValueByPath(forms[form.uid].values, key).value = mergeDeep(getValueByPath(forms[form.uid].values, key).value, value);
+	};
+
+	const createFormInput = () => {
+		if (name && !(name in forms[form.uid].values)) {
 			const obj = stringToObject(name, defaultValue);
-			forms[uid].values = mergeDeep(forms[uid].values, obj);
+			forms[form.uid].values = mergeDeep(forms[form.uid].values, obj);
 		}
 	};
 
-	const updateValue = (value: any, modelKey: string) => {
-		if (modelKey) {
-			const key = props.name ? `${props.name}.${getKey(name.value, modelKey)}` : getKey(name.value, modelKey);
-			getValueByPath(forms[uid].values, key).value = toValue(value);
-		} else {
-			getValueByPath(forms[uid].values, name.value).value = value;
+	/* CREATED */
+	createFormInput();
+
+	EventEmitter.on('reset', () => {
+		if (value.value && getValueByPath(forms[form.uid].values, name) && !isArrayField) {
+			setValue(defaultValueCopy);
 		}
-		EventEmitter.emit('value-change', uid);
-	};
+	});
 
-	const getError = (modelKey?: string) => {
-		if (modelKey) {
-			const key = props.name ? `${props.name}.${getKey(name.value, modelKey)}` : getKey(name.value, modelKey);
-
-			return options?.useModelKeyAsState ? getValueByPath(forms[uid].values, props.name)?.error : getValueByPath(forms[uid].values, key)?.error;
-		}
-
-		return getValueByPath(forms[uid].values, props.name).error;
-	};
-
-	if (!getValueByPath(forms[uid].values, props.name)) {
-		createFormInput();
-	}
 	onBeforeUnmount(() => {
-		if (!getPropBooleanValue(props.preserve) && !getPropBooleanValue(preserveForm)) {
-			deleteByPath(forms[uid].values, props.name);
+		if (!getPropBooleanValue(form.preserve) && !getPropBooleanValue(props.preserve)) {
+			deleteByPath(forms[form.uid].values, name);
 		};
 	});
 
+	onMounted(() => {
+		if (vm?.subTree?.el) {
+			if (props.as === 'select') {
+				const options = Array.from((vm?.subTree?.el as unknown as HTMLSelectElement).options);
+				options.forEach((op) => {
+					if (defaultValueCopy?.includes?.(op.value)) {
+						op.selected = true;
+					}
+				});
+			}
+		}
+	});
+
+	/* LIFECYCLE HOOKS */
 	return {
-		updateValue,
+		value: value,
 		getError,
+		setValue,
+		setArrayValue,
+		onInput,
+		onFocus,
 	};
 };

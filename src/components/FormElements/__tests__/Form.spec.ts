@@ -6,7 +6,7 @@ import NamedVModelVue from './Views/NamedVModel.vue';
 import { Form, Field, FieldArray, createInput } from '@/components/main';
 
 const ColorPicker = createInput(CustomInputVue);
-const TitleInput = createInput(NamedVModelVue, { modelKeys: 'title' });
+const TitleInput = createInput(NamedVModelVue, { modelKey: 'title' });
 const mountWithComponents = (component: Record<string, any>) => {
 	component.components = {
 		...component.components,
@@ -20,7 +20,7 @@ const mountWithComponents = (component: Record<string, any>) => {
 	return mount(component);
 };
 
-const createW = (template: string, errorField?: string, errorMessage?: string) => mountWithComponents({
+const createForm = (template: string, errorField?: string, errorMessage?: string) => mountWithComponents({
 	setup: () => {
 		const result = ref();
 		const form = ref();
@@ -43,7 +43,7 @@ const createW = (template: string, errorField?: string, errorMessage?: string) =
 
 describe('Form', () => {
 	it('Basic input', async () => {
-		const wrapper = createW('<Field name="email" />');
+		const wrapper = createForm('<Field name="email" />');
 		const form = wrapper.findComponent(Form);
 		const input = wrapper.find('input[name="email"]');
 		await input.setValue('test@test.com');
@@ -52,7 +52,7 @@ describe('Form', () => {
 	});
 
 	it('Object input', async () => {
-		const wrapper = createW('<Field name="user.email" />');
+		const wrapper = createForm('<Field name="user.email" />');
 		const form = wrapper.findComponent(Form);
 		const input = wrapper.find('input[name="user.email"]');
 		await input.setValue('test@test.com');
@@ -61,7 +61,7 @@ describe('Form', () => {
 	});
 
 	it('Array input', async () => {
-		const wrapper = createW('<Field name="links[0]" />');
+		const wrapper = createForm('<Field name="links[0]" />');
 		const form = wrapper.findComponent(Form);
 		const input = wrapper.find('input[name="links[0]"]');
 		await input.setValue('https://github.com');
@@ -70,7 +70,7 @@ describe('Form', () => {
 	});
 
 	it('Array object input', async () => {
-		const wrapper = createW('<Field name="user.links[0]" />');
+		const wrapper = createForm('<Field name="user.links[0]" />');
 		const form = wrapper.findComponent(Form);
 		const input = wrapper.find('input[name="user.links[0]"]');
 		await input.setValue('https://github.com');
@@ -79,7 +79,7 @@ describe('Form', () => {
 	});
 
 	it('Error', async () => {
-		const wrapper = createW('<Field name="email" />', 'email', 'Required');
+		const wrapper = createForm('<Field name="email" />', 'email', 'Required');
 		const form = wrapper.findComponent(Form);
 		const input = wrapper.find('input[name="email"]');
 		await input.setValue('test@test.com');
@@ -88,14 +88,14 @@ describe('Form', () => {
 	});
 
 	it('Initial values', async () => {
-		const wrapper = createW('<Field name="foo" />');
+		const wrapper = createForm('<Field name="foo" />');
 		const form = wrapper.findComponent(Form);
 		await form.trigger('submit');
 		expect(wrapper.find('#result').text()).contain('Foo');
 	});
 
 	it('Custom Field', async () => {
-		const wrapper = createW('<ColorPicker name="color" />');
+		const wrapper = createForm('<ColorPicker name="color" />');
 		const form = wrapper.findComponent(Form);
 		const input = wrapper.find('input[name="color"]');
 		await input.setValue('#ffffff');
@@ -104,7 +104,7 @@ describe('Form', () => {
 	});
 
 	it('Custom Field with named v-model', async () => {
-		const wrapper = createW('<TitleInput />');
+		const wrapper = createForm('<TitleInput />');
 		const form = wrapper.findComponent(Form);
 		const input = wrapper.find('input');
 		await input.setValue('Hi!');
