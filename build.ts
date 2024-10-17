@@ -18,6 +18,10 @@ const buildPackage = async ({ pckg }: BuildData) => {
 			output: { file: path.join(__dirname, `/packages/${pckg}/dist/index.d.ts`), format: 'es' },
 			external: [
 				'vue-formify',
+				'yup',
+				'zod',
+				'valibot',
+				'joi',
 				'element-plus',
 				'radix-vue',
 				'@ionic/vue',
@@ -107,7 +111,10 @@ inquirer
 	])
 	.then((answers) => {
 		answers.packages.forEach((pckg: string) => {
-			buildPackage({ pckg });
+			buildPackage({ pckg }).then(() => {
+				console.log(`${pckg} build finished successfully`);
+				
+			});
 		});
 	})
 	.catch((error) => {

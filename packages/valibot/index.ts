@@ -1,4 +1,4 @@
-import { BaseSchema, ObjectInput, safeParseAsync, SchemaIssue } from 'valibot';
+import { BaseIssue, GenericSchema, getDefaults, ObjectSchema, safeParseAsync } from 'valibot';
 
 const arrayToStringPath = (arr: (string | number)[]): string => {
 	let result = '';
@@ -20,7 +20,7 @@ const arrayToStringPath = (arr: (string | number)[]): string => {
 	return result.slice(0, -1);
 };
 
-const processError = (issues: SchemaIssue[]) => {
+const processError = (issues: BaseIssue<any>[]) => {
 	const _error: any[] = [];
 	issues.forEach((issue) => {
 		const p = arrayToStringPath(issue.path?.map(_path => _path.key) as string[]);
@@ -34,7 +34,7 @@ const processError = (issues: SchemaIssue[]) => {
 	return _error;
 };
 
-const schemaFromValibot = <TSchema extends BaseSchema<ObjectInput<any, any>>>(_schema: TSchema) => {
+const schemaFromValibot = <TSchema extends ObjectSchema<any, any>>(_schema: TSchema) => {
 	const schema = {
 		parse: async (value: any) => {
 			const result = await safeParseAsync(_schema, value);
@@ -48,6 +48,11 @@ const schemaFromValibot = <TSchema extends BaseSchema<ObjectInput<any, any>>>(_s
 			const errors = processError(result.issues);
 
 			return { errors };
+		},
+		cast: () => {
+			console.log(getDefaults(_schema));
+
+			return getDefaults(_schema);
 		},
 	};
 

@@ -2,7 +2,7 @@ import { ObjectSchema, ValidationError } from 'joi';
 
 const arrayToStringPath = (arr: (string | number)[]): string => {
 	let result = '';
-	
+
 	for (const element of arr) {
 		if (typeof element === 'string') {
 			result += element;
@@ -50,6 +50,14 @@ const schemaFromJoi = <TSchema extends ObjectSchema>(_schema: TSchema) => {
 
 				return { errors };
 			}
+		},
+		cast: (values: Record<string, any>) => {
+			const result = _schema.validate(values);
+			if (result.error) {
+				return values;
+			}
+
+			return result.value;
 		},
 	};
 

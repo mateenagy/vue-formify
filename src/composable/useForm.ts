@@ -1,5 +1,5 @@
 /* eslint-disable vue/one-component-per-file */
-import { createFormDataFromObject, deleteByPath, EventEmitter, flattenObject, getValueByPath, normalizeChildren, resolveTag } from '@/utils/utils';
+import { createFormDataFromObject, deleteByPath, EventEmitter, flattenObject, getValueByPath, mergeDeep, normalizeChildren, resolveTag } from '@/utils/utils';
 import { computed, defineComponent, h, inject, InputHTMLAttributes, nextTick, onMounted, PropType, provide, ref, resolveDynamicComponent, SlotsType, toValue } from 'vue';
 import { forms } from '@/utils/store';
 import { useField } from './useField';
@@ -131,6 +131,10 @@ const FormComp = <T extends Record<string, any> = Record<string, any>>() => defi
 			};
 		} else {
 			props.initialValues && (forms[uid].initialValues = props.initialValues);
+		}
+
+		if (props.validationSchema && typeof props.validationSchema.cast === 'function') {
+			forms[uid].initialValues = props.initialValues ? mergeDeep(props.validationSchema.cast(flattenObject(forms[uid].values)), props.initialValues) : props.validationSchema.cast(flattenObject(forms[uid].values));
 		}
 
 		/*---------------------------------------------
