@@ -17,16 +17,16 @@ type GetNestedArray<T> = T extends (infer U)[]
 export type GetKeys<T extends Record<string, any>> = keyof {
 	[K in keyof T as (
 		T[K] extends string | number | boolean | Date ? `${K & string}` :
-		T[K] extends (string | number | boolean | Date | undefined)[] | undefined ? `${K & string}[]` | `${K & string}[${number}]` | `${K & string}` :
+		T[K] extends (string | number | boolean | Date | undefined)[] | undefined ? `${K & string}[${number}]` | `${K & string}` :
 		T[K] extends any[] ? `${K & string}[]` | `${K & string}[${number}]` | `${K & string}` :
 		T[K] extends object ? `${K & string}.${GetNestedArray<T[K]> & string}` : `${K & string}`
 	)]: any
 }
 
-type FormType = {
+type FormType<T extends Record<string, any>> = {
 	enctype?: 'application/x-www-form-urlencoded' | 'multipart/form-data';
 	validationSchema?: any;
-	initialValues?: any;
+	initialValues?: Partial<Record<GetKeys<T>, any>>;
 	name?: string;
 	preserve?: boolean;
 	onValueChange?: (value?: any) => void;
@@ -53,153 +53,181 @@ type FieldArrayType<T extends Record<string, any>> = {
 	default?: any[];
 }
 
-const FormComp = <T extends Record<string, any> = Record<string, any>>() => defineComponent(
-	(props: FormType, { slots, emit, attrs, expose }) => {
-		const uid = props.name || Math.floor(Math.random() * Date.now());
-		let originalForm = Object.create({});
-		const setError = (name: string, error: any) => {
-			if (getValueByPath(forms[uid].values, name)) {
-				getValueByPath(forms[uid].values, name).error = error;
-			}
+type FormOptions<T extends Record<string, any>> = {
+	initials: Partial<T>
+}
+
+const FormCompBase = <T extends Record<string, any> = Record<string, any>>(opt?: FormOptions<T>) => {
+	let uid: number | string = Math.floor(Math.random() * Date.now());
+	let originalForm = Object.create({});
+
+	const handleSubmit = (cb?: (data?: T) => void) => {
+		return async () => {
+			cb?.(flattenObject(forms[uid].values) as T);
 		};
+	};
 
-		const updateField = (name: string, value: any) => {
-			if (getValueByPath(forms[uid].values, name)) {
-				getValueByPath(forms[uid].values, name).value = value;
+	const setError = (name: GetKeys<T>, error: any) => {
+		if (getValueByPath(forms[uid].values, name as unknown as string)) {
+			getValueByPath(forms[uid].values, name as unknown as string).error = error;
+		}
+	};
 
-				EventEmitter.emit('value-change', uid);
-			}
-		};
+	const setInitalValues = (initials: Partial<T>) => {
+		forms[uid].initialValues = mergeDeep(flattenObject(forms[uid].values), initials);
+		forms[uid].key++;
+	};
 
-		const reset = () => {
-			EventEmitter.emit('reset');
-			forms[uid].values = JSON.parse(originalForm);
-			forms[uid].key++;
-		};
+	const reset = () => {
+		EventEmitter.emit('reset');
+		forms[uid].values = JSON.parse(originalForm);
+		forms[uid].key++;
+	};
 
-		EventEmitter.on('value-change', (id: string) => {
-			if (id === uid && props?.onValueChange) {
-				emit('value-change', values.value);
-			}
-		});
+	const cmp = defineComponent(
+		(props: FormType<T>, { slots, emit, attrs, expose }) => {
+			props.name && (uid = props.name);
 
-		const submit = async ($event: any) => {
-			$event.preventDefault();
-			let _value: any = values.value;
-			if (props.validationSchema) {
-				const result = await props.validationSchema.parse(flattenObject(forms[uid].values));
+			const updateField = (name: string, value: any) => {
+				if (getValueByPath(forms[uid].values, name)) {
+					getValueByPath(forms[uid].values, name).value = value;
 
-				if (result.errors.length) {
-					result.errors.forEach((err: any) => {
-						setError(err.key, err.message);
-					});
-
-					return;
+					EventEmitter.emit('value-change', uid);
 				}
-			}
-
-			if (props?.enctype === 'multipart/form-data') {
-				_value = createFormDataFromObject(flattenObject(forms[uid].values));
-			}
-			emit('submit', _value, $event);
-		};
-
-		const flush = () => {
-			forms[uid].initialValues = Object.create({});
-			forms[uid].values = Object.create({});
-			forms[uid].key++;
-		};
-
-		/*---------------------------------------------
-		/  COMPUTED
-		---------------------------------------------*/
-		const errors = computed(() => {
-			return flattenObject(forms[uid].values, 'error');
-		});
-		const values = computed(() => {
-			return flattenObject(forms[uid].values) as T;
-		});
-
-		/*---------------------------------------------
-		/  CREATED
-		---------------------------------------------*/
-		if (!forms[uid]) {
-			forms[uid] = {
-				values: Object.create({}),
-				initialValues: props.initialValues,
-				key: 0,
 			};
-		} else {
-			props.initialValues && (forms[uid].initialValues = props.initialValues);
-		}
 
-		if (props.validationSchema && typeof props.validationSchema.cast === 'function') {
-			forms[uid].initialValues = props.initialValues ? mergeDeep(props.validationSchema.cast(flattenObject(forms[uid].values)), props.initialValues) : props.validationSchema.cast(flattenObject(forms[uid].values));
-		}
+			EventEmitter.on('value-change', (id: string) => {
+				if (id === uid && props?.onValueChange) {
+					emit('value-change', values.value);
+				}
+			});
 
-		/*---------------------------------------------
-		/  HOOKS
-		---------------------------------------------*/
-		onMounted(() => {
-			originalForm = JSON.stringify(forms[uid].values);
-		});
+			const submit = async ($event: any) => {
+				$event.preventDefault();
+				let _value: any = values.value;
+				if (props.validationSchema) {
+					const result = await props.validationSchema.parse(flattenObject(forms[uid].values));
 
-		provide('formData', {
-			uid,
-			preserve: props.preserve,
-		});
+					if (result.errors.length) {
+						result.errors.forEach((err: any) => {
+							setError(err.key, err.message);
+						});
 
-		expose({
-			values,
-			errors,
-			setError,
-			updateField,
-			reset,
-			flush,
-		});
+						return;
+					}
+				}
+
+				if (props?.enctype === 'multipart/form-data') {
+					_value = createFormDataFromObject(flattenObject(forms[uid].values));
+				}
+				emit('submit', _value, $event);
+			};
+
+			const flush = () => {
+				forms[uid].initialValues = Object.create({});
+				forms[uid].values = Object.create({});
+				forms[uid].key++;
+			};
+
+			/*---------------------------------------------
+			/  COMPUTED
+			---------------------------------------------*/
+			const errors = computed(() => {
+				return flattenObject(forms[uid].values, 'error');
+			});
+			const values = computed(() => {
+				return flattenObject(forms[uid].values) as T;
+			});
+
+			/*---------------------------------------------
+			/  CREATED
+			---------------------------------------------*/
+			if (!forms[uid]) {
+				forms[uid] = {
+					values: Object.create({}),
+					initialValues: opt?.initials || props.initialValues || {},
+					key: 0,
+				};
+			} else {
+				props.initialValues && (forms[uid].initialValues = opt?.initials || props.initialValues);
+			}
+
+			if (props.validationSchema && typeof props.validationSchema.cast === 'function') {
+				forms[uid].initialValues = props.initialValues ? mergeDeep(props.initialValues, opt?.initials, props.validationSchema.cast(flattenObject(forms[uid].values))) : mergeDeep(opt?.initials, props.validationSchema.cast(flattenObject(forms[uid].values)));
+			}
+
+			/*---------------------------------------------
+			/  HOOKS
+			---------------------------------------------*/
+			onMounted(() => {
+				originalForm = JSON.stringify(forms[uid].values);
+			});
+
+			provide('formData', {
+				uid,
+				preserve: props.preserve,
+			});
+
+			expose({
+				values,
+				errors,
+				setError,
+				updateField,
+				reset,
+				flush,
+			});
 
 
-		return () => {
-			return h('form',
-				{ ...props, ...attrs, ...emit, key: forms[uid].key, onSubmit: submit },
-				slots.default?.({ values: values.value, errors: errors.value }),
-			);
-		};
-	},
-	{
-		name: 'FormifyForm',
-		props: {
-			enctype: {
-				type: String as PropType<'application/x-www-form-urlencoded' | 'multipart/form-data'>,
-				default: undefined,
-			},
-			validationSchema: {
-				type: Object as PropType<Record<string, any>>,
-				default: undefined,
-			},
-			initialValues: {
-				type: Object as PropType<Record<string, any>>,
-				default: undefined,
-			},
-			name: {
-				type: String as PropType<string>,
-				default: undefined,
-			},
-			preserve: {
-				type: Boolean as PropType<boolean>,
-				default: undefined,
-			},
-			onValueChange: {
-				type: Function as PropType<(value?: any) => void>,
-				default: undefined,
-			},
+			return () => {
+				return h('form',
+					{ ...props, ...attrs, ...emit, key: forms[uid].key, onSubmit: submit },
+					slots.default?.({ values: values.value, errors: errors.value }),
+				);
+			};
 		},
-		slots: Object as SlotsType<{
-			default: { values: T, errors: any }
-		}>,
-		emits: ['submit', 'value-change'],
-	},
-);
+		{
+			name: 'FormifyForm',
+			props: {
+				enctype: {
+					type: String as PropType<'application/x-www-form-urlencoded' | 'multipart/form-data'>,
+					default: undefined,
+				},
+				validationSchema: {
+					type: Object as PropType<Record<string, any>>,
+					default: undefined,
+				},
+				initialValues: {
+					type: Object as PropType<Record<string, any>>,
+					default: undefined,
+				},
+				name: {
+					type: String as PropType<string>,
+					default: undefined,
+				},
+				preserve: {
+					type: Boolean as PropType<boolean>,
+					default: undefined,
+				},
+				onValueChange: {
+					type: Function as PropType<(value?: any) => void>,
+					default: undefined,
+				},
+			},
+			slots: Object as SlotsType<{
+				default: { values: T, errors: any }
+			}>,
+			emits: ['submit', 'value-change'],
+		},
+	);
+
+	return {
+		cmp,
+		handleSubmit,
+		setError,
+		setInitalValues,
+		reset,
+	};
+};
 
 const FieldComp = <T extends Record<string, any> = Record<string, any>>() => defineComponent(
 	(props: FieldType<T>, { emit, slots, attrs: baseAttrs }) => {
@@ -370,6 +398,7 @@ const FieldArrayComp = <T extends Record<string, any> = Record<string, any>>() =
 		const init = () => {
 			fields.value = [];
 			const initials = forms[uid].initialValues?.[props.name] || props.initialValues;
+
 			if (initials) {
 				initials.forEach(() => {
 					fields.value.push({
@@ -481,21 +510,25 @@ const ErrorComp = <T extends Record<string, any> = Record<string, any>>() => def
 	},
 );
 
-export const Form = FormComp();
+export const Form = FormCompBase().cmp;
 export const Field = FieldComp();
 export const FieldArray = FieldArrayComp();
 export const Error = ErrorComp();
 
-export const useForm = <T extends Record<string, any>>() => {
-	const Form = FormComp<T>();
+export const useForm = <T extends Record<string, any>>(opt?: FormOptions<T>) => {
+	const FormBase = FormCompBase<T>(opt);
 	const Field = FieldComp<T>();
 	const FieldArray = FieldArrayComp<T>();
 	const Error = ErrorComp<T>();
 
 	return {
-		Form,
+		Form: FormBase.cmp,
 		Field,
 		FieldArray,
 		Error,
+		handleSubmit: FormBase.handleSubmit,
+		setError: FormBase.setError,
+		setInitalValues: FormBase.setInitalValues,
+		reset: FormBase.reset,
 	};
 };
