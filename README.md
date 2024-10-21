@@ -53,7 +53,7 @@ const sendForm = (data) => {
 ### Type safe
 ```vue
 <script lang="ts" setup>
-import { useField } from 'vue-formify';
+import { useForm } from 'vue-formify';
 
 type FormData = {
   username: string;
