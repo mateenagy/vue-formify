@@ -11,6 +11,7 @@
 <ul>
 	<li>Auto collect form values</li>
 	<li>Nested Objects and Arrays</li>
+	<li>Type-safe forms</li>
 	<li>Form level validation integration with (external modules)</li>
 		<ul>
 			<li>joi</li>
@@ -31,6 +32,7 @@ Read more in the <a href="https://vue-formify.matenagy.me/" target="_blank">docu
 npm i vue-formify
 ```
 ## 💻 Usage
+### Basic
 ```vue
 <script lang="ts" setup>
 import { FormifyForm, Field, Error } from 'vue-formify';
@@ -46,5 +48,36 @@ const sendForm = (data) => {
 		<Error error-for="email" />
 		<button>Send</button>
 	</FormifyForm>
+</template>
+```
+### Type safe
+```vue
+<script lang="ts" setup>
+import { useField } from 'vue-formify';
+
+type FormData = {
+  username: string;
+  password: string;
+}
+
+const {
+  Form,
+  Field,
+  Error,
+  handleSubmit,
+} = useForm<FormData>();
+
+const sendForm = handleSubmit((data) => {
+	console.log(data)
+})
+
+</script>
+
+<template>
+	<Form @submit="sendForm">
+		<Field name="email" as="input" />
+		<Error error-for="email" />
+		<button>Send</button>
+	</Form>
 </template>
 ```
