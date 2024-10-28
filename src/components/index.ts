@@ -13,6 +13,7 @@ export type FormElement = Record<string, {
 export type FormType<T extends Record<string, any> = Record<string, any>> = {
 	values: T;
 	errors: T;
+	isSubmitting: boolean;
 	setError: (name: GetKeys<T>, error: any) => void;
 	updateField: (name: GetKeys<T>, value: any) => void;
 	reset: () => void;

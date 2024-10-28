@@ -9,6 +9,7 @@ export default [
 		ignores: [
 			'/**/*.d.ts',
 			'src/**/*.d.ts',
+			'src/**/App.vue',
 			'/**/*.spec.js',
 			'/*.js',
 			'*.config.ts',

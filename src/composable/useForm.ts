@@ -1,5 +1,5 @@
 /* eslint-disable vue/one-component-per-file */
-import { createFormDataFromObject, deleteByPath, EventEmitter, flattenObject, getValueByPath, mergeDeep, normalizeChildren, resolveTag } from '@/utils/utils';
+import { createFormDataFromObject, deleteByPath, EventEmitter, fetcher, flattenObject, getValueByPath, mergeDeep, normalizeChildren, resolveTag } from '@/utils/utils';
 import { computed, defineComponent, h, inject, InputHTMLAttributes, nextTick, onMounted, PropType, provide, ref, resolveDynamicComponent, SlotsType, toValue } from 'vue';
 import { forms } from '@/utils/store';
 import { useField } from './useField';
@@ -26,10 +26,12 @@ export type GetKeys<T extends Record<string, any>> = keyof {
 type FormType<T extends Record<string, any>> = {
 	enctype?: 'application/x-www-form-urlencoded' | 'multipart/form-data';
 	validationSchema?: any;
+	action?: string;
 	initialValues?: Partial<Record<GetKeys<T>, any>>;
 	name?: string;
 	preserve?: boolean;
 	onValueChange?: (value?: any) => void;
+	onSubmit?: (value?: any, $event?: SubmitEvent) => void | Promise<void>;
 }
 
 type FieldType<T extends Record<string, any>> = {
@@ -60,10 +62,14 @@ type FormOptions<T extends Record<string, any>> = {
 const FormCompBase = <T extends Record<string, any> = Record<string, any>>(opt?: FormOptions<T>) => {
 	let uid: number | string = Math.floor(Math.random() * Date.now());
 	let originalForm = Object.create({});
+	let _values = {};
+	const isSubmitting = ref<boolean>(false);
 
-	const handleSubmit = (cb?: (data?: T) => void) => {
+	const handleSubmit = (cb?: (data?: T) => void | Promise<void>) => {
 		return async () => {
-			cb?.(flattenObject(forms[uid].values) as T);
+			isSubmitting.value = true;
+			await cb?.(_values as T);
+			isSubmitting.value = false;
 		};
 	};
 
@@ -103,8 +109,7 @@ const FormCompBase = <T extends Record<string, any> = Record<string, any>>(opt?:
 			});
 
 			const submit = async ($event: any) => {
-				$event.preventDefault();
-				let _value: any = values.value;
+				_values = values.value;
 				if (props.validationSchema) {
 					const result = await props.validationSchema.parse(flattenObject(forms[uid].values));
 
@@ -113,14 +118,21 @@ const FormCompBase = <T extends Record<string, any> = Record<string, any>>(opt?:
 							setError(err.key, err.message);
 						});
 
-						return;
+						return $event.preventDefault();
 					}
 				}
 
 				if (props?.enctype === 'multipart/form-data') {
-					_value = createFormDataFromObject(flattenObject(forms[uid].values));
+					_values = createFormDataFromObject(flattenObject(forms[uid].values));
 				}
-				emit('submit', _value, $event);
+
+				if (props.action) {
+					return;
+				}
+				$event.preventDefault();
+				isSubmitting.value = true;
+				await fetcher(props.onSubmit?.(_values, $event));
+				isSubmitting.value = false;
 			};
 
 			const flush = () => {
@@ -153,7 +165,7 @@ const FormCompBase = <T extends Record<string, any> = Record<string, any>>(opt?:
 			}
 
 			if (props.validationSchema && typeof props.validationSchema.cast === 'function') {
-				forms[uid].initialValues = props.initialValues ? mergeDeep(props.initialValues, opt?.initials, props.validationSchema.cast(flattenObject(forms[uid].values))) : mergeDeep(opt?.initials, props.validationSchema.cast(flattenObject(forms[uid].values)));
+				forms[uid].initialValues = props.initialValues ? mergeDeep(props.initialValues, opt?.initials || {}, props.validationSchema.cast(flattenObject(forms[uid].values))) : mergeDeep(opt?.initials || {}, props.validationSchema.cast(flattenObject(forms[uid].values)));
 			}
 
 			/*---------------------------------------------
@@ -175,6 +187,7 @@ const FormCompBase = <T extends Record<string, any> = Record<string, any>>(opt?:
 				updateField,
 				reset,
 				flush,
+				isSubmitting,
 			});
 
 
@@ -204,12 +217,20 @@ const FormCompBase = <T extends Record<string, any> = Record<string, any>>(opt?:
 					type: String as PropType<string>,
 					default: undefined,
 				},
+				action: {
+					type: String as PropType<string>,
+					default: undefined,
+				},
 				preserve: {
 					type: Boolean as PropType<boolean>,
 					default: undefined,
 				},
 				onValueChange: {
 					type: Function as PropType<(value?: any) => void>,
+					default: undefined,
+				},
+				onSubmit: {
+					type: Function as PropType<(value?: any, $event?: SubmitEvent) => void | Promise<void>>,
 					default: undefined,
 				},
 			},
@@ -226,6 +247,7 @@ const FormCompBase = <T extends Record<string, any> = Record<string, any>>(opt?:
 		setError,
 		setInitalValues,
 		reset,
+		isSubmitting,
 	};
 };
 
@@ -272,7 +294,7 @@ const FieldComp = <T extends Record<string, any> = Record<string, any>>() => def
 				attrs.checked = true;
 			}
 
-			if (props.as !== 'select' && !attrs.multiple) {
+			if (baseAttrs.type !== 'file' && (props.as !== 'select' && !attrs.multiple)) {
 				attrs.value = value.value;
 			}
 
@@ -530,5 +552,6 @@ export const useForm = <T extends Record<string, any>>(opt?: FormOptions<T>) => 
 		setError: FormBase.setError,
 		setInitalValues: FormBase.setInitalValues,
 		reset: FormBase.reset,
+		isSubmitting: FormBase.isSubmitting,
 	};
 };

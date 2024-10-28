@@ -1,8 +1,3 @@
-// Get and Set input value either in store and in input
-// Handle v-model logic
-// Set default value
-// Implement OnInput, OnFocus, OnBlur events
-// Handle checkbox, radiobox, select and multiple select values and UI states
 import { forms } from '@/utils/store';
 import { deleteByPath, EventEmitter, getPropBooleanValue, getValueByPath, mergeDeep, stringToObject } from '@/utils/utils';
 import { computed, getCurrentInstance, inject, onBeforeUnmount, onMounted } from 'vue';
@@ -16,9 +11,10 @@ export const useField = (props: Record<string, any>, emit: any, isArrayField: bo
 	const vm = getCurrentInstance();
 
 	const setInitialValues = () => {
-		if (forms[form.uid].initialValues && getValueByPath(forms[form.uid].initialValues, name) && !isArrayField) {
+		if (forms[form.uid].initialValues && name in forms[form.uid].initialValues && !isArrayField) {
 			return getValueByPath(forms[form.uid].initialValues, name);
 		}
+		
 
 		return (options?.modelKey && props[options.modelKey]) ?? props.modelValue ?? props.default ?? options?.default ?? (isArrayField ? [] : '');
 	};
@@ -48,6 +44,10 @@ export const useField = (props: Record<string, any>, emit: any, isArrayField: bo
 	const getValueByInputType = (target: HTMLInputElement) => {
 		if (target.type === 'checkbox') {
 			return getCheckValue(target.checked);
+		}
+	
+		if (target.type === 'file') {
+			return target.multiple ? target.files : target.files?.[0];
 		}
 
 		if (target.type === 'select-multiple') {

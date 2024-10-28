@@ -1,4 +1,4 @@
-import { BaseIssue, GenericSchema, getDefaults, ObjectSchema, safeParseAsync } from 'valibot';
+import { BaseIssue, getDefaults, ObjectSchema, safeParseAsync } from 'valibot';
 
 const arrayToStringPath = (arr: (string | number)[]): string => {
 	let result = '';
@@ -50,8 +50,6 @@ const schemaFromValibot = <TSchema extends ObjectSchema<any, any>>(_schema: TSch
 			return { errors };
 		},
 		cast: () => {
-			console.log(getDefaults(_schema));
-
 			return getDefaults(_schema);
 		},
 	};

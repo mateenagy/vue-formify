@@ -48,6 +48,7 @@
 		"dev": "vite",
 		"lint": "eslint 'src/**/*.{ts,js,vue}' '*.{ts,js}' --no-fix",
 		"lint:fix": "eslint 'src/**/*.{ts,js,vue}' '*.{ts,js}' --fix",
+		"lint:tsc": "vue-tsc --noEmit -p tsconfig.json ",
 		"vitest": "vitest --environment jsdom run",
 		"vitest:hot": "vitest --environment jsdom",
 		"test": "npm run vitest"

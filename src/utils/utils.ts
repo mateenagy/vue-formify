@@ -252,6 +252,14 @@ export const createFormDataFromObject = (obj: Record<string, any>, parentKey = '
 	return formData;
 };
 
+export const fetcher = async (promise?: void | Promise<void>) => {
+	try {
+		return await promise;
+	} catch {
+		return;
+	}
+};
+
 /* Custom event handler */
 
 type EventHandler = (data?: any) => void;
