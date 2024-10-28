@@ -12,8 +12,11 @@ export const useField = (props: Record<string, any>, emit: any, isArrayField: bo
 
 	const setInitialValues = () => {
 		if (forms[form.uid].initialValues && name in forms[form.uid].initialValues && !isArrayField) {
-			return getValueByPath(forms[form.uid].initialValues, name);
+			if (getValueByPath(forms[form.uid].initialValues, name) !== undefined) {
+				return getValueByPath(forms[form.uid].initialValues, name);
+			}
 		}
+		
 		
 
 		return (options?.modelKey && props[options.modelKey]) ?? props.modelValue ?? props.default ?? options?.default ?? (isArrayField ? [] : '');

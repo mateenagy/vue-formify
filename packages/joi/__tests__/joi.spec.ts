@@ -14,7 +14,7 @@ const mountWithComponents = (component: Record<string, any>) => {
 	return mount(component);
 };
 
-describe('Jpi validation', () => {
+describe('Joi validation', () => {
 	it('Required field', async () => {
 		const wrapper = mountWithComponents({
 			setup: () => {

@@ -96,7 +96,7 @@
 		"zod": "^3.23",
 		"radix-vue": "^1.9",
 		"@internationalized/date": "^3.5",
-		"vue-formify": "^1.1",
+		"vue-formify": "1.1",
 		"unplugin-element-plus": "^0.8"
 	},
 	"license": "MIT",

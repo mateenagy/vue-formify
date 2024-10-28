@@ -1,6 +1,9 @@
 <script lang="ts" setup>
-import * as yup from 'yup';
+// import * as yup from 'yup';
+// import * as v from 'valibot';
 // import { schemaFromYup } from '../packages/yup/index';
+// import { schemaFromYup } from '../packages/yup/index';
+// import { schemaFromValibot } from '../packages/valibot/index';
 import { useForm } from '@/composable/useForm';
 /*---------------------------------------------
 /  PROPS & EMITS
@@ -16,6 +19,9 @@ type LoginRequest = {
 ---------------------------------------------*/
 // const schema = schemaFromYup(yup.object({
 // 	username: yup.string().required('Required field'),
+// }));
+// const schema = schemaFromValibot(v.object({
+// 	username: v.pipe(v.string(), v.minLength(1, 'Required field')),
 // }));
 const {
 	Form,
