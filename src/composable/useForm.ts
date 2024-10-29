@@ -67,9 +67,7 @@ const FormCompBase = <T extends Record<string, any> = Record<string, any>>(opt?:
 
 	const handleSubmit = (cb?: (data?: T) => void | Promise<void>) => {
 		return async () => {
-			isSubmitting.value = true;
 			await cb?.(_values as T);
-			isSubmitting.value = false;
 		};
 	};
 
