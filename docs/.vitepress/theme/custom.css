@@ -1,0 +1,25 @@
+:root {
+    --color-green: rgb(66, 184, 131);
+    --vp-c-brand-1: #42b883 !important;
+    --vp-button-brand-bg: #42b883 !important;
+    --vp-c-brand-2: #3ca475 !important;
+}
+
+.clip {
+    -webkit-text-fill-color: light-dark(#3c3c43, #fff) !important;
+    span {
+        -webkit-text-fill-color: var(--color-green) !important;
+    }
+}
+
+.VPHomeHero .text {
+    font-size: 30px !important;
+}
+
+.VPSidebarItem.level-0 {
+    padding-bottom: 12px !important;
+}
+
+.VPImage {
+    filter: drop-shadow(0px 0px 30px rgba(66 184 131 / 40%));
+}

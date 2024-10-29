@@ -7,7 +7,8 @@
 		"node": "v20.12.1"
 	},
 	"workspaces": [
-		"packages/*"
+		"packages/*",
+		"docs/*"
 	],
 	"description": "Unleash Form-Building Freedom! 🚀",
 	"sideEffects": false,
