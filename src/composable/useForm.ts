@@ -31,7 +31,7 @@ type FormType<T extends Record<string, any>> = {
 	name?: string;
 	preserve?: boolean;
 	onValueChange?: (value?: any) => void;
-	onSubmit?: (value?: any, $event?: SubmitEvent) => void | Promise<void>;
+	onSubmit?: (value?: any, $event?: SubmitEvent) => void | Promise<any>;
 }
 
 type FieldType<T extends Record<string, any>> = {
@@ -65,7 +65,7 @@ const FormCompBase = <T extends Record<string, any> = Record<string, any>>(opt?:
 	let _values = {};
 	const isSubmitting = ref<boolean>(false);
 
-	const handleSubmit = (cb?: (data?: T) => void | Promise<void>) => {
+	const handleSubmit = (cb?: (data?: T) => void | Promise<any>) => {
 		return async () => {
 			await cb?.(_values as T);
 		};
@@ -228,7 +228,7 @@ const FormCompBase = <T extends Record<string, any> = Record<string, any>>(opt?:
 					default: undefined,
 				},
 				onSubmit: {
-					type: Function as PropType<(value?: any, $event?: SubmitEvent) => void | Promise<void>>,
+					type: Function as PropType<(value?: any, $event?: SubmitEvent) => void | Promise<any>>,
 					default: undefined,
 				},
 			},

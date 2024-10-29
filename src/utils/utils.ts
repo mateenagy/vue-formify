@@ -252,7 +252,7 @@ export const createFormDataFromObject = (obj: Record<string, any>, parentKey = '
 	return formData;
 };
 
-export const fetcher = async (promise?: void | Promise<void>) => {
+export const fetcher = async (promise?: void | Promise<any>) => {
 	try {
 		return await promise;
 	} catch {
