@@ -115,7 +115,7 @@ export const useField = (props: Record<string, any>, emit: any, isArrayField: bo
 	onMounted(() => {
 		if (vm?.subTree?.el) {
 			if (props.as === 'select') {
-				const options = Array.from((vm?.subTree?.el as unknown as HTMLSelectElement).options);
+				const options = Array.from((vm.subTree.el as unknown as HTMLSelectElement).options);
 				options.forEach((op) => {
 					if (defaultValueCopy?.includes?.(op.value)) {
 						op.selected = true;

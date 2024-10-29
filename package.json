@@ -42,12 +42,13 @@
 	},
 	"scripts": {
 		"start": "vue-tsc && vite build --watch",
-		"build": "bun run lint && vue-tsc && vite build",
-		"build:packages": "bun run lint && bun run vue-tsc && bun build.ts",
+		"build": "bun run oxl:lint && vue-tsc && vite build",
+		"build:packages": "bun run oxl:lint && bun run vue-tsc && bun build.ts",
 		"build:local": "vite build",
 		"publish": "bun run build && bun run vitest && np",
 		"dev": "vite",
 		"lint": "eslint 'src/**/*.{ts,js,vue}' '*.{ts,js}' --no-fix",
+		"oxl:lint": "oxlint all ./src ./packages",
 		"lint:fix": "eslint 'src/**/*.{ts,js,vue}' '*.{ts,js}' --fix",
 		"lint:tsc": "vue-tsc --noEmit -p tsconfig.json ",
 		"vitest": "vitest --environment jsdom run",
@@ -98,7 +99,8 @@
 		"radix-vue": "^1.9",
 		"@internationalized/date": "^3.5",
 		"vue-formify": "1.1",
-		"unplugin-element-plus": "^0.8"
+		"unplugin-element-plus": "^0.8",
+		"oxlint": "^0.10"
 	},
 	"license": "MIT",
 	"repository": {

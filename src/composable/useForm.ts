@@ -518,6 +518,7 @@ const ErrorComp = <T extends Record<string, any> = Record<string, any>>() => def
 		};
 	},
 	{
+		name: 'FieldError',
 		props: {
 			errorFor: {
 				type: String as PropType<any>,

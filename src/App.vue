@@ -43,7 +43,7 @@ const promiseSubmit = async () => {
 	return new Promise((_r, _rj) => setTimeout(_r, 2000));
 }
 const submit = handleSubmit(async (data) => {
-	// await promiseSubmit()
+	await promiseSubmit();
 	console.log('[data]: ', data);
 });
 /*---------------------------------------------
