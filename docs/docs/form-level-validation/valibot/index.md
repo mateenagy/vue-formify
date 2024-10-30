@@ -7,7 +7,7 @@ Import the helper function to convert valibot schema for vue-formify specific sc
 ```vue
 <script lang="ts" setup>
 import * as valibot from 'valibot';
-import { schemaFromZod } from '@vue-formify/valibot';
+import { schemaFromValibot } from '@vue-formify/valibot';
 import { FormifyForm, Field } from 'vue-formify';
 
 const schemaValibot = schemaFromValibot(

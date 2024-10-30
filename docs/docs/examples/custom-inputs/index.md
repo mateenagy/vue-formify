@@ -3,7 +3,7 @@ In this example we are going to make and advance yet simple drag and drop file u
 
 Our first task is to create the component of course. Here is what we do:
 
-- We define the file prop which will be our v-model. There reason why I don't use modelValue is because createInput can handle named v-model (e.g. v-model:file).
+- We define the file prop which will be our v-model. The reason why I don't use modelValue is because createInput can handle named v-model (e.g. v-model:file).
 - We define the emit to update the value
 - We define two method:
     - onDrop will handle drag and drop file upload
