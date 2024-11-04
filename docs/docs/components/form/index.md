@@ -45,6 +45,13 @@ const sendForm = (data) => {
 | flush      | `void` | Forced reset. |
 | setError      | `{ name: string; error: any }` | Set error messages for specified input. |
 
+#### Exposed variables
+| Name      |     Description
+| -------------  | :-------------------- |
+| isSubmitting      | Form submitting state |
+| values      | Form field values |
+| errors      | Form field errors |
+
 ### Slots
 | Slot      |      Parameter      |        Description
 | -------------  | :-------------------- | :-------------------- |

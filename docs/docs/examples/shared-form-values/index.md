@@ -36,7 +36,7 @@ const sendForm = (data) => {
 <template>
 	<FormifyForm @submit="sendForm" name="signup" preserved>
 		<Field name="email" />
-		<Field name="password" />
+		<Field name="password" type="password" />
 		<button>Send</button>
 	</FormifyForm>
 </template>

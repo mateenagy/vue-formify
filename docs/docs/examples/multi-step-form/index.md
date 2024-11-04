@@ -38,7 +38,7 @@ const send = (data: any) => {
 			<Field name="username"/>
 		</div>
 		<div v-show="step === 1">
-			<Field name="password"/>
+			<Field name="password" type="password"/>
 		</div>
 		<button class="mt-2">
 			{{ step !== 1 ? 'Next' : 'Send' }}

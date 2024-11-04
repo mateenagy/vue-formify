@@ -28,7 +28,7 @@ const {
   handleSubmit,
   setError,
 } = useForm<FormData>({
-  initials: {
+  initialValues: {
       stay_loggedin: false,
   },
 });
@@ -183,3 +183,8 @@ const { InputField } = useMyCustomInputs<LoginType>();
 | setError      | `{name: T, message: string}` | Set error message for defined field. `name` is typed and have autocomplete |
 | setInitalValues      | `Record<T, any>` | Set initial values. |
 | reset      | `void` | Reset form values. |
+
+#### Variables
+| Name      |     Description
+| -------------  | :-------------------- |
+| isSubmitting      | Form submitting state |
