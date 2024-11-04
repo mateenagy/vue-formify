@@ -32,7 +32,7 @@ const {
 	isSubmitting,
 	setError,
 } = useForm<LoginRequest>({
-	initials: {
+	initialValues: {
 		stay_loggedin: false,
 	},
 });

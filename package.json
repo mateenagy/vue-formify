@@ -10,7 +10,7 @@
 		"packages/*",
 		"docs/*"
 	],
-	"description": "Unleash Form-Building Freedom! 🚀",
+	"description": "Build powerful, type-safe forms in Vue.",
 	"sideEffects": false,
 	"keywords": [
 		"vue",

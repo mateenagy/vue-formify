@@ -1,56 +1,28 @@
 <p align="center">
   <a href="https://vue-formify.matenagy.me/" target="_blank">
-	<img src="https://raw.githubusercontent.com/mateenagy/vue-formify/main/logo.png"  width="200px"/>
+	<img src="https://raw.githubusercontent.com/mateenagy/vue-formify/main/logo.png"  width="120px"/>
   </a>
 </p>
-<p align="center" style="font-size: 20px">Unleash Form-Building Freedom! 🚀</p>
+<p align="center" style="font-size: 20px">Build powerful, <strong>type-safe</strong> forms in Vue.</p>
 
-<div class="text-center"><strong>VueFormify</strong> is a form creation package that liberates developers to create forms with freedom! VueFormify is not just a form package; it's your ticket to form-building autonomy, empowering you to craft both simple and complex forms with a bare yet robust skeleton.</div>
+<div class="text-center"><strong>VueFormify</strong> is a form-building library for Vue that simplifies creating both simple and complex forms. It offers type safety and a minimal bundle size (~4kb gzipped), making it both secure and efficient.</div>
 
 ## Features
-<ul>
-	<li>Auto collect form values</li>
-	<li>Nested Objects and Arrays</li>
-	<li>Type-safe forms</li>
-	<li>Form level validation integration with (external modules)</li>
-		<ul>
-			<li>joi</li>
-			<li>yup</li>
-			<li>zod</li>
-			<li>valibot</li>
-		</ul>
-	<li>Easy to create custom or third party components</li>
-	<li>You can access values with v-model if you want</li>
-	<li>Using JSON or FormData</li>
-	<li>Only 4kb (gzipped)</li>
-</ul>
+- <strong>Type Safe</strong>: Ensures accurate data types and autocompletion across fields.
+- <strong>Auto Collect Values</strong>: Seamlessly gathers form data.
+- <strong>Supports Nested Objects and Arrays</strong>: Easily handle complex data structures. 
+- <strong>Easy Third-Party Integrations</strong>: Flexible to work with other libraries.
+- <strong>Customizable Components</strong>: Easily build and integrate custom components.
+- <strong>Lightweight</strong>: Small footprint for a faster, more responsive app. 
 
 ## 📚 Documentation
 Read more in the <a href="https://vue-formify.matenagy.me/" target="_blank">documentation</a>
 ## 📦 Install
-```
+```bash
 npm i vue-formify
 ```
 ## 💻 Usage
 ### Basic
-```vue
-<script lang="ts" setup>
-import { FormifyForm, Field, Error } from 'vue-formify';
-
-const sendForm = (data) => {
-	console.log(data);
-};
-</script>
-
-<template>
-	<FormifyForm @submit="sendForm">
-		<Field name="email" as="input" />
-		<Error error-for="email" />
-		<button>Send</button>
-	</FormifyForm>
-</template>
-```
-### Type safe
 ```vue
 <script lang="ts" setup>
 import { useForm } from 'vue-formify';

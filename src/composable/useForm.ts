@@ -56,7 +56,7 @@ type FieldArrayType<T extends Record<string, any>> = {
 }
 
 type FormOptions<T extends Record<string, any>> = {
-	initials: Partial<T>
+	initialValues: Partial<T>
 }
 
 const FormCompBase = <T extends Record<string, any> = Record<string, any>>(opt?: FormOptions<T>) => {
@@ -155,15 +155,15 @@ const FormCompBase = <T extends Record<string, any> = Record<string, any>>(opt?:
 			if (!forms[uid]) {
 				forms[uid] = {
 					values: Object.create({}),
-					initialValues: opt?.initials || props.initialValues || {},
+					initialValues: opt?.initialValues || props.initialValues || {},
 					key: 0,
 				};
 			} else {
-				props.initialValues && (forms[uid].initialValues = opt?.initials || props.initialValues);
+				props.initialValues && (forms[uid].initialValues = opt?.initialValues || props.initialValues);
 			}
 
 			if (props.validationSchema && typeof props.validationSchema.cast === 'function') {
-				forms[uid].initialValues = props.initialValues ? mergeDeep(props.initialValues, opt?.initials || {}, props.validationSchema.cast(flattenObject(forms[uid].values))) : mergeDeep(opt?.initials || {}, props.validationSchema.cast(flattenObject(forms[uid].values)));
+				forms[uid].initialValues = props.initialValues ? mergeDeep(props.initialValues, opt?.initialValues || {}, props.validationSchema.cast(flattenObject(forms[uid].values))) : mergeDeep(opt?.initialValues || {}, props.validationSchema.cast(flattenObject(forms[uid].values)));
 			}
 
 			/*---------------------------------------------
