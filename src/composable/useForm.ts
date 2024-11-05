@@ -23,17 +23,6 @@ export type GetKeys<T extends Record<string, any>> = keyof {
 	)]: any
 }
 
-type FormType<T extends Record<string, any>> = {
-	enctype?: 'application/x-www-form-urlencoded' | 'multipart/form-data';
-	validationSchema?: any;
-	action?: string;
-	initialValues?: Partial<Record<GetKeys<T>, any>>;
-	name?: string;
-	preserve?: boolean;
-	onValueChange?: (value?: any) => void;
-	onSubmit?: (value?: any, $event?: SubmitEvent) => void | Promise<any>;
-}
-
 type ExtractValue<T, K extends string> =
 	K extends `${infer Root}.${infer Rest}`
 		? Root extends keyof T
@@ -55,24 +44,35 @@ type ExtractValue<T, K extends string> =
 		? T[K]
 		: never;
 
-type FieldType2<T extends Record<string, any>> = {
+type RecursivePartial<T> = {
+	[P in keyof T]?: RecursivePartial<T[P]>;
+};
+
+type FormType<T extends Record<string, any>> = {
+	enctype?: 'application/x-www-form-urlencoded' | 'multipart/form-data';
+	validationSchema?: any;
+	action?: string;
+	initialValues?: RecursivePartial<T>;
+	name?: string;
+	preserve?: boolean;
+	onValueChange?: (value?: any) => void;
+	onSubmit?: (value?: any, $event?: SubmitEvent) => void | Promise<any>;
+}
+
+type FieldType<T extends Record<string, any>> = {
 	[K in GetKeys<T>]: {
 		name: K;
 		default?: ExtractValue<T, K>;
+	} & {
+		error?: any;
+		ignore?: any;
+		trueValue?: any;
+		modelValue?: any;
+		falseValue?: any;
+		preserve?: boolean;
+		as?: 'input' | 'select';
 	} & InputHTMLAttributes
 }[GetKeys<T>];
-
-type FieldType<T extends Record<string, any>> = {
-	name: GetKeys<T>;
-	default?: any;
-	error?: any;
-	ignore?: any;
-	trueValue?: any;
-	modelValue?: any;
-	falseValue?: any;
-	preserve?: boolean;
-	as?: 'input' | 'select';
-} & InputHTMLAttributes
 
 type FieldArrayType<T extends Record<string, any>> = {
 	name: GetKeys<T>;
@@ -236,7 +236,7 @@ const FormCompBase = <T extends Record<string, any> = Record<string, any>>(opt?:
 					default: undefined,
 				},
 				initialValues: {
-					type: Object as PropType<Record<string, any>>,
+					type: Object as PropType<any>,
 					default: undefined,
 				},
 				name: {
@@ -279,7 +279,7 @@ const FormCompBase = <T extends Record<string, any> = Record<string, any>>(opt?:
 
 //@ts-expect-error Object props throw error with `FieldWithAutoComplete` but it's working actually
 const FieldComp = <T extends Record<string, any> = Record<string, any>>() => defineComponent<
-	FieldType2<T>,
+	FieldType<T>,
 	any,
 	string,
 	SlotsType<{
