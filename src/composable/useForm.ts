@@ -34,10 +34,38 @@ type FormType<T extends Record<string, any>> = {
 	onSubmit?: (value?: any, $event?: SubmitEvent) => void | Promise<any>;
 }
 
+type ExtractValue<T, K extends string> =
+	K extends `${infer Root}.${infer Rest}`
+		? Root extends keyof T
+			? ExtractValue<T[Root], Rest>
+			: Root extends `${infer ArrayRoot}[${number}]`
+				? ArrayRoot extends keyof T
+					? T[ArrayRoot] extends (infer U)[]
+						? ExtractValue<U, Rest>
+						: never
+					: never
+				: never
+	: K extends `${infer Root}[${number}]`
+		? Root extends keyof T
+			? T[Root] extends (infer U)
+				? U
+				: never
+			: never
+	: K extends keyof T
+		? T[K]
+		: never;
+
+type FieldType2<T extends Record<string, any>> = {
+	[K in GetKeys<T>]: {
+		name: K;
+		default?: ExtractValue<T, K>;
+	} & InputHTMLAttributes
+}[GetKeys<T>];
+
 type FieldType<T extends Record<string, any>> = {
 	name: GetKeys<T>;
-	error?: any;
 	default?: any;
+	error?: any;
 	ignore?: any;
 	trueValue?: any;
 	modelValue?: any;
@@ -249,7 +277,15 @@ const FormCompBase = <T extends Record<string, any> = Record<string, any>>(opt?:
 	};
 };
 
-const FieldComp = <T extends Record<string, any> = Record<string, any>>() => defineComponent(
+//@ts-expect-error Object props throw error with `FieldWithAutoComplete` but it's working actually
+const FieldComp = <T extends Record<string, any> = Record<string, any>>() => defineComponent<
+	FieldType2<T>,
+	any,
+	string,
+	SlotsType<{
+		default: { field: { value: any }, error: any }
+	}>
+>(
 	(props: FieldType<T>, { emit, slots, attrs: baseAttrs }) => {
 		const {
 			value,
@@ -340,7 +376,7 @@ const FieldComp = <T extends Record<string, any> = Record<string, any>>() => def
 			},
 			default: {
 				type: [String, Array, Boolean, Number, Object] as PropType<any>,
-				default: '',
+				default: undefined,
 			},
 			error: {
 				type: String,
@@ -372,9 +408,6 @@ const FieldComp = <T extends Record<string, any> = Record<string, any>>() => def
 			},
 		},
 		emits: ['update:modelValue'],
-		slots: Object as SlotsType<{
-			default: { field: { value: any }, error: any }
-		}>,
 	},
 );
 

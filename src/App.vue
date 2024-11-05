@@ -5,14 +5,27 @@
 // import { schemaFromYup } from '../packages/yup/index';
 // import { schemaFromValibot } from '../packages/valibot/index';
 import { useForm } from '@/composable/useForm';
+import { FieldComp } from './components/Field';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
+type User = {
+	name: string;
+	age: number;
+	links: string[];
+}
 type LoginRequest = {
-	username: string;
+	username: number;
 	password: string;
+	bro: string[]
+	test: {foo: string, bar?: string};
 	stay_loggedin: boolean;
 	file: any;
+	nested: {
+		foo: string;
+		bar: string[];
+		baz: User[];
+	}
 }
 /*---------------------------------------------
 /  VARIABLES
@@ -36,6 +49,7 @@ const {
 		stay_loggedin: false,
 	},
 });
+const Field2 = FieldComp<LoginRequest>()
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
@@ -63,11 +77,13 @@ const submit = handleSubmit(async (data) => {
 	<div>
 		<Form ref="form" @submit="submit" name="foo" v-slot="{ values }">
 			<div>
-				<Field name="username" />
+				<Field name="bro" v-slot="{field}">
+					<input v-bind="field">
+				</Field>
 				<Error error-for="username" />
 			</div>
 			<div>
-				<Field name="password" type="password" />
+				<Field name="username" type="password" />
 			</div>
 			<div>
 				<Field name="stay_loggedin" v-slot="{ field }">
