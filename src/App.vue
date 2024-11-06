@@ -49,11 +49,7 @@ const {
 	handleSubmit,
 	isSubmitting,
 	setError,
-} = useForm<LoginRequest>({
-	initialValues: {
-		username: 'asd'
-	},
-});
+} = useForm<LoginRequest>();
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
@@ -79,9 +75,7 @@ const submit = handleSubmit(async (data) => {
 </script>
 <template>
 	<div>
-		<Form ref="form" @submit="submit" name="foo" v-slot="{ values }" :initial-values="{
-			username: 'asd'
-		}">
+		<Form ref="form" @submit="submit" name="foo" v-slot="{ values }">
 			<button :disabled="isSubmitting">Send</button>
 			<button type="button" @click="reset">
 				Reset
