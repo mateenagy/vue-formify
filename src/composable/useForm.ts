@@ -23,7 +23,7 @@ export type GetKeys<T extends Record<string, any>> = keyof {
 	)]: any
 }
 
-type ExtractValue<T, K extends string> =
+export type ExtractValue<T, K extends string> =
 	K extends `${infer Root}.${infer Rest}`
 		? Root extends keyof T
 			? ExtractValue<T[Root], Rest>
@@ -59,13 +59,13 @@ type FormType<T extends Record<string, any>> = {
 	onSubmit?: (value?: any, $event?: SubmitEvent) => void | Promise<any>;
 }
 
-type FieldType<T extends Record<string, any>> = {
+export type FieldType<T extends Record<string, any>> = {
 	[K in GetKeys<T>]: {
 		name: K;
 		default?: ExtractValue<T, K>;
 	} & {
 		error?: any;
-		ignore?: any;
+		ignore?: boolean;
 		trueValue?: any;
 		modelValue?: any;
 		falseValue?: any;
