@@ -1,6 +1,6 @@
 import { Component, computed, defineComponent, h, resolveDynamicComponent } from 'vue';
 // import { useField } from './useField';
-import { GetKeys } from './useForm';
+import { FieldType, GetKeys } from './useForm';
 import { useField } from './useField';
 
 export type BaseInput<T extends Record<string, any>> = {
@@ -22,7 +22,7 @@ export type CreateInputOptions = {
 }
 
 export const createInput = <T, K extends Record<string, any> = Record<string, any>>(component: Component, options?: CreateInputOptions) => defineComponent(
-	(props: T & BaseInput<K>, { emit, slots, attrs: baseAttrs }) => {
+	(props: T & FieldType<K>, { emit, slots, attrs: baseAttrs }) => {
 		const {
 			value,
 			onInput,

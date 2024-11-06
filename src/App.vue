@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-// import * as yup from 'yup';
 // import * as v from 'valibot';
+// import * as yup from 'yup';
 // import { schemaFromYup } from '../packages/yup/index';
 // import { schemaFromYup } from '../packages/yup/index';
 // import { schemaFromValibot } from '../packages/valibot/index';
@@ -8,18 +8,36 @@ import { useForm } from '@/composable/useForm';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
+type User = {
+	name: string;
+	age: number;
+	links: string[];
+}
 type LoginRequest = {
 	username: string;
 	password: string;
+	bro: string[]
+	test: {foo: string, bar?: string};
 	stay_loggedin: boolean;
 	file: any;
+	nested: {
+		foo: string;
+		bar: string[];
+		baz: User[];
+	}
 }
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
-// const schema = schemaFromYup(yup.object({
+// const _schema = yup.object({
 // 	username: yup.string().required('Required field'),
-// }));
+// 	nested: yup.object({
+// 		name: yup.string(),
+// 		age: yup.number(),
+// 	})
+// })
+// const schema = schemaFromYup(_schema);
+// type UserType = yup.InferType<typeof _schema>;
 // const schema = schemaFromValibot(v.object({
 // 	username: v.pipe(v.string(), v.minLength(1, 'Required field')),
 // }));
@@ -31,11 +49,7 @@ const {
 	handleSubmit,
 	isSubmitting,
 	setError,
-} = useForm<LoginRequest>({
-	initialValues: {
-		stay_loggedin: false,
-	},
-});
+} = useForm<LoginRequest>();
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
@@ -62,25 +76,6 @@ const submit = handleSubmit(async (data) => {
 <template>
 	<div>
 		<Form ref="form" @submit="submit" name="foo" v-slot="{ values }">
-			<div>
-				<Field name="username" />
-				<Error error-for="username" />
-			</div>
-			<div>
-				<Field name="password" type="password" />
-			</div>
-			<div>
-				<Field name="stay_loggedin" v-slot="{ field }">
-					<input id="loggedin" type="checkbox" v-bind="field" />
-					<label for="loggedin">Stay logged in</label>
-				</Field>
-			</div>
-			<div>
-				<Field name="file" type="file" v-slot="{ field }">
-					<label>Upload</label>
-					<input v-bind="field" />
-				</Field>
-			</div>
 			<button :disabled="isSubmitting">Send</button>
 			<button type="button" @click="reset">
 				Reset

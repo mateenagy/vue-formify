@@ -16,8 +16,6 @@ export const useField = (props: Record<string, any>, emit: any, isArrayField: bo
 				return getValueByPath(forms[form.uid].initialValues, name);
 			}
 		}
-		
-		
 
 		return (options?.modelKey && props[options.modelKey]) ?? props.modelValue ?? props.default ?? options?.default ?? (isArrayField ? [] : '');
 	};
