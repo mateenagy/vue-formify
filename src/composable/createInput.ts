@@ -1,5 +1,4 @@
 import { Component, computed, defineComponent, h, resolveDynamicComponent } from 'vue';
-// import { useField } from './useField';
 import { FieldType, GetKeys } from './useForm';
 import { useField } from './useField';
 

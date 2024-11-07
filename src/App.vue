@@ -16,8 +16,9 @@ type User = {
 type LoginRequest = {
 	username: string;
 	password: string;
+	links: string[];
 	bro: string[]
-	test: {foo: string, bar?: string};
+	test: { foo: string, bar?: string };
 	stay_loggedin: boolean;
 	file: any;
 	nested: {
@@ -44,6 +45,7 @@ type LoginRequest = {
 const {
 	Form,
 	Field,
+	FieldArray,
 	Error,
 	reset,
 	handleSubmit,
@@ -58,6 +60,7 @@ const promiseSubmit = async () => {
 }
 const submit = handleSubmit(async (data) => {
 	await promiseSubmit();
+	setError('username', 'asd')
 	console.log('[data]: ', data);
 });
 /*---------------------------------------------
@@ -75,7 +78,14 @@ const submit = handleSubmit(async (data) => {
 </script>
 <template>
 	<div>
-		<Form ref="form" @submit="submit" name="foo" v-slot="{ values }">
+		<Form ref="form" @submit="submit" name="foo" v-slot="{ values }" :initial-values="{ username: '1' }">
+			<FieldArray name="links" v-slot="{ fields, add, remove }" :initial-values="['1', '2']">
+				<fieldset v-for="(field, index) of fields" :key="field.id">
+					<Field :name="`links[${index}]`" />
+					<button type="button" @click="remove(index)">Remove</button>
+				</fieldset>
+				<button type="button" @click="add">Add</button>
+			</FieldArray>
 			<button :disabled="isSubmitting">Send</button>
 			<button type="button" @click="reset">
 				Reset
