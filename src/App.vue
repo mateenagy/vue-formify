@@ -11,50 +11,32 @@ import CustomInput from './CustomInput.vue';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
-type User = {
-	name: string;
-	age: number;
-	links: string[];
-}
 type LoginRequest = {
 	username: string;
 	password: string;
 	links: string[];
-	bro: string[]
-	test: { foo: string, bar?: string };
+	nested: { 
+		foo: string,
+		bar?: string
+	};
 	stay_loggedin: boolean;
-	file: any;
-	nested: {
-		foo: string;
-		bar: string[];
-		baz: User[];
-	}
 }
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
-// const _schema = yup.object({
-// 	username: yup.string().required('Required field'),
-// 	nested: yup.object({
-// 		name: yup.string(),
-// 		age: yup.number(),
-// 	})
-// })
-// const schema = schemaFromYup(_schema);
-// type UserType = yup.InferType<typeof _schema>;
-// const schema = schemaFromValibot(v.object({
-// 	username: v.pipe(v.string(), v.minLength(1, 'Required field')),
-// }));
 const {
 	Form,
 	Field,
-	FieldArray,
 	Error,
 	reset,
 	handleSubmit,
 	isSubmitting,
 	setError,
-} = useForm<LoginRequest>();
+} = useForm<LoginRequest>({
+	initialValues: {
+		stay_loggedin: false
+	}
+});
 const Custom = createInput<ComponentProps<typeof CustomInput>, LoginRequest>(CustomInput);
 /*---------------------------------------------
 /  METHODS
@@ -64,7 +46,7 @@ const promiseSubmit = async () => {
 }
 const submit = handleSubmit(async (data) => {
 	await promiseSubmit();
-	setError('username', 'asd')
+	!data?.username && setError('username', 'Error')
 	console.log('[data]: ', data);
 });
 /*---------------------------------------------
@@ -82,14 +64,16 @@ const submit = handleSubmit(async (data) => {
 </script>
 <template>
 	<div>
-		<Form ref="form" @submit="submit" name="foo" v-slot="{ values }" :initial-values="{ username: '1' }">
-			<FieldArray name="links" v-slot="{ fields, add, remove }" :initial-values="['1', '2']">
-				<fieldset v-for="(field, index) of fields" :key="field.id">
-					<Field :name="`links[${index}]`" />
-					<button type="button" @click="remove(index)">Remove</button>
-				</fieldset>
-				<button type="button" @click="add">Add</button>
-			</FieldArray>
+		<Form ref="form" @submit="submit" name="foo" v-slot="{ values }">
+			<Field name="username" />
+			<Error error-for="username"/>
+			<Custom name="password" />
+			<Error error-for="password"/>
+			<div>
+				<Field id="stay_loggedin" name="stay_loggedin" type="checkbox" />
+				<label for="stay_loggedin">Check</label>
+				<Error error-for="stay_loggedin"/>
+			</div>
 			<button :disabled="isSubmitting">Send</button>
 			<button type="button" @click="reset">
 				Reset
