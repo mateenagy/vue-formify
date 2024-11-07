@@ -5,6 +5,9 @@
 // import { schemaFromYup } from '../packages/yup/index';
 // import { schemaFromValibot } from '../packages/valibot/index';
 import { useForm } from '@/composable/useForm';
+import { createInput } from './composable/createInput';
+import { ComponentProps } from './components';
+import CustomInput from './CustomInput.vue';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
@@ -52,6 +55,7 @@ const {
 	isSubmitting,
 	setError,
 } = useForm<LoginRequest>();
+const Custom = createInput<ComponentProps<typeof CustomInput>, LoginRequest>(CustomInput);
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
