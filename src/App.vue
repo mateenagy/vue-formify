@@ -1,9 +1,4 @@
 <script lang="ts" setup>
-// import * as v from 'valibot';
-// import * as yup from 'yup';
-// import { schemaFromYup } from '../packages/yup/index';
-// import { schemaFromYup } from '../packages/yup/index';
-// import { schemaFromValibot } from '../packages/valibot/index';
 import { useForm } from '@/composable/useForm';
 import { createInput } from './composable/createInput';
 import { ComponentProps } from './components';
