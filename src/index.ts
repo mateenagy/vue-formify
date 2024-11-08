@@ -4,11 +4,6 @@ import { AllowedComponentProps, Component, VNodeProps } from 'vue';
 export type ComponentProps<C extends Component> = C extends new (...args: any) => any
 	? Omit<InstanceType<C>['$props'], keyof VNodeProps | keyof AllowedComponentProps>
 	: never;
-export type FormValue = string | number | boolean | Date;
-export type FormElement = Record<string, {
-	value: FormValue;
-	error: string | undefined;
-}>
 
 export type FormType<T extends Record<string, any> = Record<string, any>> = {
 	values: T;

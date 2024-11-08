@@ -1,7 +1,7 @@
 import { GetKeys } from '@/composable/useForm';
 import { forms } from '@/utils/store';
 import { getValueByPath, mergeDeep, flattenObject, createFormDataFromObject, fetcher, EventEmitter } from '@/utils/utils';
-import { ref, defineComponent, computed, onMounted, provide, h, PropType, SlotsType } from 'vue';
+import { ref, defineComponent, computed, onMounted, provide, h, PropType, SlotsType, watch } from 'vue';
 
 type RecursivePartial<T> = {
 	[P in keyof T]?: T[P] extends object ? RecursivePartial<T[P]> : T[P];
@@ -25,12 +25,12 @@ export type FormOptions<T extends Record<string, any>> = {
 export const FormCompBase = <T extends Record<string, any> = Record<string, any>>(opt?: FormOptions<T>) => {
 	let uid: number | string = Math.floor(Math.random() * Date.now());
 	let originalForm = Object.create({});
-	let _values = {};
+	const _val = ref({});
 	const isSubmitting = ref<boolean>(false);
 
 	const handleSubmit = (cb?: (data?: T) => void | Promise<any>) => {
 		return async () => {
-			await cb?.(_values as T);
+			await cb?.(_val.value as T);
 		};
 	};
 
@@ -70,7 +70,7 @@ export const FormCompBase = <T extends Record<string, any> = Record<string, any>
 			});
 
 			const submit = async ($event: any) => {
-				_values = values.value;
+				let _val = values.value;
 				if (props.validationSchema) {
 					const result = await props.validationSchema.parse(flattenObject(forms[uid].values));
 
@@ -84,7 +84,7 @@ export const FormCompBase = <T extends Record<string, any> = Record<string, any>
 				}
 
 				if (props?.enctype === 'multipart/form-data') {
-					_values = createFormDataFromObject(flattenObject(forms[uid].values));
+					_val = createFormDataFromObject(flattenObject(forms[uid].values)) as any;
 				}
 
 				if (props.action) {
@@ -92,7 +92,7 @@ export const FormCompBase = <T extends Record<string, any> = Record<string, any>
 				}
 				$event.preventDefault();
 				isSubmitting.value = true;
-				await fetcher(props.onSubmit?.(_values, $event));
+				await fetcher(props.onSubmit?.(_val, $event));
 				isSubmitting.value = false;
 			};
 
@@ -109,8 +109,10 @@ export const FormCompBase = <T extends Record<string, any> = Record<string, any>
 				return flattenObject(forms[uid].values, 'error');
 			});
 			const values = computed(() => {
-				return flattenObject(forms[uid].values) as T;
+				return flattenObject(forms[uid]?.values) as T;
 			});
+
+			watch(values, curr => _val.value = curr);
 
 			/*---------------------------------------------
 			/  CREATED
@@ -208,6 +210,7 @@ export const FormCompBase = <T extends Record<string, any> = Record<string, any>
 		setError,
 		setInitalValues,
 		reset,
+		values: _val,
 		isSubmitting,
 	};
 };

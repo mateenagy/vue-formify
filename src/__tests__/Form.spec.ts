@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest';
 import { ref } from 'vue';
 import CustomInputVue from './Views/CustomInput.vue';
 import NamedVModelVue from './Views/NamedVModel.vue';
-import { Form, Field, FieldArray, createInput } from '@/components/main';
+import { Form, Field, FieldArray, createInput } from '@/main';
 
 const ColorPicker = createInput(CustomInputVue);
 const TitleInput = createInput(NamedVModelVue, { modelKey: 'title' });

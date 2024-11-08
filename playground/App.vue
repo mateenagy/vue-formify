@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useForm } from '@/composable/useForm';
 import { createInput } from '@/composable/createInput';
-import { ComponentProps } from '@/components';
+import { ComponentProps } from '@/index';
 import CustomInput from './CustomInput.vue';
 /*---------------------------------------------
 /  PROPS & EMITS
@@ -25,8 +25,9 @@ const {
 	Error,
 	reset,
 	handleSubmit,
-	isSubmitting,
 	setError,
+	isSubmitting,
+	values,
 } = useForm<LoginRequest>({
 	initialValues: {
 		stay_loggedin: false,
@@ -62,8 +63,7 @@ const submit = handleSubmit(async (data) => {
 		<Form
 			ref="form"
 			@submit="submit"
-			name="foo"
-			v-slot="{ values }">
+			name="foo">
 			<Field name="username" />
 			<Error error-for="username" />
 			<Custom name="password" />

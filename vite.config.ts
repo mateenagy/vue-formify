@@ -37,14 +37,14 @@ export default defineConfig({
 			mangle: true,
 		},
 		lib: {
-			entry: 'src/components/main.ts',
+			entry: 'src/main.ts',
 			name: 'VueFormify',
 			formats: ['es', 'umd'],
 			fileName: format => `vue-formify.${format}.js`,
 		},
 		rollupOptions: {
 			input: {
-				main: path.resolve(__dirname, 'src/components/main.ts'),
+				main: path.resolve(__dirname, 'src/main.ts'),
 			},
 			external: [
 				'vue',
