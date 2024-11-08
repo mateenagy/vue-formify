@@ -38,7 +38,7 @@
     "noFallthroughCasesInSwitch": true,
   },
   "include": [
-	"src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue",
+	"src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "playground/**/*.vue", "playground/**/*.ts",
   ],
   "exclude": [
 	"node_modules",
