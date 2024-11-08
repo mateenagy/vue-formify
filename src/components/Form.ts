@@ -25,7 +25,7 @@ export type FormOptions<T extends Record<string, any>> = {
 export const FormCompBase = <T extends Record<string, any> = Record<string, any>>(opt?: FormOptions<T>) => {
 	let uid: number | string = Math.floor(Math.random() * Date.now());
 	let originalForm = Object.create({});
-	const _val = ref({});
+	const _val = ref<T>(Object.create({}));
 	const isSubmitting = ref<boolean>(false);
 
 	const handleSubmit = (cb?: (data?: T) => void | Promise<any>) => {
