@@ -1,13 +1,18 @@
-import PrimeVue from 'primevue/config';
-import Aura from '@primevue/themes/aura';
-import { createApp } from 'vue';
-import App from './App.vue';
+import { FormType, ComponentProps } from './index';
+import { createInput } from '@/composable/createInput';
+import { useForm, Form, Field, FieldArray, Error } from '@/composable/useForm';
 
-const app = createApp(App);
-app
-	.use(PrimeVue, {
-		theme: {
-			preset: Aura,
-		},
-	})
-	.mount('#app');
+export {
+	createInput,
+	Form as FormifyForm,
+	Form,
+	Error,
+	FieldArray,
+	Field,
+	useForm,
+};
+
+export type {
+	FormType,
+	ComponentProps,
+};

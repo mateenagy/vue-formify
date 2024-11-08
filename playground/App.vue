@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useForm } from '@/composable/useForm';
-import { createInput } from './composable/createInput';
-import { ComponentProps } from './components';
+import { createInput } from '@/composable/createInput';
+import { ComponentProps } from '@/index';
 import CustomInput from './CustomInput.vue';
 /*---------------------------------------------
 /  PROPS & EMITS
@@ -25,23 +25,24 @@ const {
 	Error,
 	reset,
 	handleSubmit,
-	isSubmitting,
 	setError,
+	isSubmitting,
+	values,
 } = useForm<LoginRequest>({
 	initialValues: {
-		stay_loggedin: false
-	}
+		stay_loggedin: false,
+	},
 });
 const Custom = createInput<ComponentProps<typeof CustomInput>, LoginRequest>(CustomInput);
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
 const promiseSubmit = async () => {
-	return new Promise((_r, _rj) => setTimeout(_r, 2000));
-}
+	return new Promise(_r => setTimeout(_r, 2000));
+};
 const submit = handleSubmit(async (data) => {
 	await promiseSubmit();
-	!data?.username && setError('username', 'Error')
+	!data?.username && setError('username', 'Error');
 	console.log('[data]: ', data);
 });
 /*---------------------------------------------
@@ -59,18 +60,28 @@ const submit = handleSubmit(async (data) => {
 </script>
 <template>
 	<div>
-		<Form ref="form" @submit="submit" name="foo" v-slot="{ values }">
+		<Form
+			ref="form"
+			@submit="submit"
+			name="foo">
 			<Field name="username" />
-			<Error error-for="username"/>
+			<Error error-for="username" />
 			<Custom name="password" />
-			<Error error-for="password"/>
+			<Error error-for="password" />
 			<div>
-				<Field id="stay_loggedin" name="stay_loggedin" type="checkbox" />
+				<Field
+					id="stay_loggedin"
+					name="stay_loggedin"
+					type="checkbox" />
 				<label for="stay_loggedin">Check</label>
-				<Error error-for="stay_loggedin"/>
+				<Error error-for="stay_loggedin" />
 			</div>
-			<button :disabled="isSubmitting">Send</button>
-			<button type="button" @click="reset">
+			<button :disabled="isSubmitting">
+				Send
+			</button>
+			<button
+				type="button"
+				@click="reset">
 				Reset
 			</button>
 			<pre>{{ values }}</pre>

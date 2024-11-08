@@ -43,5 +43,6 @@ export const useForm = <T extends Record<string, any>>(opt?: FormOptions<T>) => 
 		setInitalValues: FormBase.setInitalValues,
 		reset: FormBase.reset,
 		isSubmitting: FormBase.isSubmitting,
+		values: FormBase.values,
 	};
 };
