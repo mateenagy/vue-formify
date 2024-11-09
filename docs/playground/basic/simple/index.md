@@ -2,4 +2,4 @@
 aside: false
 ---
 # Simple
-<iframe src="https://stackblitz.com/edit/vue-formify-starter-ktlyw3?ctl=1&embed=1&file=src%2FApp.vue" />
+<iframe src="https://play.vuejs.org/#eNp9UttOwzAM/RUrL4A0WnERD6NDXAQSPADi8paXqnNLIE2ixB2bpv07TstKue3NsY99jk+8FGfOJbMGxVhkofDKEQSkxoHOTTWRgoIUJ9Ko2llPsIQm4JX1Nayg9LaGLW7dLTmhysWWNNLQwiE8B/QwgaU0AKXygUxe4xgCeWWq45jV+a/kKrYX1oRIEzlGcKVQT5lqsqbN4uST7R2GZ2knl8Xxg7B2OifkF0A2VbM24DB2fcbx1Q6MxLxar0wKSP/BrHUOIFnaz8zSjilLB/xixKbxHqWqktdgDTvbGiFFYWunNPo7R4r3lGLcWRRrudb2/abNkW9wtM4XL1i8/ZF/DfOYk+LeI3syY4V9jXJfIXXly8dbnHPcF2s7bTSjNxQfMFjdRI0d7LwxU5Y9wLVqr9ub4M97CpdzQhPWS0WhEblq8VLwjVxsWP1L7kFy2PbxMbCL3c3t1rn74WNX+D5kcIed6BciF8Zp2hj3ViVsfTqAnO4l+8kR/16gYTrBwFRS9CJWH6R4CNs=" />
