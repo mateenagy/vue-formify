@@ -8,7 +8,7 @@ Import the helper function to convert joi schema for vue-formify specific schema
 <script lang="ts" setup>
 import Joi from 'joi';
 import { schemaFromJoi } from '@vue-formify/joi';
-import { FormifyForm, Field, Error } from 'vue-formify';
+import { Form, Field, Error } from 'vue-formify';
 
 const schemaJoi = schemaFromJoi(
   Joi.object({
@@ -23,10 +23,10 @@ const sendForm = (data) => {
 
 </script>
 <template>
-	<FormifyForm :validation-schema="schemaJoi" @submit="sendForm">
+	<Form :validation-schema="schemaJoi" @submit="sendForm">
         <Field name="first_name" />
         <Field name="last_name" />
     <button>Submit</button>
-  </FormifyForm>
+  </Form>
 </template>
 ```

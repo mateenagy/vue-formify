@@ -20,7 +20,7 @@ import { ElInput } from '@vue-formify/element-plus';
 ## 💻 Usage
 ```vue
 <script lang="ts" setup>
-import { FormifyForm } from 'vue-formify';
+import { Form } from 'vue-formify';
 import { ElInput } from '@vue-formify/element-plus';
 
 const sendForm = (data) => {
@@ -29,9 +29,9 @@ const sendForm = (data) => {
 
 </script>
 <template>
-	<FormifyForm @submit="sendForm">
+	<Form @submit="sendForm">
 		<ElInput name="email" />
 		<button>Send</button>
-	</FormifyForm>
+	</Form>
 </template>
 ```

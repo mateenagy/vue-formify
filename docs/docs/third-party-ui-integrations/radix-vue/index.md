@@ -31,7 +31,7 @@ const sendForm = (data) => {
 
 </script>
 <template>
-	<FormifyForm @submit="send">
+	<Form @submit="send">
 		<SwitchRoot
 			id="airplane-mode"
 			name="airplane"
@@ -39,7 +39,7 @@ const sendForm = (data) => {
 			<SwitchThumb class="SwitchThumb"/>
 		</SwitchRoot>
 		<button>Send</button>
-	</FormifyForm>
+	</Form>
 </template>
 ```
 ## 🗒️ Note

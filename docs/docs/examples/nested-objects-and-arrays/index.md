@@ -5,7 +5,7 @@ You can create nested objects by passing strings with dot path to name attribute
 There is no limitation, you can nest as musch as you like.
 ```vue
 <script lang="ts" setup>
-import { FormifyForm, Field } from 'vue-formify';
+import { Form, Field } from 'vue-formify';
 
 type NestedObject = {
 	social: {
@@ -19,11 +19,11 @@ const sendForm = (data: NestedObject) => {
 
 </script>
 <template>
-	<FormifyForm @submit="sendForm">
+	<Form @submit="sendForm">
 		<Field name="social.twitter" />
 		<Field name="social.github" />
 		<button>Send</button>
-	</FormifyForm>
+	</Form>
 </template>
 ```
 :::warning Disable object nesting behaviour
@@ -44,7 +44,7 @@ You can create arrays using square brackets.
 :::
 ```vue
 <script lang="ts" setup>
-import { FormifyForm, Field } from 'vue-formify';
+import { Form, Field } from 'vue-formify';
 
 const sendForm = (data) => {
 	console.log(data);
@@ -52,18 +52,18 @@ const sendForm = (data) => {
 
 </script>
 <template>
-	<FormifyForm @submit="sendForm">
+	<Form @submit="sendForm">
 		<Field name="social[0]" />
 		<Field name="social[1]" />
 		<button>Send</button>
-	</FormifyForm>
+	</Form>
 </template>
 ```
 
 Also you can nesting objects and arrays together as much as you like:`foo.bar[0].baz`
 ```vue
 <script lang="ts" setup>
-import { FormifyForm, Field } from 'vue-formify';
+import { Form, Field } from 'vue-formify';
 
 const sendForm = (data) => {
 	console.log(data);
@@ -71,10 +71,10 @@ const sendForm = (data) => {
 
 </script>
 <template>
-	<FormifyForm @submit="sendForm">
+	<Form @submit="sendForm">
 		<Field name="social.links[0].url" />
 		<Field name="social.links[1].url" />
 		<button>Send</button>
-	</FormifyForm>
+	</Form>
 </template>
 ```

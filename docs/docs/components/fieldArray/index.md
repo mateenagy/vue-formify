@@ -2,9 +2,10 @@
 
 The `<FieldArray>` is a component for create repeatable array fields.
 
+### Basic usage
 ```vue
 <script lang="ts" setup>
-import { FormifyForm, FieldArray, Field } from 'vue-formify';
+import { Form, FieldArray, Field } from 'vue-formify';
 
 const sendForm = (data) => {
 	console.log(data);
@@ -12,8 +13,8 @@ const sendForm = (data) => {
 
 </script>
 <template>
-	<FormifyForm @submit="sendForm">
-        <FieldArray name="links[]" v-slot="{fields, add, remove}">
+	<Form @submit="sendForm">
+        <FieldArray name="links" v-slot="{fields, add, remove}">
             <fieldset v-for="(field, index) of fields" :key="field.id">
                 <Field :name="`links[${index}]`" />
                 <button type="button" @click="remove(index)">Remove</button>
@@ -21,7 +22,7 @@ const sendForm = (data) => {
             <button type="button" @click="add">Add</button>
         </FieldArray>
 		<button>Send</button>
-	</FormifyForm>
+	</Form>
 </template>
 ```
 ::: tip Best practice
@@ -34,6 +35,7 @@ When you using `v-for` on the `fields` always use the `field.id` in the `:key` a
 | name               | Field name |
 | initial-values               | Field default value |
 | ignore               | Ignore field when extract data |
+| preserve               | Preserve field value when field is unmounted |
 
 ### Slots
 | Slot      |      Parameter      |        Description

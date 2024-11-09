@@ -1,11 +1,12 @@
 # Multi step form
-In this example we create a simple multi step form. To archive this we just simply use v-show and a reactive value to track the current step. On the send method you can write the logic for validation and when to let the user to the next step.
+In this example, we create a simple multi-step form. To achieve this, we use `v-show` and a `reactive` value to track the current step. In the send method, you can write the logic for validation and determine when to allow the user to move to the next step.
 
-You can use v-if if you want but then you have to put **preserve** attribute on every input
+You can also use `v-if` if preferred, but in that case, you'll need to add the `preserve` attribute to every input.
+
 ```vue
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { FormifyForm, Field, FormType } from 'vue-formify';
+import { Form, Field, FormType } from 'vue-formify';
 
 const step = ref<number>(0);
 const form = ref<FormType>();
@@ -31,7 +32,7 @@ const send = (data: any) => {
 };
 </script>
 <template>
-	<FormifyForm ref="form" @submit="send" v-slot="{ data }">
+	<Form ref="form" @submit="send" v-slot="{ data }">
 		<pre>{{ data }}</pre>
 		<h3>Registration</h3>
 		<div v-show="step === 0">
@@ -43,6 +44,6 @@ const send = (data: any) => {
 		<button class="mt-2">
 			{{ step !== 1 ? 'Next' : 'Send' }}
 		</button>
-	</FormifyForm>
+	</Form>
 </template>
 ```

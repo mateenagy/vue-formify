@@ -74,7 +74,7 @@ export default defineConfig({
 				{
 					text: 'Components',
 					items: [
-						{ text: 'FormifyForm', link: '/docs/components/form/index.md' },
+						{ text: 'Form', link: '/docs/components/form/index.md' },
 						{ text: 'Field', link: '/docs/components/field/index.md' },
 						{ text: 'FieldArray', link: '/docs/components/fieldArray/index.md' },
 						{ text: 'Error', link: '/docs/components/error/index.md' },
@@ -84,12 +84,12 @@ export default defineConfig({
 					text: 'Composables',
 					items: [
 						{
-							text: 'createInput',
-							link: '/docs/composables/create-input/index.md',
-						},
-						{
 							text: 'useForm',
 							link: '/docs/composables/use-form/index.md',
+						},
+						{
+							text: 'createInput',
+							link: '/docs/composables/create-input/index.md',
 						},
 					]
 				},

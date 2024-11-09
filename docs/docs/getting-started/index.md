@@ -31,7 +31,7 @@ const sendForm = handleSubmit((data) => console.log(data));
 ### Without type safe
 ```vue
 <script lang="ts" setup>
-import { FormifyForm, Field } from 'vue-formify';
+import { Form, Field } from 'vue-formify';
 
 const sendForm = (data) => {
 	console.log(data);
@@ -39,10 +39,10 @@ const sendForm = (data) => {
 
 </script>
 <template>
-	<FormifyForm @submit="sendForm">
+	<Form @submit="sendForm">
 		<Field name="first_name" />
 		<Field name="last_name" />
 		<button>Send</button>
-	</FormifyForm>
+	</Form>
 </template>
 ```

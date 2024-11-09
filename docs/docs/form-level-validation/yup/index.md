@@ -8,7 +8,7 @@ Import the helper function to convert yup schema for vue-formify specific schema
 <script lang="ts" setup>
 import * as yup from 'yup';
 import { schemaFromYup } from '@vue-formify/yup';
-import { FormifyForm, Field } from 'vue-formify';
+import { Form, Field } from 'vue-formify';
 
 const schemaYup = schemaFromYup(
   yup.object({
@@ -23,10 +23,10 @@ const sendForm = (data) => {
 
 </script>
 <template>
-	<FormifyForm :validation-schema="schemaYup" @submit="sendForm">
+	<Form :validation-schema="schemaYup" @submit="sendForm">
         <Field name="first_name" />
         <Field name="last_name" />
     <button>Submit</button>
-  </FormifyForm>
+  </Form>
 </template>
 ```

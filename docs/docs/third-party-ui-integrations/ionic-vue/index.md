@@ -20,7 +20,7 @@ import { IonInput } from '@vue-formify/ionic-vue';
 ## 💻 Usage
 ```vue
 <script lang="ts" setup>
-import { FormifyForm } from 'vue-formify';
+import { Form } from 'vue-formify';
 import { IonInput } from '@vue-formify/ionic-vue';
 
 const sendForm = (data) => {
@@ -29,10 +29,10 @@ const sendForm = (data) => {
 
 </script>
 <template>
-	<FormifyForm @submit="sendForm">
+	<Form @submit="sendForm">
 		<IonInput name="email" />
 		<button>Send</button>
-	</FormifyForm>
+	</Form>
 </template>
 ```
 ## ℹ️ Auto Import

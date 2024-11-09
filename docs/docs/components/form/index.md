@@ -1,12 +1,10 @@
 # Form
+The `<Form />` component functions like a native form but includes additional behind the scenes functionality. It helps collect form data, manage validations, and handle submissions.
 
-The `<FormifyForm />` component is the same as the native equivalent with some extra magic under the hood.
-
-This is the root component for every form. The form will extract the data automatically.
 ### Basic usage
 ```vue
 <script lang="ts" setup>
-import { FormifyForm, Field } from 'vue-formify';
+import { Form, Field } from 'vue-formify';
 
 const sendForm = (data) => {
 	console.log(data);
@@ -14,38 +12,37 @@ const sendForm = (data) => {
 
 </script>
 <template>
-	<FormifyForm @submit="sendForm">
+	<Form @submit="sendForm">
 		<Field name="first_name" />
 		<Field name="last_name" />
 		<button>Send</button>
-	</FormifyForm>
+	</Form>
 </template>
 ```
-
 ## Api reference
 ### Props
-| Prop                 |      Description      |
+| Prop name                 |      Description      |
 | --------------------- | :----------- |
 | enctype               | Specifies how the form data should be encoded. |
-| initialValues               | Inital values for form elements |
-| validation-schema     | You can pass validation schema object from **yup/zod/valibot/joi** |
-| preserve     | Preserve form data even the Form component is unmounted |
-| name     | Name of the form. |
+| initialValues               | Sets initial values for form elements. |
+| validation-schema     | Accepts a validation schema object from **yup**, **zod**, **valibot**, or **joi**. |
+| preserve     | Preserves form data even when the Form component is unmounted. |
+| name     | Defines the name of the form. |
 
 ### Events
 | Event                 |      Description      |
 | -------------         | :----------- |
-| submit               | Send form data. Data will be automatically extracted. |
-| value-change         | Event when form data changed. Good for side effects.  |
+| submit               | Sends form data, with data automatically extracted. |
+| value-change         | Triggers an event when form data changes, useful for side effects.  |
 
 ### Methods
 | Method      |      Parameter      |        Description
 | -------------  | :-------------------- | :-------------------- |
-| reset      | `void` | Reset form to default value. |
+| reset      | `void` | Reset form. |
 | flush      | `void` | Forced reset. |
 | setError      | `{ name: string; error: any }` | Set error messages for specified input. |
 
-#### Exposed variables
+### Exposed variables
 | Name      |     Description
 | -------------  | :-------------------- |
 | isSubmitting      | Form submitting state |

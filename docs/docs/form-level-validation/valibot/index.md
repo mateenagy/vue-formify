@@ -8,7 +8,7 @@ Import the helper function to convert valibot schema for vue-formify specific sc
 <script lang="ts" setup>
 import * as valibot from 'valibot';
 import { schemaFromValibot } from '@vue-formify/valibot';
-import { FormifyForm, Field } from 'vue-formify';
+import { Form, Field } from 'vue-formify';
 
 const schemaValibot = schemaFromValibot(
   v.object({
@@ -27,10 +27,10 @@ const sendForm = (data) => {
 
 </script>
 <template>
-	<FormifyForm :validation-schema="schemaValibot" @submit="sendForm">
+	<Form :validation-schema="schemaValibot" @submit="sendForm">
         <Field name="first_name" />
         <Field name="last_name" />
     <button>Submit</button>
-  </FormifyForm>
+  </Form>
 </template>
 ```

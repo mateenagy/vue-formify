@@ -1,14 +1,14 @@
 # Share data between forms
-There are situations where you need one large object but your forms need to be separated into different views like a checkout. In this case you mostly use some kind of store management logic.
+In situations where you need a large object but your forms are split into different views, like in a checkout process, you typically use some form of store management logic.
 
-I solved this problem so you are able to share data between forms.
+I’ve solved this problem by allowing data to be shared between forms.
 
-To make it work we need to do two thing: Set the `name` and `preserve` attribute 
+To make this work, you need to do two things: set the `name` and `preserve` attributes.
 
 `View1.vue`
 ```vue
 <script lang="ts" setup>
-import { FormifyForm, Field } from 'vue-formify';
+import { Form, Field } from 'vue-formify';
 
 const sendForm = (data) => {
 	console.log(data);
@@ -16,17 +16,17 @@ const sendForm = (data) => {
 
 </script>
 <template>
-	<FormifyForm @submit="sendForm" name="signup" preserved>
+	<Form @submit="sendForm" name="signup" preserved>
 		<Field name="first_name" />
 		<Field name="last_name" />
 		<button>Send</button>
-	</FormifyForm>
+	</Form>
 </template>
 ```
 `View2.vue`
 ```vue
 <script lang="ts" setup>
-import { FormifyForm, Field } from 'vue-formify';
+import { Form, Field } from 'vue-formify';
 
 const sendForm = (data) => {
 	console.log(data);
@@ -34,11 +34,11 @@ const sendForm = (data) => {
 
 </script>
 <template>
-	<FormifyForm @submit="sendForm" name="signup" preserved>
+	<Form @submit="sendForm" name="signup" preserved>
 		<Field name="email" />
 		<Field name="password" type="password" />
 		<button>Send</button>
-	</FormifyForm>
+	</Form>
 </template>
 ```
 When you send the form the final data will be:

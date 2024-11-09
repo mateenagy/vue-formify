@@ -81,7 +81,7 @@ If you using the composable you must import the other components from there too 
 ❌ Bad:
 ```vue
 <script lang="ts" setup>
-import { useForm, FormifyForm } from './composable/useForm';
+import { useForm, Form } from './composable/useForm';
 
 const {
   Field,
@@ -89,10 +89,10 @@ const {
 ...
 </script>
 <template>
-    <FormifyForm
+    <Form
         @submit="submit">
         <Field name="username" />
-    </FormifyForm>
+    </Form>
 </template>
 ```
 ✅ Good:
@@ -188,3 +188,4 @@ const { InputField } = useMyCustomInputs<LoginType>();
 | Name      |     Description
 | -------------  | :-------------------- |
 | isSubmitting      | Form submitting state |
+| values      | Form data values |

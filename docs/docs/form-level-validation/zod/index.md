@@ -8,7 +8,7 @@ Import the helper function to convert zod schema for vue-formify specific schema
 <script lang="ts" setup>
 import * as zod from 'zod';
 import { schemaFromZod } from '@vue-formify/zod';
-import { FormifyForm, Field } from 'vue-formify';
+import { Form, Field } from 'vue-formify';
 
 const schemaZod = schemaFromZod(
   zod.object({
@@ -23,10 +23,10 @@ const sendForm = (data) => {
 
 </script>
 <template>
-	<FormifyForm :validation-schema="schemaZod" @submit="sendForm">
+	<Form :validation-schema="schemaZod" @submit="sendForm">
         <Field name="first_name" />
         <Field name="last_name" />
     <button>Submit</button>
-  </FormifyForm>
+  </Form>
 </template>
 ```

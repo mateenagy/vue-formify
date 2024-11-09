@@ -20,7 +20,7 @@ import { InputText } from '@vue-formify/primevue';
 ## 💻 Usage
 ```vue
 <script lang="ts" setup>
-import { FormifyForm } from 'vue-formify';
+import { Form } from 'vue-formify';
 import { InputText, InputMask } from '@vue-formify/primevue';
 
 const sendForm = (data) => {
@@ -29,11 +29,11 @@ const sendForm = (data) => {
 
 </script>
 <template>
-	<FormifyForm @submit="sendForm">
+	<Form @submit="sendForm">
 		<InputText name="email" />
         <InputMask name="mask" mask="99-999999" placeholder="99-999999" />
 		<button>Send</button>
-	</FormifyForm>
+	</Form>
 </template>
 ```
 ## ℹ️ Auto Import
