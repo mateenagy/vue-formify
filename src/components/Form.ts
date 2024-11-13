@@ -19,7 +19,7 @@ type FormType<T extends Record<string, any>> = {
 }
 
 export type FormOptions<T extends Record<string, any>> = {
-	initialValues: Partial<T>
+	initialValues: T extends Record<string, any> ? Partial<T> : Record<string, any>
 }
 
 export const FormCompBase = <T extends Record<string, any> = Record<string, any>>(opt?: FormOptions<T>) => {
