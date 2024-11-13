@@ -1,8 +1,6 @@
 <script lang="ts" setup>
 import { useForm } from '@/composable/useForm';
-import { createInput } from '@/composable/createInput';
-import { ComponentProps } from '@/index';
-import CustomInput from './CustomInput.vue';
+import { JSONSchema, SchemaField } from '@/components/SchemaField';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
@@ -10,7 +8,7 @@ type LoginRequest = {
 	username: string;
 	password: string;
 	links: string[];
-	nested: { 
+	nested: {
 		foo: string,
 		bar?: string
 	};
@@ -33,7 +31,6 @@ const {
 		stay_loggedin: false,
 	},
 });
-const Custom = createInput<ComponentProps<typeof CustomInput>, LoginRequest>(CustomInput);
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
@@ -57,6 +54,20 @@ const submit = handleSubmit(async (data) => {
 /*---------------------------------------------
 /  HOOKS
 ---------------------------------------------*/
+const jsonSchema: JSONSchema<LoginRequest> = [
+	{
+		name: 'username',
+		component: [Field, Error],
+	},
+	{
+		name: 'password',
+		component: 'input',
+	},
+	{
+		name: 'nested.foo',
+		component: Field,
+	},
+];
 </script>
 <template>
 	<div>
@@ -64,18 +75,7 @@ const submit = handleSubmit(async (data) => {
 			ref="form"
 			@submit="submit"
 			name="foo">
-			<Field name="username" />
-			<Error error-for="username" />
-			<Custom name="password" />
-			<Error error-for="password" />
-			<div>
-				<Field
-					id="stay_loggedin"
-					name="stay_loggedin"
-					type="checkbox" />
-				<label for="stay_loggedin">Check</label>
-				<Error error-for="stay_loggedin" />
-			</div>
+			<SchemaField :schema="jsonSchema" />
 			<button :disabled="isSubmitting">
 				Send
 			</button>

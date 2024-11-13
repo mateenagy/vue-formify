@@ -1,6 +1,7 @@
 import { FormType, ComponentProps } from './index';
 import { createInput } from '@/composable/createInput';
 import { useForm, Form, Field, FieldArray, Error } from '@/composable/useForm';
+import { SchemaField } from '@/components/SchemaField';
 
 export {
 	createInput,
@@ -9,6 +10,7 @@ export {
 	Error,
 	FieldArray,
 	Field,
+	SchemaField,
 	useForm,
 };
 
