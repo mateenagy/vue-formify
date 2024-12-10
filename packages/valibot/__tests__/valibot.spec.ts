@@ -1,134 +1,96 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import * as v from 'valibot';
 import { describe, expect, it } from 'vitest';
-import { FormifyForm, Field } from 'vue-formify';
+import { useForm } from 'vue-formify';
 import { schemaFromValibot } from '../index';
+import { defineComponent, h } from 'vue';
 
-const mountWithComponents = (component: Record<string, any>) => {
-	component.components = {
-		...component.components,
-		FormifyForm,
-		Field,
-	};
+const BaseComponent = (options: {
+	fieldName: any,
+	errorName?: any,
+	schema: any,
+}) => {
+	const cmp = defineComponent(() => {
+		const { Field, Form, Error } = useForm();
+		const schema = schemaFromValibot(v.object({
+			...options.schema,
+		}));
 
-	return mount(component);
-};
-describe('Valibot validation', () => {
-	it('Required field Valibot', async () => {
-		const wrapper = mountWithComponents({
-			setup: () => {
-				const schema = schemaFromValibot(v.object({
-					email: v.pipe(v.string(), v.minLength(1, 'Required field')),
-				}));
-
-				const send = (data: any) => {
-					console.log(data);
-				};
-
-				return { schema, send };
-			},
-			template: `
-				<FormifyForm v-slot="{data, errors}" :validation-schema="schema" @submit="send">
-					<Field name="email" />
-					<span id="error">{{ errors.email }}</span>
-				</FormifyForm>
-			`,
-		});
-		const form = wrapper.findComponent(FormifyForm);
-		const input = wrapper.find('input[name="email"]');
-
-		expect(wrapper.find('input[name="email"]'));
-		await input.setValue('');
-		await form.trigger('submit');
-		await flushPromises();
-		expect(wrapper.find('#error').text()).equals('Required field');
+		return () => {
+			return h(Form, {
+				'validation-schema': schema,
+			}, () => [h(Field, { name: options.fieldName }), h(Error, { errorFor: options.errorName || options.fieldName })]);
+		};
 	});
-	it('Email test', async () => {
-		const wrapper = mountWithComponents({
-			setup: () => {
-				const schema = schemaFromValibot(v.object({
-					email: v.pipe(v.string(), v.minLength(1, 'Required field'), v.email('Invalid email')),
-				}));
 
-				const send = (data: any) => {
-					console.log(data);
-				};
+	return mount(cmp);
+};
 
-				return { schema, send };
+describe('Valibot validation', () => {
+	it('Required field', async () => {
+		const wrapper = BaseComponent({
+			fieldName: 'email',
+			schema: {
+				email: v.pipe(v.string(), v.nonEmpty('Required field')),
 			},
-			template: `
-				<FormifyForm v-slot={errors} :validation-schema="schema" @submit="send">
-					<Field name="email" />
-					<span id="error">{{ errors.email }}</span>
-					<button type="submit">Send</button>
-				</FormifyForm>
-			`,
 		});
-		const form = wrapper.findComponent(FormifyForm);
-		const input = wrapper.find('input[name="email"]');
-		await input.setValue('asd@');
+
+		const form = wrapper.findComponent('form');
 		await form.trigger('submit');
 		await flushPromises();
-		expect(wrapper.find('#error').text()).equals('Invalid email');
+		expect(wrapper.find('span').text()).equals('Required field');
 	});
 	it('Nested object', async () => {
-		const wrapper = mountWithComponents({
-			setup: () => {
-				const schema = schemaFromValibot(v.object({
-					social: v.object({
-						github: v.pipe(v.string(), v.minLength(1, 'Required field'), v.url('Invalid url')),
-					}),
-				}));
-
-				const send = (data: any) => {
-					console.log(data);
-				};
-
-				return { schema, send };
+		const wrapper = BaseComponent({
+			fieldName: 'user.email',
+			schema: {
+				user: v.object({
+					email: v.pipe(v.string(), v.nonEmpty('Required field')),
+				}),
 			},
-			template: `
-				<FormifyForm v-slot={errors} :validation-schema="schema" @submit="send">
-					<Field name="social.github" />
-					<span id="error">{{ errors.social?.github }}</span>
-					<button type="submit">Send</button>
-				</FormifyForm>
-			`,
 		});
-		const form = wrapper.findComponent(FormifyForm);
-		const input = wrapper.find('input[name="social.github"]');
-		await input.setValue('qwe.com');
+
+		const form = wrapper.findComponent('form');
 		await form.trigger('submit');
 		await flushPromises();
-		expect(wrapper.find('#error').text()).equals('Invalid url');
+		expect(wrapper.find('span').text()).equals('Required field');
+	});
+	it('Array', async () => {
+		const wrapper = BaseComponent({
+			fieldName: 'emails[0]',
+			errorName: 'emails',
+			schema: {
+				emails: v.pipe(
+					v.array(v.string()),
+					v.nonEmpty('Min 1 item'),
+					v.minLength(2, 'Min 2 item'),
+				),
+			},
+		});
+
+		const form = wrapper.findComponent('form');
+		await form.trigger('submit');
+		await flushPromises();
+		expect(wrapper.find('span').text()).equals('Min 1 item');
 	});
 	it('Nested array object', async () => {
-		const wrapper = mountWithComponents({
-			setup: () => {
-				const schema = schemaFromValibot(v.object({
-					social: v.array(v.object({
-						url: v.pipe(v.string(), v.minLength(1, 'Required field'), v.url('Invalid url')),
-					})),
-				}));
-
-				const send = (data: any) => {
-					console.log(data);
-				};
-
-				return { schema, send };
+		const wrapper = BaseComponent({
+			fieldName: 'user.emails[0]',
+			errorName: 'user.emails',
+			schema: {
+				user: v.object({
+					emails: v.pipe(
+						v.array(v.string()),
+						v.nonEmpty('Min 1 item'),
+						v.minLength(2, 'Min 2 item'),
+					),
+				}),
 			},
-			template: `
-				<FormifyForm v-slot={errors} :validation-schema="schema" @submit="send">
-					<Field name="social[0].url" />
-					<span id="error">{{ errors.social?.[0]?.url }}</span>
-					<button type="submit">Send</button>
-				</FormifyForm>
-			`,
 		});
-		const form = wrapper.findComponent(FormifyForm);
-		const input = wrapper.find('input[name="social[0].url"]');
-		await input.setValue('qwe.com');
+
+		const form = wrapper.findComponent('form');
 		await form.trigger('submit');
 		await flushPromises();
-		expect(wrapper.find('#error').text()).equals('Invalid url');
+		expect(wrapper.find('span').text()).equals('Min 1 item');
 	});
 });

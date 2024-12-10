@@ -1,35 +1,10 @@
-import { BaseIssue, getDefaults, ObjectSchema, safeParseAsync } from 'valibot';
+import { getDefaults, ObjectSchema, safeParseAsync, flatten } from 'valibot';
 
-const arrayToStringPath = (arr: (string | number)[]): string => {
-	let result = '';
-	
-	for (const element of arr) {
-		if (typeof element === 'string') {
-			result += element;
-		} else if (typeof element === 'number') {
-			result = result.slice(0, -1);
-			result += `[${element}]`;
-		} else {
-			console.warn(`Unexpected type in array: ${typeof element}`);
-
-			return '';
-		}
-		result += '.';
+const processError = (issues: any) => {
+	const _error = {};
+	for (const key in issues) {
+		_error[key] = issues[key];
 	}
-
-	return result.slice(0, -1);
-};
-
-const processError = (issues: BaseIssue<any>[]) => {
-	const _error: any[] = [];
-	issues.forEach((issue) => {
-		const p = arrayToStringPath(issue.path?.map(_path => _path.key) as string[]);
-
-		_error.push({
-			key: p,
-			message: issue.message,
-		});
-	});
 
 	return _error;
 };
@@ -44,8 +19,7 @@ const schemaFromValibot = <TSchema extends ObjectSchema<any, any>>(_schema: TSch
 					errors: [],
 				};
 			}
-
-			const errors = processError(result.issues);
+			const errors = processError(flatten(result.issues).nested);
 
 			return { errors };
 		},

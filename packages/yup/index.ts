@@ -1,12 +1,10 @@
 import { AnyObjectSchema, ObjectSchema, ValidationError } from 'yup';
 
 const processError = (error: any[]) => {
-	const _error: any[] = [];
+	const _error = {};
+
 	error.forEach((err) => {
-		_error.push({
-			key: err.path,
-			message: err.errors[0],
-		});
+		_error[err.path] = err.errors;
 	});
 
 	return _error;

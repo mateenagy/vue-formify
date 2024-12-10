@@ -14,7 +14,7 @@ export const ErrorComp = <T extends Record<string, any> = Record<string, any>>()
 		return () => {
 			return h('span',
 				{ ...props, ...attrs, ...emit },
-				slots.default ? slots.default?.({ error: getError() }) as SlotsType<{ error: any }> : getError(),
+				slots.default ? slots.default?.({ error: getError() }) as SlotsType<{ error: any }> : Array.isArray(getError()) ? getError()?.[0] : getError(),
 			);
 		};
 	},

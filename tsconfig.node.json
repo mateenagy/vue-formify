@@ -5,6 +5,14 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
+	"paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@packages/*": [
+        "./packages/*"
+      ]
+    },
   },
   "include": [
 	"vite.config.ts",
