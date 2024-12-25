@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils';
 import joi from 'joi';
 import { describe, expect, it } from 'vitest';
-import { useForm } from 'vue-formify';
+import { useForm } from '@/main';
 import { schemaFromJoi } from '../index';
 import { defineComponent, h } from 'vue';
 

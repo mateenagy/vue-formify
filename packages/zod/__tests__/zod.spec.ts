@@ -1,6 +1,6 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
-import { useForm } from 'vue-formify';
+import { useForm } from '@/main';
 import * as zod from 'zod';
 import { schemaFromZod } from '../index';
 import { defineComponent, h } from 'vue';

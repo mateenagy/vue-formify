@@ -1,7 +1,5 @@
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script lang="ts" setup>
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 import { useForm } from '@/composable/useForm';
 import { createInput } from '@/composable/createInput';
 import * as v from 'valibot';

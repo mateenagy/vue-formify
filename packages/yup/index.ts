@@ -4,7 +4,6 @@ const processError = (error: any[]) => {
 	const _error = {};
 	
 	error.forEach((err) => {
-		console.log(error);
 		_error[err.path] = err.errors;
 	});
 

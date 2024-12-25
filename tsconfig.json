@@ -37,14 +37,7 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
   },
-  "include": [
-	"src/**/*.ts",
-	"src/**/*.d.ts",
-	"src/**/*.tsx",
-	"src/**/*.vue",
-	"playground/**/*.vue",
-	"playground/**/*.ts",
-  ],
+  "include": [],
   "exclude": [
 	"node_modules",
   ],

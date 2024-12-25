@@ -1,7 +1,7 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import * as v from 'valibot';
 import { describe, expect, it } from 'vitest';
-import { useForm } from 'vue-formify';
+import { useForm } from '@/main';
 import { schemaFromValibot } from '../index';
 import { defineComponent, h } from 'vue';
 
