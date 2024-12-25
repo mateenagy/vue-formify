@@ -14,7 +14,7 @@ import CustomInput from './CustomInput.vue';
 /  PROPS & EMITS
 ---------------------------------------------*/
 const _schema = yup.object().shape({
-	emails: yup.array().of(yup.string().required('Required field').email('Wrong email format')).min(2, 'Minimum 2 item'),
+	emails: yup.array().of(yup.string().required('Required field').email('Bad email format')).min(2, 'Minimum 2 item'),
 });
 type User = yup.InferType<typeof _schema>;
 const schema = schemaFromYup(_schema);
