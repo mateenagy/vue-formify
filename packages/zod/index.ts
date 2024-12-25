@@ -21,7 +21,7 @@ const arrayToStringPath = (arr: (string | number)[]): string => {
 };
 
 const processError = (error: z.ZodIssue[]) => {
-	const _error = {};
+	const _error: Record<string, any> = {};
 	error.forEach((err) => {
 		_error[arrayToStringPath(err.path)] = err.message;
 	});

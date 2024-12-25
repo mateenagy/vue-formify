@@ -20,7 +20,6 @@ import { default as _Slider } from 'primevue/slider';
 import { default as _Textarea } from 'primevue/textarea';
 import { default as _ToggleButton } from 'primevue/togglebutton';
 import { default as _TreeSelect } from 'primevue/treeselect';
-import { default as _TriStateCheckbox } from 'primevue/tristatecheckbox';
 import { ComponentProps, createInput } from 'vue-formify';
 
 const InputText = createInput<ComponentProps<typeof _InputText>>(_InputText);
@@ -45,7 +44,6 @@ const Slider = createInput<ComponentProps<typeof _Slider>>(_Slider);
 const Textarea = createInput<ComponentProps<typeof _Textarea>>(_Textarea);
 const ToggleButton = createInput<ComponentProps<typeof _ToggleButton>>(_ToggleButton);
 const TreeSelect = createInput<ComponentProps<typeof _TreeSelect>>(_TreeSelect);
-const TriStateCheckbox = createInput<ComponentProps<typeof _TriStateCheckbox>>(_TriStateCheckbox);
 
 export {
 	InputText,
@@ -70,5 +68,4 @@ export {
 	Textarea,
 	ToggleButton,
 	TreeSelect,
-	TriStateCheckbox,
 };

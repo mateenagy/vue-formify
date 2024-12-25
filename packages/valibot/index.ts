@@ -1,7 +1,7 @@
 import { getDefaults, ObjectSchema, safeParseAsync, flatten } from 'valibot';
 
 const processError = (issues: any) => {
-	const _error = {};
+	const _error: Record<string, any> = {};
 	for (const key in issues) {
 		_error[key] = issues[key];
 	}

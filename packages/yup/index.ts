@@ -1,7 +1,7 @@
 import { AnyObjectSchema, ObjectSchema, ValidationError } from 'yup';
 
 const processError = (error: any[]) => {
-	const _error = {};
+	const _error: Record<string, any> = {};
 	
 	error.forEach((err) => {
 		_error[err.path] = err.errors;

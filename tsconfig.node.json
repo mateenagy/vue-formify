@@ -5,6 +5,11 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
+	/* Linting */
+    "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
 	"paths": {
       "@/*": [
         "./src/*"
@@ -17,12 +22,8 @@
   "include": [
 	"vite.config.ts",
 	"build.ts",
-	"src/**/*.ts",
-	"src/**/*.d.ts",
-	"src/**/*.tsx",
-	"src/**/*.vue",
 	"playground/**/*.vue",
 	"playground/**/*.ts",
-	"packages/**/*.ts", "packages/**/*.d.ts", "packages/**/*.tsx", "packages/**/*.vue", "packages/**/**/*.ts", "packages/**/**/*.d.ts",
+	//"packages/**/*.ts", "packages/**/*.d.ts", "packages/**/*.tsx", "packages/**/*.vue", "packages/**/**/*.ts", "packages/**/**/*.d.ts",
    ]
 }
