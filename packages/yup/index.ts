@@ -2,8 +2,9 @@ import { AnyObjectSchema, ObjectSchema, ValidationError } from 'yup';
 
 const processError = (error: any[]) => {
 	const _error = {};
-
+	
 	error.forEach((err) => {
+		console.log(error);
 		_error[err.path] = err.errors;
 	});
 
@@ -20,6 +21,8 @@ const schemaFromYup = <TSchema extends AnyObjectSchema>(_schema: TSchema) => {
 			try {
 				const result = await _schema.validate(value, {
 					abortEarly: false,
+					strict: true,
+
 				});
 
 				return {

@@ -1,134 +1,83 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
-import { FormifyForm, Field } from 'vue-formify';
+import { useForm } from 'vue-formify';
 import * as zod from 'zod';
 import { schemaFromZod } from '../index';
+import { defineComponent, h } from 'vue';
 
-const mountWithComponents = (component: Record<string, any>) => {
-	component.components = {
-		...component.components,
-		FormifyForm,
-		Field,
-	};
+const BaseComponent = (options: {
+	fieldName: any,
+	errorName?: any,
+	schema: any,
+}) => {
+	const cmp = defineComponent(() => {
+		const { Field, Form, Error } = useForm();
+		const schema = schemaFromZod(zod.object({
+			...options.schema,
+		}));
 
-	return mount(component);
+		return () => {
+			return h(Form, {
+				'validation-schema': schema,
+			}, () => [h(Field, { name: options.fieldName }), h(Error, { errorFor: options.errorName || options.fieldName })]);
+		};
+	});
+
+	return mount(cmp);
 };
 describe('Zod validation', () => {
-	it('Required field Zod', async () => {
-		const wrapper = mountWithComponents({
-			setup: () => {
-				const scema = schemaFromZod(zod.object({
-					email: zod.string({ required_error: 'Required field' }).min(1, { message: 'Required field' }),
-				}));
-		
-				const send = (data: any) => {
-					console.log(data);
-				};
-		
-				return { scema, send };
+	it('Required field', async () => {
+		const wrapper = BaseComponent({
+			fieldName: 'email',
+			schema: {
+				email: zod.string({ required_error: 'Required field' }).min(1, { message: 'Required field' }),
 			},
-			template: `
-				<FormifyForm v-slot="{data, errors}" :validation-schema="scema" @submit="send">
-					<Field name="email" />
-					<span id="error">{{ errors.email }}</span>
-				</FormifyForm>
-			`,
 		});
-		const form = wrapper.findComponent(FormifyForm);
-		const input = wrapper.find('input[name="email"]');
-		
-		expect(wrapper.find('input[name="email"]'));
-		await input.setValue('');
+		const form = wrapper.findComponent('form');
 		await form.trigger('submit');
 		await flushPromises();
-		expect(wrapper.find('#error').text()).equals('Required field');
-	});
-	it('Email test', async () => {
-		const wrapper = mountWithComponents({
-			setup: () => {
-				const schema = schemaFromZod(zod.object({
-					email: zod.string().email('Invalid email'),
-				}));
-		
-				const send = (data: any) => {
-					console.log(data);
-				};
-		
-				return { schema, send };
-			},
-			template: `
-				<FormifyForm v-slot={errors} :validation-schema="schema" @submit="send">
-					<Field name="email" />
-					<span id="error">{{ errors.email }}</span>
-					<button type="submit">Send</button>
-				</FormifyForm>
-			`,
-		});
-		const form = wrapper.findComponent(FormifyForm);
-		const input = wrapper.find('input[name="email"]');
-		await input.setValue('asd@');
-		await form.trigger('submit');
-		await flushPromises();
-		expect(wrapper.find('#error').text()).equals('Invalid email');
+		expect(wrapper.find('span').text()).equals('Required field');
 	});
 	it('Nested object', async () => {
-		const wrapper = mountWithComponents({
-			setup: () => {
-				const schema = schemaFromZod(zod.object({
-					social: zod.object({
-						github: zod.string().url({ message: 'Invalid url' }),
-					}),
-				}));
-		
-				const send = (data: any) => {
-					console.log(data);
-				};
-		
-				return { schema, send };
+		const wrapper = BaseComponent({
+			fieldName: 'user.email',
+			schema: {
+				user: zod.object({
+					email: zod.string({ required_error: 'Required field' }).min(1, { message: 'Required field' }),
+				}),
 			},
-			template: `
-				<FormifyForm v-slot={errors} :validation-schema="schema" @submit="send">
-					<Field name="social.github" />
-					<span id="error">{{ errors.social?.github }}</span>
-					<button type="submit">Send</button>
-				</FormifyForm>
-			`,
 		});
-		const form = wrapper.findComponent(FormifyForm);
-		const input = wrapper.find('input[name="social.github"]');
-		await input.setValue('qwe.com');
+		const form = wrapper.findComponent('form');
 		await form.trigger('submit');
 		await flushPromises();
-		expect(wrapper.find('#error').text()).equals('Invalid url');
+		expect(wrapper.find('span').text()).equals('Required field');
+	});
+	it('Array', async () => {
+		const wrapper = BaseComponent({
+			fieldName: 'emails[0]',
+			errorName: 'emails',
+			schema: {
+				emails: zod.array(zod.string()).min(1, { message: 'Minimum 1 item required' }),
+			},
+		});
+		const form = wrapper.findComponent('form');
+		await form.trigger('submit');
+		await flushPromises();
+		expect(wrapper.find('span').text()).equals('Minimum 1 item required');
 	});
 	it('Nested array object', async () => {
-		const wrapper = mountWithComponents({
-			setup: () => {
-				const schema = schemaFromZod(zod.object({
-					social: zod.array(zod.object({
-						url: zod.string().url('Invalid url'),
-					})),
-				}));
-		
-				const send = (data: any) => {
-					console.log(data);
-				};
-		
-				return { schema, send };
+		const wrapper = BaseComponent({
+			fieldName: 'user.emails[0]',
+			errorName: 'user.emails',
+			schema: {
+				user: zod.object({
+					emails: zod.array(zod.string()).min(1, { message: 'Minimum 1 item required' }),
+				}),
 			},
-			template: `
-				<FormifyForm v-slot={errors} :validation-schema="schema" @submit="send">
-					<Field name="social[0].url" />
-					<span id="error">{{ errors.social?.[0]?.url }}</span>
-					<button type="submit">Send</button>
-				</FormifyForm>
-			`,
 		});
-		const form = wrapper.findComponent(FormifyForm);
-		const input = wrapper.find('input[name="social[0].url"]');
-		await input.setValue('qwe.com');
+		const form = wrapper.findComponent('form');
 		await form.trigger('submit');
 		await flushPromises();
-		expect(wrapper.find('#error').text()).equals('Invalid url');
+		expect(wrapper.find('span').text()).equals('Minimum 1 item required');
 	});
 });

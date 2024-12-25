@@ -1,5 +1,7 @@
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script lang="ts" setup>
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import { useForm } from '@/composable/useForm';
 import { createInput } from '@/composable/createInput';
 import * as v from 'valibot';
@@ -11,10 +13,8 @@ import CustomInput from './CustomInput.vue';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
-const _schema = yup.object({
-	email: yup.string().email('Email is not good').required('Required field'),
-	email2: yup.string().email('Email is not good').required('Required field'),
-	emails: yup.array().of(yup.string()).min(1, 'Min 1 item'),
+const _schema = yup.object().shape({
+	emails: yup.array().of(yup.string().required('Required field').email('Wrong email format')).min(2, 'Minimum 2 item'),
 });
 type User = yup.InferType<typeof _schema>;
 const schema = schemaFromYup(_schema);
@@ -38,7 +38,6 @@ const promiseSubmit = async () => {
 	return new Promise(_r => setTimeout(_r, 2000));
 };
 const submit = handleSubmit(async (data) => {
-	setError('email', 'asd');
 	await promiseSubmit();
 	console.log('[data]: ', data);
 });
@@ -61,25 +60,17 @@ const submit = handleSubmit(async (data) => {
 			ref="form"
 			@submit="submit"
 			:validation-schema="schema"
-			name="foo">
-			<Field name="email" />
-			<Error error-for="email" />
-			<Error
-				error-for="email"
-				v-slot="{ error }">
-				<pre>{{ error }}</pre>
-			</Error>
-
-			<Field name="email2" />
-			<Error error-for="email2" />
-			<Error
-				error-for="email2"
-				v-slot="{ error }">
-				<pre>{{ error }}</pre>
-			</Error>
-
+			name="foo"
+			v-slot="{ errors }">
 			<Field name="emails[0]" />
+			<Error error-for="emails[0]" />
+
+			<Field name="emails[1]" />
+			<Error error-for="emails[1]" />
+
 			<Error error-for="emails" />
+
+			<pre>{{ errors }}</pre>
 			<button :disabled="isSubmitting">
 				Send
 			</button>

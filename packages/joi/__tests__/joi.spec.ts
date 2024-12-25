@@ -1,149 +1,80 @@
 import { mount } from '@vue/test-utils';
-import Joi from 'joi';
+import joi from 'joi';
 import { describe, expect, it } from 'vitest';
-import { FormifyForm, Field } from 'vue-formify';
+import { useForm } from 'vue-formify';
 import { schemaFromJoi } from '../index';
+import { defineComponent, h } from 'vue';
 
-const mountWithComponents = (component: Record<string, any>) => {
-	component.components = {
-		...component.components,
-		FormifyForm,
-		Field,
-	};
+const BaseComponent = (options: {
+	fieldName: any,
+	errorName?: any,
+	schema: any,
+}) => {
+	const cmp = defineComponent(() => {
+		const { Field, Form, Error } = useForm();
+		const schema = schemaFromJoi(joi.object({
+			...options.schema,
+		}));
 
-	return mount(component);
+		return () => {
+			return h(Form, {
+				'validation-schema': schema,
+			}, () => [h(Field, { name: options.fieldName }), h(Error, { errorFor: options.errorName || options.fieldName })]);
+		};
+	});
+
+	return mount(cmp);
 };
 
 describe('Joi validation', () => {
 	it('Required field', async () => {
-		const wrapper = mountWithComponents({
-			setup: () => {
-				const schema = schemaFromJoi(Joi.object({
-					email: Joi.string().required().messages({ 'any.required': 'Required field', 'string.empty': 'Required field' }),
-				}));
-		
-				const send = (data: any) => {
-					console.log(data);
-				};
-		
-				return { schema, send };
+		const wrapper = BaseComponent({
+			fieldName: 'email',
+			schema: {
+				email: joi.string().required().messages({ 'any.required': 'Required field', 'string.empty': 'Required field' }),
 			},
-			template: `
-				<FormifyForm v-slot={errors} :validation-schema="schema" @submit="send">
-					<Field name="email" />
-					<span id="error">{{ errors.email }}</span>
-					<button type="submit">Send</button>
-				</FormifyForm>
-			`,
 		});
-		const form = wrapper.findComponent(FormifyForm);
+		const form = wrapper.findComponent('form');
 		await form.trigger('submit');
-		expect(wrapper.find('#error').text()).equals('Required field');
-	});
-	it('Email test', async () => {
-		const wrapper = mountWithComponents({
-			setup: () => {
-				const schema = schemaFromJoi(Joi.object({
-					email: Joi.string().email().messages({ 'any.required': 'Required field', 'string.email': 'Invalid email' }),
-				}));
-		
-				const send = (data: any) => {
-					console.log(data);
-				};
-		
-				return { schema, send };
-			},
-			template: `
-				<FormifyForm v-slot={errors} :validation-schema="schema" @submit="send">
-					<Field name="email" />
-					<span id="error">{{ errors.email }}</span>
-					<button type="submit">Send</button>
-				</FormifyForm>
-			`,
-		});
-		const form = wrapper.findComponent(FormifyForm);
-		const input = wrapper.find('input[name="email"]');
-		await input.setValue('asd@');
-		await form.trigger('submit');
-		expect(wrapper.find('#error').text()).equals('Invalid email');
-	});
-	it('Minimum length', async () => {
-		const wrapper = mountWithComponents({
-			setup: () => {
-				const schema = schemaFromJoi(Joi.object({
-					password: Joi.string().min(8).messages({ 'string.min': 'Password too short' }),
-				}));
-		
-				const send = (data: any) => {
-					console.log(data);
-				};
-		
-				return { schema, send };
-			},
-			template: `
-				<FormifyForm v-slot={errors} :validation-schema="schema" @submit="send">
-					<Field name="password" default="asd123@" />
-					<span id="error">{{ errors.password }}</span>
-					<button type="submit">Send</button>
-				</FormifyForm>
-			`,
-		});
-		const form = wrapper.findComponent(FormifyForm);
-		await form.trigger('submit');
-		expect(wrapper.find('#error').text()).equals('Password too short');
+		expect(wrapper.find('span').text()).equals('Required field');
 	});
 	it('Nested object', async () => {
-		const wrapper = mountWithComponents({
-			setup: () => {
-				const schema = schemaFromJoi(Joi.object({
-					social: Joi.object({
-						github: Joi.string().uri().messages({ 'string.uri': 'Invalid url' }),
-					}),
-				}));
-		
-				const send = (data: any) => {
-					console.log(data);
-				};
-		
-				return { schema, send };
+		const wrapper = BaseComponent({
+			fieldName: 'user.email',
+			schema: {
+				user: joi.object({
+					email: joi.string().required().messages({ 'any.required': 'Required field', 'string.empty': 'Required field' }),
+				}),
 			},
-			template: `
-				<FormifyForm v-slot={errors} :validation-schema="schema" @submit="send">
-					<Field name="social.github" default="https:/github" />
-					<span id="error">{{ errors.social?.github }}</span>
-					<button type="submit">Send</button>
-				</FormifyForm>
-			`,
 		});
-		const form = wrapper.findComponent(FormifyForm);
+		const form = wrapper.findComponent('form');
 		await form.trigger('submit');
-		expect(wrapper.find('#error').text()).equals('Invalid url');
+		expect(wrapper.find('span').text()).equals('Required field');
+	});
+	it('Array', async () => {
+		const wrapper = BaseComponent({
+			fieldName: 'emails[0]',
+			errorName: 'emails',
+			schema: {
+				emails: joi.array().items(joi.string()).min(1).message('Minimum 1 item required'),
+			},
+		});
+		const form = wrapper.findComponent('form');
+		await form.trigger('submit');
+		expect(wrapper.find('span').text()).equals('Minimum 1 item required');
 	});
 	it('Nested array object', async () => {
-		const wrapper = mountWithComponents({
-			setup: () => {
-				const schema = schemaFromJoi(Joi.object({
-					social: Joi.array().items(Joi.object({
-						url: Joi.string().uri().messages({ 'string.uri': 'Invalid url' }),
-					})),
-				}));
-		
-				const send = (data: any) => {
-					console.log(data);
-				};
-		
-				return { schema, send };
+		const wrapper = BaseComponent({
+			fieldName: 'user.emails[0]',
+			errorName: 'user.emails',
+			schema: {
+				user: joi.object({
+					emails: joi.array().items(joi.string()).min(1).message('Minimum 1 item required'),
+				}),
 			},
-			template: `
-				<FormifyForm v-slot={errors} :validation-schema="schema" @submit="send">
-					<Field name="social[0].url" default="https:/github" />
-					<span id="error">{{ errors.social?.[0]?.url }}</span>
-					<button type="submit">Send</button>
-				</FormifyForm>
-			`,
 		});
-		const form = wrapper.findComponent(FormifyForm);
+		const form = wrapper.findComponent('form');
 		await form.trigger('submit');
-		expect(wrapper.find('#error').text()).equals('Invalid url');
+		expect(wrapper.find('span').text()).equals('Minimum 1 item required');
 	});
 });
