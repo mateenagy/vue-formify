@@ -70,14 +70,15 @@ export const FormCompBase = <T extends Record<string, any> = Record<string, any>
 			});
 
 			const submit = async ($event: any) => {
+				$event.preventDefault();
 				let _val = values.value;
+
 				if (props.validationSchema) {
 					const result = await props.validationSchema.parse(flattenObject(forms[uid].values));
-
-					if (result.errors.length) {
-						result.errors.forEach((err: any) => {
-							setError(err.key, err.message);
-						});
+					if (Object.keys(result.errors).length) {
+						for (const key in result.errors) {
+							setError(key as any, result.errors[key]);
+						}
 
 						return $event.preventDefault();
 					}

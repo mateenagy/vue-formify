@@ -1,21 +1,21 @@
+<!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script lang="ts" setup>
 import { useForm } from '@/composable/useForm';
 import { createInput } from '@/composable/createInput';
+import * as v from 'valibot';
+import * as yup from 'yup';
+import { schemaFromValibot } from '@packages/valibot';
+import { schemaFromYup } from '@packages/yup/index';
 import { ComponentProps } from '@/index';
 import CustomInput from './CustomInput.vue';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
-type LoginRequest = {
-	username: string;
-	password: string;
-	links: string[];
-	nested: { 
-		foo: string,
-		bar?: string
-	};
-	stay_loggedin: boolean;
-}
+const _schema = yup.object().shape({
+	emails: yup.array().of(yup.string().required('Required field').email('Bad email format')).min(2, 'Minimum 2 item'),
+});
+type User = yup.InferType<typeof _schema>;
+const schema = schemaFromYup(_schema);
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
@@ -28,12 +28,7 @@ const {
 	setError,
 	isSubmitting,
 	values,
-} = useForm<LoginRequest>({
-	initialValues: {
-		stay_loggedin: false,
-	},
-});
-const Custom = createInput<ComponentProps<typeof CustomInput>, LoginRequest>(CustomInput);
+} = useForm<User>();
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
@@ -42,7 +37,6 @@ const promiseSubmit = async () => {
 };
 const submit = handleSubmit(async (data) => {
 	await promiseSubmit();
-	!data?.username && setError('username', 'Error');
 	console.log('[data]: ', data);
 });
 /*---------------------------------------------
@@ -63,19 +57,18 @@ const submit = handleSubmit(async (data) => {
 		<Form
 			ref="form"
 			@submit="submit"
-			name="foo">
-			<Field name="username" />
-			<Error error-for="username" />
-			<Custom name="password" />
-			<Error error-for="password" />
-			<div>
-				<Field
-					id="stay_loggedin"
-					name="stay_loggedin"
-					type="checkbox" />
-				<label for="stay_loggedin">Check</label>
-				<Error error-for="stay_loggedin" />
-			</div>
+			:validation-schema="schema"
+			name="foo"
+			v-slot="{ errors }">
+			<Field name="emails[0]" />
+			<Error error-for="emails[0]" />
+
+			<Field name="emails[1]" />
+			<Error error-for="emails[1]" />
+
+			<Error error-for="emails" />
+
+			<pre>{{ errors }}</pre>
 			<button :disabled="isSubmitting">
 				Send
 			</button>

@@ -1,6 +1,6 @@
 {
 	"name": "@vue-formify/valibot",
-	"version": "1.1.4",
+	"version": "1.2.8",
 	"private": false,
 	"description": "Valibot schema integration for vue-formify",
 	"engines": {

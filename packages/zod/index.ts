@@ -21,12 +21,9 @@ const arrayToStringPath = (arr: (string | number)[]): string => {
 };
 
 const processError = (error: z.ZodIssue[]) => {
-	const _error: any[] = [];
+	const _error = {};
 	error.forEach((err) => {
-		_error.push({
-			key: arrayToStringPath(err.path),
-			message: err.message,
-		});
+		_error[arrayToStringPath(err.path)] = err.message;
 	});
 
 	return _error;
