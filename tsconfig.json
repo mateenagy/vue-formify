@@ -48,6 +48,8 @@
 	"packages/**/*.vue",
 	"packages/**/**/*.ts",
 	"packages/**/**/*.d.ts",
+	"playground/**/*.vue",
+	"playground/**/*.ts",
   ],
   "exclude": [
 	"node_modules",

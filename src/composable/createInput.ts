@@ -1,7 +1,7 @@
 import { Component, computed, defineComponent, h, resolveDynamicComponent } from 'vue';
-import { GetKeys } from './useForm';
 import { useField } from './useField';
 import { FieldType } from '@/components/Field';
+import { GetKeys } from './useForm';
 
 export type BaseInput<T extends Record<string, any>> = {
 	name?: GetKeys<T>;

@@ -3,23 +3,19 @@ import { FieldArrayComp } from '@/components/FieldArray';
 import { ErrorComp } from '@/components/Error';
 import { FormCompBase, FormOptions } from '@/components/Form';
 
-type GetNestedArray<T> = T extends (infer U)[]
-	? `${GetNestedArray<U>}[]` | `${GetNestedArray<U>}[${number}]`
-	: T extends object
+type GetNestedArray<T> = T extends object
 	? {
 		[K in keyof T]: T[K] extends (infer U)[]
-		? `${K & string}[]${U extends object ? `.${GetNestedArray<U>}` : ''}` | `${K & string}${U extends object ? `.${GetNestedArray<U>}` : ''}` | `${K & string}[${number}]${U extends object ? `.${GetNestedArray<U>}` : ''}`
-		: `${K & string}${T[K] extends object ? `.${GetNestedArray<T[K]>}` : ''}`;
+		? `${K & string}[]${U extends object ? `.${GetNestedArray<U>}` : ''}` | `${K & string}[${number}]${U extends object ? `.${GetNestedArray<U>}` : ''}` | `${K & string}` | `${K & string}[${number}]`
+		: `${K & string}${T[K] extends object ? `.${GetNestedArray<T[K]>}` : `${GetNestedArray<T[K]>}`}`;
 	}[keyof T]
 	: '';
 
 export type GetKeys<T extends Record<string, any>> = keyof {
 	[K in keyof T as (
-		T[K] extends string | number | boolean | Date ? `${K & string}` :
-		T[K] extends (string | number | boolean | Date | undefined)[] | undefined ? `${K & string}[${number}]` | `${K & string}` :
-		T[K] extends any[] ? `${K & string}[]` | `${K & string}[${number}]` | `${K & string}` :
-		T[K] extends object ? `${K & string}.${GetNestedArray<T[K]> & string}` : `${K & string}`
-	)]: any
+		T[K] extends any[] ? T[K] extends Record<string, any>[] ? `${K & string}[].${GetNestedArray<T[K][0]>}` | `${K & string}[${number}].${GetNestedArray<T[K][0]>}` | `${K & string}` : `${K & string}[]` | `${K & string}[${number}]` :
+		T[K] extends Record<string, any> ? `${K & string}.${GetNestedArray<T[K]> & string}` : `${K & string}`
+	)]: any;
 }
 
 export const Form = FormCompBase().cmp;

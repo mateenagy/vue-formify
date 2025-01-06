@@ -1,5 +1,5 @@
-import { GetKeys } from '@/composable/useForm';
 import { AllowedComponentProps, Component, VNodeProps } from 'vue';
+import { GetKeys } from './composable/useForm';
 
 export type ComponentProps<C extends Component> = C extends new (...args: any) => any
 	? Omit<InstanceType<C>['$props'], keyof VNodeProps | keyof AllowedComponentProps>
