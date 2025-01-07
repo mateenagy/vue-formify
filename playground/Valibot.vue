@@ -1,18 +1,29 @@
-<!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script lang="ts" setup>
-import Basic from './Basic.vue';
-import Valibot from './Valibot.vue';
-import Yup from './Yup.vue';
-import Zod from './Zod.vue';
+import { useForm } from '@/composable/useForm';
+import { schemaFromValibot } from '@packages/valibot';
+import * as v from 'valibot';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
+const schema = schemaFromValibot(v.object({
+	username: v.string(),
+	links: v.array(v.object({
+		name: v.string(),
+		url: v.string(),
+	})),
+}));
+const { Form, Field, handleSubmit } = useForm({
+	schema,
+});
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
+const submit = handleSubmit((data) => {
+	console.log('[data]', data);
+});
 /*---------------------------------------------
 /  COMPUTED
 ---------------------------------------------*/
@@ -28,24 +39,14 @@ import Zod from './Zod.vue';
 </script>
 <template>
 	<div>
-		<div>
-			<h2>Basic</h2>
-			<Basic />
-		</div>
-		<hr>
-		<div>
-			<h2>Yup</h2>
-			<Yup />
-		</div>
-		<hr>
-		<div>
-			<h2>Zod</h2>
-			<Zod />
-		</div>
-		<hr>
-		<div>
-			<h2>Valibot</h2>
-			<Valibot />
-		</div>
+		<Form
+			v-slot="{ values }"
+			@submit="submit">
+			<Field name="username" />
+			<Field name="links[0].name" />
+			<Field name="links[0].url" />
+			<pre>{{ values }}</pre>
+			<button>Send</button>
+		</Form>
 	</div>
 </template>

@@ -1,4 +1,5 @@
-import { AnyObjectSchema, ObjectSchema, ValidationError } from 'yup';
+import { TypedSchema } from '@packages/utils/types';
+import { AnyObjectSchema, ObjectSchema, ValidationError, InferType } from 'yup';
 
 const processError = (error: any[]) => {
 	const _error: Record<string, any> = {};
@@ -10,8 +11,8 @@ const processError = (error: any[]) => {
 	return _error;
 };
 
-const schemaFromYup = <TSchema extends AnyObjectSchema>(_schema: TSchema) => {
-	const schema = {
+const schemaFromYup = <TSchema extends AnyObjectSchema>(_schema: TSchema): TypedSchema<TSchema, InferType<TSchema>> => {
+	const schema: TypedSchema = {
 		parse: async (value: any) => {
 			if (!(_schema instanceof ObjectSchema)) {
 				throw new Error('You have to use yup object)!');

@@ -1,3 +1,4 @@
+import { TypedSchema } from '@packages/utils/types';
 import { z } from 'zod';
 
 const arrayToStringPath = (arr: (string | number)[]): string => {
@@ -29,8 +30,8 @@ const processError = (error: z.ZodIssue[]) => {
 	return _error;
 };
 
-const schemaFromZod = <TSchema extends z.ZodObject<z.ZodRawShape>>(_schema: TSchema) => {
-	const schema = {
+const schemaFromZod = <TSchema extends z.ZodObject<z.ZodRawShape>>(_schema: TSchema): TypedSchema<TSchema, z.infer<TSchema>> => {
+	const schema: TypedSchema = {
 		parse: async (value: any) => {
 			if (!(_schema instanceof z.ZodObject)) {
 				throw new Error('You have to use ZodObject type)!');
@@ -48,6 +49,8 @@ const schemaFromZod = <TSchema extends z.ZodObject<z.ZodRawShape>>(_schema: TSch
 			return { errors };
 		},
 		cast: () => {
+			console.log('cast');
+			
 			return defaultInstance(_schema);
 		},
 	};

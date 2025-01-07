@@ -4,8 +4,12 @@ import { useForm } from '@/composable/useForm';
 import { MassiveForm, MegaForm } from './Examples.types';
 
 type BasicForm = {
-	email: string;
-	emails: string[];
+	email?: string;
+	emails?: string[];
+	socials: {
+		name: string;
+		url: string;
+	}[];
 	loo: {
 		a: string;
 		b: string[];
@@ -21,7 +25,11 @@ type BasicForm = {
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
-const { Form, Field, FieldArray } = useForm<BasicForm>();
+const { Form, Field, FieldArray } = useForm<BasicForm>({
+	initialValues: {
+		email: 'as',
+	},
+});
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
@@ -39,19 +47,15 @@ const { Form, Field, FieldArray } = useForm<BasicForm>();
 ---------------------------------------------*/
 </script>
 <template>
-	<Form
-		v-slot="{ values }">
+	<Form v-slot="{ values }">
 		<fieldset>
 			<label>Emaila</label>
-			<Field
-				name="email" />
+			<Field name="email" />
 		</fieldset>
 		<fieldset>
 			<label>Array</label>
-			<Field
-				name="loo.c[0]" />
-			<Field
-				name="loo.c[1]" />
+			<Field name="loo.c[0]" />
+			<Field name="loo.c[1]" />
 		</fieldset>
 		<fieldset>
 			<label>Array field</label>

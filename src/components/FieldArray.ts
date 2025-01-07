@@ -55,7 +55,7 @@ export const FieldArrayComp = <T extends Record<string, any> = Record<string, an
 			const initials = forms[uid].initialValues?.[props.name] || props.initialValues;
 
 			if (initials) {
-				initials.forEach(() => {
+				initials.forEach?.(() => {
 					fields.value.push({
 						id: fields.value.length,
 						name: props.name,
@@ -64,7 +64,7 @@ export const FieldArrayComp = <T extends Record<string, any> = Record<string, an
 
 				nextTick(() => {
 					if (initials) {
-						initials.forEach((value: any, idx: any) => {
+						initials.forEach?.((value: any, idx: any) => {
 							if (typeof value === 'object') {
 								Object.keys(value).forEach((key) => {
 									setArrayValue({

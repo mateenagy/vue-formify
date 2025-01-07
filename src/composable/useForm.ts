@@ -13,7 +13,7 @@ type GetNestedArray<T> = T extends object
 
 export type GetKeys<T extends Record<string, any>> = keyof {
 	[K in keyof T as (
-		T[K] extends any[] ? T[K] extends Record<string, any>[] ? `${K & string}[].${GetNestedArray<T[K][0]>}` | `${K & string}[${number}].${GetNestedArray<T[K][0]>}` | `${K & string}` : `${K & string}[]` | `${K & string}[${number}]` :
+		T[K] extends (any | undefined)[] ? T[K] extends Record<string, any>[] ? `${K & string}[].${GetNestedArray<T[K][0]>}` | `${K & string}[${number}].${GetNestedArray<T[K][0]>}` | `${K & string}` : `${K & string}[]` | `${K & string}[${number}]` | `${K & string}` :
 		T[K] extends Record<string, any> ? `${K & string}.${GetNestedArray<T[K]> & string}` : `${K & string}`
 	)]: any;
 }
