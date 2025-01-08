@@ -15,7 +15,7 @@ const schema = schemaFromValibot(v.object({
 		url: v.string(),
 	})),
 }));
-const { Form, Field, handleSubmit } = useForm({
+const { Form, Field, FieldArray, Error, handleSubmit } = useForm({
 	schema,
 });
 /*---------------------------------------------
@@ -43,8 +43,27 @@ const submit = handleSubmit((data) => {
 			v-slot="{ values }"
 			@submit="submit">
 			<Field name="username" />
-			<Field name="links[0].name" />
-			<Field name="links[0].url" />
+			<FieldArray
+				name="links"
+				v-slot="{ fields, add, remove }">
+				<fieldset
+					v-for="(field, index) of fields"
+					:key="field.id">
+					<Field :name="`links[${index}].name`" />
+					<Field :name="`links[${index}].url`" />
+					<Error :error-for="`links[${index}].url`" />
+					<button
+						type="button"
+						@click="remove(index)">
+						Remove
+					</button>
+				</fieldset>
+				<button
+					type="button"
+					@click="add">
+					Add
+				</button>
+			</FieldArray>
 			<pre>{{ values }}</pre>
 			<button>Send</button>
 		</Form>

@@ -1,9 +1,9 @@
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script lang="ts" setup>
 import Basic from './Basic.vue';
-import Valibot from './Valibot.vue';
-import Yup from './Yup.vue';
-import Zod from './Zod.vue';
+import Valibot from './validators/Valibot.vue';
+import Yup from './validators/Yup.vue';
+import Zod from './validators/Zod.vue';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/

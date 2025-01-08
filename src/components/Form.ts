@@ -48,7 +48,6 @@ export const FormCompBase = <T extends Record<string, any> = Record<string, any>
 	};
 
 	const reset = () => {
-		EventEmitter.emit('reset');
 		forms[uid].values = JSON.parse(originalForm);
 		forms[uid].key++;
 	};
@@ -133,6 +132,10 @@ export const FormCompBase = <T extends Record<string, any> = Record<string, any>
 
 			if (props.validationSchema && typeof props.validationSchema.cast === 'function') {
 				forms[uid].initialValues = props.initialValues ? mergeDeep(props.initialValues, opt?.initialValues || {}, props.validationSchema.cast(flattenObject(forms[uid].values))) : mergeDeep(opt?.initialValues || {}, props.validationSchema.cast(flattenObject(forms[uid].values)));
+			}
+
+			if (opt?.schema && typeof opt?.schema.cast === 'function') {
+				forms[uid].initialValues = props.initialValues ? mergeDeep(props.initialValues, opt?.initialValues || {}, opt?.schema.cast(flattenObject(forms[uid].values))) : mergeDeep(opt?.initialValues || {}, opt?.schema.cast(flattenObject(forms[uid].values)));
 			}
 
 			/*---------------------------------------------

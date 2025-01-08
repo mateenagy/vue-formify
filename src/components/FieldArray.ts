@@ -1,4 +1,4 @@
-import { deleteByPath, EventEmitter, getValueByPath } from '@/utils/utils';
+import { deleteByPath, getValueByPath } from '@/utils/utils';
 import { defineComponent, h, inject, nextTick, PropType, ref, SlotsType, toValue } from 'vue';
 import { forms } from '@/utils/store';
 import { useField } from '../composable/useField';
@@ -38,12 +38,15 @@ export const FieldArrayComp = <T extends Record<string, any> = Record<string, an
 			getValueByPath(forms[uid].values, props.name as string).error = undefined;
 
 			const removedIndex = fields.value.findIndex(field => field.id === idx);
+
 			for (let index = removedIndex + 1; index < fields.value.length; index++) {
-				const tmp = JSON.parse(JSON.stringify(getValueByPath(forms[uid].values, `${props.name as string}[${index}]`)));
-				if (getValueByPath(forms[uid].values, `${props.name as string}[${index - 1}]`)) {
-					setArrayValue({
-						[`[${index - 1}]`]: tmp,
-					});
+				const currentPath = `${props.name as string}[${index}]`;
+				const previousPath = `${props.name as string}[${index - 1}]`;
+
+				const tmp = getValueByPath(forms[uid].values, currentPath);
+
+				if (getValueByPath(forms[uid].values, previousPath)) {
+					setArrayValue({ [`[${index - 1}]`]: JSON.parse(JSON.stringify(tmp)) });
 				}
 			}
 			deleteByPath(forms[uid].values, `${fields.value[fields.value.length - 1].name}[${fields.value.length - 1}]`);
@@ -52,36 +55,34 @@ export const FieldArrayComp = <T extends Record<string, any> = Record<string, an
 
 		const init = () => {
 			fields.value = [];
-			const initials = forms[uid].initialValues?.[props.name] || props.initialValues;
+			let initials = props.initialValues || forms[uid].initialValues?.[props.name];
+			if (!Array.isArray(initials) && typeof initials === 'object') {
+				initials = Object.values(initials);
+			}
 
 			if (initials) {
-				initials.forEach?.(() => {
+				initials.forEach?.(async (value: any, idx: any) => {
 					fields.value.push({
 						id: fields.value.length,
 						name: props.name,
 					});
-				});
 
-				nextTick(() => {
-					if (initials) {
-						initials.forEach?.((value: any, idx: any) => {
-							if (typeof value === 'object') {
-								Object.keys(value).forEach((key) => {
-									setArrayValue({
-										[`[${idx}]`]: {
-											[key]: {
-												value: value[key],
-											},
-										},
-									});
-								});
-							} else {
-								setArrayValue({
-									[`[${idx}]`]: {
-										value,
+					await nextTick();
+					if (typeof value === 'object') {
+						Object.keys(value).forEach((key) => {
+							setArrayValue({
+								[`[${idx}]`]: {
+									[key]: {
+										value: value[key],
 									},
-								});
-							}
+								},
+							});
+						});
+					} else {
+						setArrayValue({
+							[`[${idx}]`]: {
+								value,
+							},
 						});
 					}
 				});
@@ -91,9 +92,6 @@ export const FieldArrayComp = <T extends Record<string, any> = Record<string, an
 		/  CREATED
 		---------------------------------------------*/
 		init();
-		EventEmitter.on('reset', () => {
-			init();
-		});
 
 		return () => {
 			return h('div',
@@ -131,7 +129,7 @@ export const FieldArrayComp = <T extends Record<string, any> = Record<string, an
 			},
 		},
 		slots: Object as SlotsType<{
-			default: { fields: {id: number}[], add: () => void, remove: (idx: number) => void, error: any }
+			default: { fields: { id: number }[], add: () => void, remove: (idx: number) => void, error: any }
 		}>,
 		emits: ['update:modelValue'],
 	},

@@ -49,8 +49,6 @@ const schemaFromZod = <TSchema extends z.ZodObject<z.ZodRawShape>>(_schema: TSch
 			return { errors };
 		},
 		cast: () => {
-			console.log('cast');
-			
 			return defaultInstance(_schema);
 		},
 	};

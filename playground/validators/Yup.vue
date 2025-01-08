@@ -19,7 +19,9 @@ const schema = schemaFromYup(yup.object({
 		bar: yup.string(),
 	}),
 }));
-const { Form, Field, FieldArray, Error, handleSubmit } = useForm();
+const { Form, Field, FieldArray, Error, handleSubmit } = useForm({
+	schema,
+});
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
@@ -43,16 +45,16 @@ const submit = handleSubmit((data) => {
 	<div>
 		<Form
 			v-slot="{ values }"
-			@submit="submit"
-			:validation-schema="schema">
-			<Field name="foo.bar" />
+			@submit="submit">
+			<Field name="username" />
 			<FieldArray
 				name="links"
 				v-slot="{ fields, add, remove }">
 				<fieldset
 					v-for="(field, index) of fields"
 					:key="field.id">
-					<Field :name="`links[${index}]`" />
+					<Field
+						:name="`links[${index}]`" />
 					<Error :error-for="`links[${index}]`" />
 					<button
 						type="button"

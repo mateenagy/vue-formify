@@ -97,12 +97,6 @@ export const useField = (props: Record<string, any>, emit: any, isArrayField: bo
 	/* CREATED */
 	createFormInput();
 
-	EventEmitter.on('reset', () => {
-		if (value.value && getValueByPath(forms[form.uid].values, name) && !isArrayField) {
-			setValue(defaultValueCopy);
-		}
-	});
-
 	onBeforeUnmount(() => {
 		if (!getPropBooleanValue(form.preserve) && !getPropBooleanValue(props.preserve)) {
 			deleteByPath(forms[form.uid].values, name);

@@ -19,6 +19,7 @@ export type CreateInputOptions = {
 	modelKey?: string;
 	useModelKeyAsState?: boolean;
 	defaultValueKey?: any;
+	componentName?: string;
 }
 
 export const createInput = <T, K extends Record<string, any> = Record<string, any>>(component: Component, options?: CreateInputOptions) => defineComponent(
@@ -90,7 +91,7 @@ export const createInput = <T, K extends Record<string, any> = Record<string, an
 		};
 	},
 	{
-		name: 'CustomField',
+		name: options?.componentName ?? 'CustomField',
 		props: {
 			default: {
 				type: [String, Number, Array, Object, Boolean],
