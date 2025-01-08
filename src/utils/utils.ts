@@ -1,6 +1,6 @@
 export const BETWEEN_BRACKETS_REGEX = /^\[(.+?)\]$/gm;
 export const REMOVE_BRACKETS_REGEX = /(^.*\[|\].*$)/g;
-export const ARRAY_INDEX_FROM_STRING_REGEX = /\w\[(\d*)\]/gm;
+export const ARRAY_INDEX_FROM_STRING_REGEX = /\[(\d*)\]/gm;
 export const GET_INDEX_FROM_STRING_REGEX = /\[(\d+)\]/;
 export const REMOVE_ARRAY_INDEX_FROM_STRING_REGEX = /\[\d+\]/;
 
@@ -10,6 +10,17 @@ export const getKey = (name: string = '', modelKey: string, useKey: boolean = fa
 	}
 
 	return modelKey;
+};
+
+export const extractInitialValues = (key: string, initialValues: Record<string, any>, props: Record<string, any>, options: any) => {
+	const name = key.replace(REMOVE_ARRAY_INDEX_FROM_STRING_REGEX, '');
+	const index = key.match(GET_INDEX_FROM_STRING_REGEX)?.[1];
+
+	if (!index) {
+		return getValueByPath(initialValues, name) ?? (options?.modelKey && props[options.modelKey]) ?? props?.modelValue ?? props?.default ?? options?.default ?? '';
+	}
+	
+	return getValueByPath(initialValues, name)?.[index] || '';
 };
 
 export const resolveTag = (props: Record<string, any>, slots: any) => {
@@ -261,7 +272,6 @@ export const fetcher = async (promise?: void | Promise<any>) => {
 };
 
 /* Custom event handler */
-
 type EventHandler = (data?: any) => void;
 
 export class EventEmitter {
@@ -291,3 +301,7 @@ export class EventEmitter {
 		}
 	}
 }
+
+/*
+/  TYPES
+*/

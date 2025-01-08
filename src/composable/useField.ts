@@ -1,5 +1,5 @@
 import { forms } from '@/utils/store';
-import { deleteByPath, EventEmitter, getPropBooleanValue, getValueByPath, mergeDeep, stringToObject } from '@/utils/utils';
+import { deleteByPath, EventEmitter, extractInitialValues, getPropBooleanValue, getValueByPath, mergeDeep, stringToObject } from '@/utils/utils';
 import { computed, getCurrentInstance, inject, onBeforeUnmount, onMounted } from 'vue';
 import { CreateInputOptions } from './createInput';
 
@@ -11,10 +11,8 @@ export const useField = (props: Record<string, any>, emit: any, isArrayField: bo
 	const vm = getCurrentInstance();
 
 	const setInitialValues = () => {
-		if (forms[form.uid].initialValues && name in forms[form.uid].initialValues && !isArrayField) {
-			if (getValueByPath(forms[form.uid].initialValues, name) !== undefined) {
-				return getValueByPath(forms[form.uid].initialValues, name);
-			}
+		if (Object.keys(forms[form.uid].initialValues).length && !isArrayField) {
+			return extractInitialValues(name, forms[form.uid].initialValues, props, options);
 		}
 
 		return (options?.modelKey && props[options.modelKey]) ?? props.modelValue ?? props.default ?? options?.default ?? (isArrayField ? [] : '');
@@ -98,12 +96,6 @@ export const useField = (props: Record<string, any>, emit: any, isArrayField: bo
 
 	/* CREATED */
 	createFormInput();
-
-	EventEmitter.on('reset', () => {
-		if (value.value && getValueByPath(forms[form.uid].values, name) && !isArrayField) {
-			setValue(defaultValueCopy);
-		}
-	});
 
 	onBeforeUnmount(() => {
 		if (!getPropBooleanValue(form.preserve) && !getPropBooleanValue(props.preserve)) {

@@ -1,10 +1,11 @@
 import { GetKeys } from '@/composable/useForm';
 import { forms } from '@/utils/store';
 import { getValueByPath, mergeDeep, flattenObject, createFormDataFromObject, fetcher, EventEmitter } from '@/utils/utils';
+import { TypedSchema } from '@packages/utils/types';
 import { ref, defineComponent, computed, onMounted, provide, h, PropType, SlotsType, watch } from 'vue';
 
 type RecursivePartial<T> = {
-	[P in keyof T]?: T[P] extends object ? RecursivePartial<T[P]> : T[P];
+	[P in keyof T]?: T[P] extends Record<string, any> ? RecursivePartial<T[P]> : T[P];
 };
 
 type FormType<T extends Record<string, any>> = {
@@ -19,7 +20,8 @@ type FormType<T extends Record<string, any>> = {
 }
 
 export type FormOptions<T extends Record<string, any>> = {
-	initialValues: T extends Record<string, any> ? Partial<T> : Record<string, any>
+	initialValues?: T extends Record<string, any> ? RecursivePartial<T> : Record<string, any>;
+	schema?: TypedSchema<any, T>;
 }
 
 export const FormCompBase = <T extends Record<string, any> = Record<string, any>>(opt?: FormOptions<T>) => {
@@ -46,7 +48,6 @@ export const FormCompBase = <T extends Record<string, any> = Record<string, any>
 	};
 
 	const reset = () => {
-		EventEmitter.emit('reset');
 		forms[uid].values = JSON.parse(originalForm);
 		forms[uid].key++;
 	};
@@ -73,8 +74,9 @@ export const FormCompBase = <T extends Record<string, any> = Record<string, any>
 				$event.preventDefault();
 				let _val = values.value;
 
-				if (props.validationSchema) {
-					const result = await props.validationSchema.parse(flattenObject(forms[uid].values));
+				if (props.validationSchema || opt?.schema) {
+					const _schema = props.validationSchema || opt?.schema;
+					const result = await _schema.parse(flattenObject(forms[uid].values));
 					if (Object.keys(result.errors).length) {
 						for (const key in result.errors) {
 							setError(key as any, result.errors[key]);
@@ -130,6 +132,10 @@ export const FormCompBase = <T extends Record<string, any> = Record<string, any>
 
 			if (props.validationSchema && typeof props.validationSchema.cast === 'function') {
 				forms[uid].initialValues = props.initialValues ? mergeDeep(props.initialValues, opt?.initialValues || {}, props.validationSchema.cast(flattenObject(forms[uid].values))) : mergeDeep(opt?.initialValues || {}, props.validationSchema.cast(flattenObject(forms[uid].values)));
+			}
+
+			if (opt?.schema && typeof opt?.schema.cast === 'function') {
+				forms[uid].initialValues = props.initialValues ? mergeDeep(props.initialValues, opt?.initialValues || {}, opt?.schema.cast(flattenObject(forms[uid].values))) : mergeDeep(opt?.initialValues || {}, opt?.schema.cast(flattenObject(forms[uid].values)));
 			}
 
 			/*---------------------------------------------

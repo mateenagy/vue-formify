@@ -1,4 +1,5 @@
-import { getDefaults, ObjectSchema, safeParseAsync, flatten } from 'valibot';
+import { getDefaults, ObjectSchema, safeParseAsync, flatten, InferInput } from 'valibot';
+import { TypedSchema } from '@packages/utils/types';
 
 const processError = (issues: any) => {
 	const _error: Record<string, any> = {};
@@ -9,8 +10,8 @@ const processError = (issues: any) => {
 	return _error;
 };
 
-const schemaFromValibot = <TSchema extends ObjectSchema<any, any>>(_schema: TSchema) => {
-	const schema = {
+const schemaFromValibot = <TSchema extends ObjectSchema<any, any>>(_schema: TSchema): TypedSchema<TSchema, InferInput<TSchema>> => {
+	const schema: TypedSchema = {
 		parse: async (value: any) => {
 			const result = await safeParseAsync(_schema, value);
 			if (result.success) {

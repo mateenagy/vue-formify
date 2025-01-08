@@ -3,6 +3,8 @@ import { computed, defineComponent, h, PropType, resolveDynamicComponent, SlotsT
 import { useField } from '../composable/useField';
 import { GetKeys } from '@/composable/useForm';
 
+type UnwrapArray<T> = T extends (infer U)[] ? U : T;
+
 export type ExtractValue<T, K extends string> =
 	K extends `${infer Root}.${infer Rest}`
 		? Root extends keyof T
@@ -17,11 +19,11 @@ export type ExtractValue<T, K extends string> =
 	: K extends `${infer Root}[${number}]`
 		? Root extends keyof T
 			? T[Root] extends (infer U)
-				? U
+				? UnwrapArray<U>
 				: never
 			: never
 	: K extends keyof T
-		? T[K]
+		? UnwrapArray<T[K]>
 		: never;
 
 export type FieldType<T extends Record<string, any>> = {
