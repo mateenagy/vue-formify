@@ -5,11 +5,13 @@ The `<FieldArray>` is a component for create repeatable array fields.
 ### Basic usage
 ```vue
 <script lang="ts" setup>
-import { Form, FieldArray, Field } from 'vue-formify';
+import { useForm } from 'vue-formify';
 
-const sendForm = (data) => {
+const { Form, FieldArray, handleSubmit } = useForm();
+
+const sendForm = handleSubmit((data) => {
 	console.log(data);
-};
+});
 
 </script>
 <template>
@@ -25,7 +27,7 @@ const sendForm = (data) => {
 	</Form>
 </template>
 ```
-::: tip Best practice
+::: warning Important note
 When you using `v-for` on the `fields` always use the `field.id` in the `:key` attribute and use the `index` as array index. Otherwise it won't works as expected.
 :::
 ## Api reference

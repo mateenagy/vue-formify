@@ -4,19 +4,19 @@ The `<Error />` component is for show error message for defined input field. By 
 ### Basic usage
 ```vue
 <script lang="ts" setup>
-import { Form, Field, Error, FormType } from 'vue-formify';
+import { useForm } from 'vue-formify';
 
-const form = ref<FormType>();
+const { Form, Field, Error, setError, handleSubmit } = useForm();
 
 const sendForm = (data) => {
     if (!data.email.length) {
-        form.value?.setError('email', 'Email required!');
+        setError('email', 'Email required!');
     }
 };
 
 </script>
 <template>
-	<Form ref="form" @submit="sendForm">
+	<Form @submit="sendForm">
 		<Field name="email" />
 		<Error error-for="email" />
 		<button>Send</button>

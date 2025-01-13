@@ -3,7 +3,9 @@ The `<Field />` is a flexible component designed to handle most use cases. By de
 
 ```vue
 <script lang="ts" setup>
-import { Form, Field } from 'vue-formify';
+import { useForm } from 'vue-formify';
+
+const { Form, Field } = useForm();
 </script>
 
 <template>

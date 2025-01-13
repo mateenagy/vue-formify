@@ -4,11 +4,13 @@ The `<Form />` component functions like a native form but includes additional be
 ### Basic usage
 ```vue
 <script lang="ts" setup>
-import { Form, Field } from 'vue-formify';
+import { useForm } from 'vue-formify';
 
-const sendForm = (data) => {
+const { Form, Field, handleSubmit } = useForm();
+
+const sendForm = handleSubmit((data) => {
 	console.log(data);
-};
+});
 
 </script>
 <template>

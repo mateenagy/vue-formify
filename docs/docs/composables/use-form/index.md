@@ -4,11 +4,10 @@
 ## Usage
 For basic usage you have to define the components and functions from the `useForm` composable. It gives you autocompletion for `name` attribute on `Field`, `FieldArrray` and `error-for` attribute on `Error` components.
 
-When you define `initals` as option in `useForm` it gives you full type safety.
-
-:::info Using `:initial-values` attribute on `Form`
-When you set the `:initial-values` attribute on `Form` component it will only help with autocompletion
+::: tip Initial values types
+When you define `initialValues` as option in `useForm` or `:initial-values` property on `Form` component it gives you full type safety.
 :::
+
 ### Basic
 ```vue
 <script lang="ts" setup>

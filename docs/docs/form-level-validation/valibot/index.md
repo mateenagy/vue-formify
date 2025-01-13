@@ -3,27 +3,29 @@ Install the necessary packages via package manager:
 ```bash
 npm i @vue-formify/valibot valibot
 ```
-Import the helper function to convert valibot schema for vue-formify specific schema:
+Import the helper function to convert valibot schema for vue-formify specific schema.
+
+Passing `schema` option will **automatically** infer types from `valibot`.
 ```vue
 <script lang="ts" setup>
 import * as valibot from 'valibot';
 import { schemaFromValibot } from '@vue-formify/valibot';
-import { Form, Field } from 'vue-formify';
+import { useForm } from 'vue-formify';
 
-const schemaValibot = schemaFromValibot(
+const schema = schemaFromValibot(
   v.object({
-    first_name: v.string('Must be a string', [
-      v.minLength(1, 'Required'),
-    ]),
-    last_name: v.string('Must be a string', [
-      v.minLength(1, 'Required'),
-    ]),
+    first_name: v.pipe(v.string(), v.nonEmpty('Required field')),
+    last_name: v.pipe(v.string(), v.nonEmpty('Required field')),
   })
 );
 
-const sendForm = (data) => {
+const { Form, Field, handleSubmit } = useForm({
+	schema,
+});
+
+const sendForm = handleSubmit((data) => {
 	console.log(data);
-};
+});
 
 </script>
 <template>
