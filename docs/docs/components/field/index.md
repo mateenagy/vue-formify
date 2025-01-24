@@ -53,7 +53,7 @@ You can also wrap your custom input between `Field` component and binding the `f
 ```vue
 <template>
     <Form @submit="sendForm">
-        <Field name="favourite_fruit" v-slot={field, error}>
+        <Field name="favourite_fruit" v-slot="{field, error}">
             <label>Email</label>
             <input type="email" v-bind="field" />
             <small>{{ error }}</small>

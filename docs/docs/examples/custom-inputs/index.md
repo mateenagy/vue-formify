@@ -23,10 +23,10 @@ const value = defineModel();
 ```vue
 <script lang="ts" setup>
 import { useForm, createInput, ComponentProps } from 'vue-formify';
-import CustomIput from './CustomIput.vue'
+import CustomInput from './CustomInput.vue'
 
 const { Form } = useForm();
-const InputField = createInput<ComponentProps<typeof CustomIput>>(CustomIput);
+const InputField = createInput<ComponentProps<typeof CustomInput>>(CustomInput);
 </script>
 <template>
 	<div>

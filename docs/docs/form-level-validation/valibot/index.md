@@ -8,7 +8,7 @@ Import the helper function to convert valibot schema for vue-formify specific sc
 Passing `schema` option will **automatically** infer types from `valibot`.
 ```vue
 <script lang="ts" setup>
-import * as valibot from 'valibot';
+import * as v from 'valibot';
 import { schemaFromValibot } from '@vue-formify/valibot';
 import { useForm } from 'vue-formify';
 
