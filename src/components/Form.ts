@@ -27,7 +27,8 @@ export type FormOptions<T extends Record<string, any>> = {
 export const FormCompBase = <T extends Record<string, any> = Record<string, any>>(opt?: FormOptions<T>) => {
 	let uid: number | string = Math.floor(Math.random() * Date.now());
 	let originalForm = Object.create({});
-	const _val = ref<T>(Object.create({}));
+	const _val = ref<T>(opt?.initialValues || Object.create({}));
+	
 	const isSubmitting = ref<boolean>(false);
 
 	const handleSubmit = (cb?: (data?: T) => void | Promise<any>) => {
@@ -55,17 +56,16 @@ export const FormCompBase = <T extends Record<string, any> = Record<string, any>
 	const cmp = defineComponent(
 		(props: FormType<T>, { slots, emit, attrs, expose }) => {
 			props.name && (uid = props.name);
-
+			
 			const updateField = (name: string, value: any) => {
 				if (getValueByPath(forms[uid].values, name)) {
 					getValueByPath(forms[uid].values, name).value = value;
-
 					EventEmitter.emit('value-change', uid);
 				}
 			};
 
 			EventEmitter.on('value-change', (id: string) => {
-				if (id === uid && props?.onValueChange) {
+				if (id === uid && props?.onValueChange && forms[uid]) {
 					emit('value-change', values.value);
 				}
 			});
@@ -115,7 +115,12 @@ export const FormCompBase = <T extends Record<string, any> = Record<string, any>
 				return flattenObject(forms[uid]?.values) as T;
 			});
 
-			watch(values, curr => _val.value = curr);
+			watch(values, (curr, prev) => {
+				_val.value = curr;
+				if (JSON.stringify(curr) !== JSON.stringify(prev) && props.onValueChange) {
+					EventEmitter.emit('value-change', uid);
+				}
+			});
 
 			/*---------------------------------------------
 			/  CREATED

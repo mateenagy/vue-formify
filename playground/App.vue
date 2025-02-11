@@ -1,9 +1,9 @@
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script lang="ts" setup>
-import Basic from './Basic.vue';
-import Valibot from './validators/Valibot.vue';
-import Yup from './validators/Yup.vue';
-import Zod from './validators/Zod.vue';
+// import Basic from './Basic.vue';
+// import Valibot from './validators/Valibot.vue';
+// import Yup from './validators/Yup.vue';
+// import Zod from './validators/Zod.vue';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
@@ -28,7 +28,7 @@ import Zod from './validators/Zod.vue';
 </script>
 <template>
 	<div>
-		<div>
+		<!-- <div>
 			<h2>Basic</h2>
 			<Basic />
 		</div>
@@ -46,6 +46,6 @@ import Zod from './validators/Zod.vue';
 		<div>
 			<h2>Valibot</h2>
 			<Valibot />
-		</div>
+		</div> -->
 	</div>
 </template>

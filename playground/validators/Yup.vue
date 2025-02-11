@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { useForm } from '@/composable/useForm';
 import { schemaFromYup } from '@packages/yup';
+import CustomInput from '../CustomInput.vue';
 import * as yup from 'yup';
 /*---------------------------------------------
 /  PROPS & EMITS
@@ -10,6 +11,7 @@ import * as yup from 'yup';
 ---------------------------------------------*/
 const schema = schemaFromYup(yup.object({
 	username: yup.string().default('asd'),
+	test: yup.string().required('Required field'),
 	links: yup.array().of(yup.string()).default(['asd']),
 	socials: yup.array().of(yup.object({
 		name: yup.string().required('Required field'),

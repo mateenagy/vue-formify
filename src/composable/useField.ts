@@ -1,5 +1,5 @@
 import { forms } from '@/utils/store';
-import { deleteByPath, EventEmitter, extractInitialValues, getPropBooleanValue, getValueByPath, mergeDeep, stringToObject } from '@/utils/utils';
+import { deleteByPath, extractInitialValues, getPropBooleanValue, getValueByPath, mergeDeep, stringToObject } from '@/utils/utils';
 import { computed, getCurrentInstance, inject, onBeforeUnmount, onMounted } from 'vue';
 import { CreateInputOptions } from './createInput';
 
@@ -80,7 +80,6 @@ export const useField = (props: Record<string, any>, emit: any, isArrayField: bo
 
 	const setValue = (newValue: any) => {
 		value.value = newValue;
-		EventEmitter.emit('value-change', form.uid);
 	};
 
 	const setArrayValue = (value: any, key: any = name) => {
