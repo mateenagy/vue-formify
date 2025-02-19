@@ -93,6 +93,23 @@ export const stringToObject = (path: string, defaultValue: Record<string, any>) 
 	return obj;
 };
 
+export const objectToString = (obj: Record<string, any>, parentKey: string = ''): Record<string, any> => {
+    let result: Record<string, any> = {};
+
+    for (const key in obj) {
+        const newKey = parentKey ? `${parentKey}.${key}` : key;
+
+        if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
+            const nestedResult = objectToString(obj[key], newKey);
+            result = { ...result, ...nestedResult };
+        } else {
+            result[newKey] = obj[key];
+        }
+    }
+
+    return result;
+};
+
 export const getValueByPath = (object: Record<string, any>, path?: string) => {
 	if (!path) {
 		return;

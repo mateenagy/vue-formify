@@ -1,6 +1,6 @@
 import { GetKeys } from '@/composable/useForm';
 import { forms } from '@/utils/store';
-import { getValueByPath, mergeDeep, flattenObject, createFormDataFromObject, fetcher, EventEmitter } from '@/utils/utils';
+import { getValueByPath, mergeDeep, flattenObject, createFormDataFromObject, fetcher, EventEmitter, objectToString } from '@/utils/utils';
 import { TypedSchema } from '@packages/utils/types';
 import { ref, defineComponent, computed, onMounted, provide, h, PropType, SlotsType, watch } from 'vue';
 
@@ -46,6 +46,21 @@ export const FormCompBase = <T extends Record<string, any> = Record<string, any>
 	const setInitalValues = (initials: Partial<T>) => {
 		forms[uid].initialValues = mergeDeep(flattenObject(forms[uid].values), initials);
 		forms[uid].key++;
+	};
+
+	const setValues = (values: Partial<T>) => {
+		const convertedKeys = objectToString(values);
+		for (const key in convertedKeys) {
+			if (getValueByPath(forms[uid].values, key as string) && 'value' in getValueByPath(forms[uid].values, key as string)) {
+				getValueByPath(forms[uid].values, key as string).value = convertedKeys[key];
+			}
+		}
+	};
+
+	const setValue = (name: GetKeys<T>, value: any) => {
+		if (getValueByPath(forms[uid].values, name as unknown as string)) {
+			getValueByPath(forms[uid].values, name as unknown as string).value = value;
+		}
 	};
 
 	const reset = () => {
@@ -120,7 +135,7 @@ export const FormCompBase = <T extends Record<string, any> = Record<string, any>
 				if (JSON.stringify(curr) !== JSON.stringify(prev) && props.onValueChange) {
 					EventEmitter.emit('value-change', uid);
 				}
-			});
+			}, { deep: true });
 
 			/*---------------------------------------------
 			/  CREATED
@@ -221,6 +236,8 @@ export const FormCompBase = <T extends Record<string, any> = Record<string, any>
 		handleSubmit,
 		setError,
 		setInitalValues,
+		setValues,
+		setValue,
 		reset,
 		values: _val,
 		isSubmitting,

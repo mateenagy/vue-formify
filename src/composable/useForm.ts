@@ -37,6 +37,8 @@ export const useForm = <T extends Record<string, any>>(opt?: FormOptions<T>) => 
 		handleSubmit: FormBase.handleSubmit,
 		setError: FormBase.setError,
 		setInitalValues: FormBase.setInitalValues,
+		setValues: FormBase.setValues,
+		setValue: FormBase.setValue,
 		reset: FormBase.reset,
 		isSubmitting: FormBase.isSubmitting,
 		values: FormBase.values,
