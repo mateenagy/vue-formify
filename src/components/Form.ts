@@ -1,6 +1,6 @@
 import { GetKeys } from '@/composable/useForm';
 import { forms } from '@/utils/store';
-import { getValueByPath, mergeDeep, flattenObject, createFormDataFromObject, fetcher, EventEmitter, objectToString } from '@/utils/utils';
+import { getValueByPath, mergeDeep, flattenObject, createFormDataFromObject, fetcher, EventEmitter, objectToString, stringToObject } from '@/utils/utils';
 import { TypedSchema } from '@packages/utils/types';
 import { ref, defineComponent, computed, onMounted, provide, h, PropType, SlotsType, watch } from 'vue';
 
@@ -58,8 +58,15 @@ export const FormCompBase = <T extends Record<string, any> = Record<string, any>
 	};
 
 	const setValue = (name: GetKeys<T>, value: any) => {
+		console.log('form', forms[uid].values);
+		
 		if (getValueByPath(forms[uid].values, name as unknown as string)) {
+			console.log('name', getValueByPath(forms[uid].values, name as unknown as string));
+			
 			getValueByPath(forms[uid].values, name as unknown as string).value = value;
+		} else {
+			const obj = stringToObject(name as string, { value, error: undefined });
+			forms[uid].values = mergeDeep(forms[uid].values, obj);
 		}
 	};
 
@@ -162,6 +169,11 @@ export const FormCompBase = <T extends Record<string, any> = Record<string, any>
 			/  HOOKS
 			---------------------------------------------*/
 			onMounted(() => {
+				if (opt?.initialValues) {
+					Object.keys(opt?.initialValues).forEach((key) => {
+						setValue(key as GetKeys<T>, opt?.initialValues![key]);
+					});
+				}
 				originalForm = JSON.stringify(forms[uid].values);
 			});
 

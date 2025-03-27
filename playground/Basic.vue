@@ -4,24 +4,55 @@ import { useForm } from '@/composable/useForm';
 import { MassiveForm, MegaForm } from './Examples.types';
 import { ComponentProps, createInput } from '@/main';
 import CustomInput from './CustomInput.vue';
+import { onMounted } from 'vue';
 
 type BasicForm = {
 	username: string;
+	id: number;
 	links: {
 		name: string;
 		url: string;
-	}[]
+	}[];
+	foo: {
+		bar: {
+			baz: string;
+		};
+	}
+	lol: {
+		boo: string;
+	};
 }
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
+const { id = 2 } = defineProps<{
+	id?: number;
+}>();
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
-const { Form, Field, FieldArray, reset } = useForm<BasicForm>();
+const { Form, Field, FieldArray, reset, setValue, setValues } = useForm<BasicForm>({
+	initialValues: {
+		id: id,
+		username: 'asd',
+		links: [
+			{
+				name: 'Google',
+				url: 'https://google.com',
+			},
+			{
+				name: 'Facebook',
+				url: 'https://facebook.com',
+			},
+		],
+	},
+});
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
+const submit = (data: BasicForm) => {
+	console.log(data);
+};
 /*---------------------------------------------
 /  COMPUTED
 ---------------------------------------------*/
@@ -34,12 +65,22 @@ const { Form, Field, FieldArray, reset } = useForm<BasicForm>();
 /*---------------------------------------------
 /  HOOKS
 ---------------------------------------------*/
+onMounted(() => {
+	// setValue('username', 'John Doe');
+	// setValue('foo.bar.baz', 'Heloka');
+});
 </script>
 <template>
-	<Form v-slot="{ values }">
+	<Form
+		v-slot="{ values }"
+		@submit="submit">
 		<fieldset>
 			<label>Username: </label>
-			<Field name="username" />
+			<Field
+				name="username" />
+			<Field
+				name="foo.bar.baz"
+				ignore /> 
 		</fieldset>
 		<fieldset>
 			<label>Array field: </label>
@@ -65,6 +106,9 @@ const { Form, Field, FieldArray, reset } = useForm<BasicForm>();
 			</FieldArray>
 		</fieldset>
 		<pre>{{ values }}</pre>
+		<button>
+			Send
+		</button>
 		<button
 			@click="reset"
 			type="button">

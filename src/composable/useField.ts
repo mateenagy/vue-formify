@@ -1,5 +1,5 @@
 import { forms } from '@/utils/store';
-import { deleteByPath, extractInitialValues, getPropBooleanValue, getValueByPath, mergeDeep, stringToObject } from '@/utils/utils';
+import { createFormInput, deleteByPath, extractInitialValues, getPropBooleanValue, getValueByPath, mergeDeep } from '@/utils/utils';
 import { computed, getCurrentInstance, inject, onBeforeUnmount, onMounted } from 'vue';
 import { CreateInputOptions } from './createInput';
 
@@ -11,6 +11,9 @@ export const useField = (props: Record<string, any>, emit: any, isArrayField: bo
 	const vm = getCurrentInstance();
 
 	const setInitialValues = () => {
+		if (props.ignore) {
+			return '';
+		}
 		if (Object.keys(forms[form.uid].initialValues).length && !isArrayField) {
 			return extractInitialValues(name, forms[form.uid].initialValues, props, options);
 		}
@@ -20,6 +23,7 @@ export const useField = (props: Record<string, any>, emit: any, isArrayField: bo
 	const defaultValue = {
 		value: setInitialValues(),
 		error: undefined,
+		ignore: props.ignore,
 	};
 
 	const defaultValueCopy = JSON.parse(JSON.stringify(defaultValue.value));
@@ -86,15 +90,8 @@ export const useField = (props: Record<string, any>, emit: any, isArrayField: bo
 		getValueByPath(forms[form.uid].values, key).value = mergeDeep(getValueByPath(forms[form.uid].values, key).value, value);
 	};
 
-	const createFormInput = () => {
-		if (name && !(name in forms[form.uid].values)) {
-			const obj = stringToObject(name, defaultValue);
-			forms[form.uid].values = mergeDeep(forms[form.uid].values, obj);
-		}
-	};
-
 	/* CREATED */
-	createFormInput();
+	createFormInput(name, form.uid, defaultValue);
 
 	onBeforeUnmount(() => {
 		if (!getPropBooleanValue(form.preserve) && !getPropBooleanValue(props.preserve)) {
