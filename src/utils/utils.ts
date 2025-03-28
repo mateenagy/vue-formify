@@ -15,8 +15,6 @@ export const getKey = (name: string = '', modelKey: string, useKey: boolean = fa
 };
 
 export const extractInitialValues = (key: string, initialValues: Record<string, any>, props: Record<string, any>, options: any) => {
-	console.log(key);
-	
 	const name = key.replace(REMOVE_ARRAY_INDEX_FROM_STRING_REGEX, '');
 	const index = key.match(GET_INDEX_FROM_STRING_REGEX)?.[1];
 

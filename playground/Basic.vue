@@ -13,13 +13,14 @@ type BasicForm = {
 		name: string;
 		url: string;
 	}[];
+	bars: string[];
 	foo: {
 		bar: {
 			baz: string;
 		};
 	}
 	lol: {
-		boo: string;
+		boo: string[];
 	};
 }
 /*---------------------------------------------
@@ -31,21 +32,25 @@ const { id = 2 } = defineProps<{
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
-const { Form, Field, FieldArray, reset, setValue, setValues } = useForm<BasicForm>({
-	initialValues: {
-		id: id,
-		username: 'asd',
-		links: [
-			{
-				name: 'Google',
-				url: 'https://google.com',
-			},
-			{
-				name: 'Facebook',
-				url: 'https://facebook.com',
-			},
-		],
+const initial: Partial<BasicForm> = {
+	username: 'Heloka',
+	id: 31,
+	links: [
+		{
+			name: 'Google',
+			url: 'https://google.com',
+		},
+		{
+			name: 'Facebook',
+			url: 'https://facebook.com',
+		},
+	],
+	lol: {
+		boo: ['1', '2'],
 	},
+};
+const { Form, Field, FieldArray, reset, setValues } = useForm<BasicForm>({
+	initialValues: initial,
 });
 /*---------------------------------------------
 /  METHODS
@@ -65,10 +70,6 @@ const submit = (data: BasicForm) => {
 /*---------------------------------------------
 /  HOOKS
 ---------------------------------------------*/
-onMounted(() => {
-	// setValue('username', 'John Doe');
-	// setValue('foo.bar.baz', 'Heloka');
-});
 </script>
 <template>
 	<Form
@@ -79,8 +80,7 @@ onMounted(() => {
 			<Field
 				name="username" />
 			<Field
-				name="foo.bar.baz"
-				ignore /> 
+				name="foo.bar.baz" /> 
 		</fieldset>
 		<fieldset>
 			<label>Array field: </label>

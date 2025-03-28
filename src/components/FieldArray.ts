@@ -36,7 +36,6 @@ export const FieldArrayComp = <T extends Record<string, any> = Record<string, an
 
 		const remove = (idx: number) => {
 			getValueByPath(forms[uid].values, props.name as string).error = undefined;
-
 			const removedIndex = fields.value.findIndex(field => field.id === idx);
 
 			for (let index = removedIndex + 1; index < fields.value.length; index++) {
@@ -53,21 +52,18 @@ export const FieldArrayComp = <T extends Record<string, any> = Record<string, an
 			fields.value.splice(-1);
 		};
 
-		const init = () => {
+		const init = async () => {
 			fields.value = [];
-			let initials = props.initialValues || forms[uid].initialValues?.[props.name];
-			if (!Array.isArray(initials) && typeof initials === 'object') {
-				initials = Object.values(initials);
-			}
-
+			const initials = props.initialValues || forms[uid].initialValues?.[props.name] || forms[uid].values[props.name].value;
 			if (initials) {
-				initials.forEach?.(async (value: any, idx: any) => {
+				initials.forEach?.(() => {
 					fields.value.push({
 						id: fields.value.length,
 						name: props.name,
 					});
-
-					await nextTick();
+				});
+				await nextTick();
+				initials.forEach?.((value: any, idx: any) => {
 					if (typeof value === 'object') {
 						Object.keys(value).forEach((key) => {
 							setArrayValue({

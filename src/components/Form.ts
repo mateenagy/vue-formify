@@ -58,11 +58,7 @@ export const FormCompBase = <T extends Record<string, any> = Record<string, any>
 	};
 
 	const setValue = (name: GetKeys<T>, value: any) => {
-		console.log('form', forms[uid].values);
-		
 		if (getValueByPath(forms[uid].values, name as unknown as string)) {
-			console.log('name', getValueByPath(forms[uid].values, name as unknown as string));
-			
 			getValueByPath(forms[uid].values, name as unknown as string).value = value;
 		} else {
 			const obj = stringToObject(name as string, { value, error: undefined });
@@ -150,11 +146,31 @@ export const FormCompBase = <T extends Record<string, any> = Record<string, any>
 			if (!forms[uid]) {
 				forms[uid] = {
 					values: Object.create({}),
-					initialValues: opt?.initialValues || props.initialValues || {},
+					initialValues: props.initialValues || {},
 					key: 0,
 				};
 			} else {
 				props.initialValues && (forms[uid].initialValues = opt?.initialValues || props.initialValues);
+			}
+
+			if (opt?.initialValues) {
+				forms[uid].initialValues = opt?.initialValues;
+
+				Object.keys(opt?.initialValues).forEach((key) => {
+					if (!Array.isArray(opt?.initialValues![key])) {
+						setValue(key as GetKeys<T>, opt?.initialValues![key]);
+					} else {
+						opt?.initialValues![key].forEach((value: any, index: number) => {
+							if (typeof value === 'object') {
+								Object.keys(value).forEach((k) => {
+									setValue(`${key}[${index}].${k}` as GetKeys<T>, value[k]);
+								});
+							} else {
+								setValue(`${key}[${index}]` as GetKeys<T>, value);
+							}
+						});
+					}
+				});
 			}
 
 			if (props.validationSchema && typeof props.validationSchema.cast === 'function') {
@@ -164,16 +180,11 @@ export const FormCompBase = <T extends Record<string, any> = Record<string, any>
 			if (opt?.schema && typeof opt?.schema.cast === 'function') {
 				forms[uid].initialValues = props.initialValues ? mergeDeep(props.initialValues, opt?.initialValues || {}, opt?.schema.cast(flattenObject(forms[uid].values))) : mergeDeep(opt?.initialValues || {}, opt?.schema.cast(flattenObject(forms[uid].values)));
 			}
-
+			
 			/*---------------------------------------------
 			/  HOOKS
 			---------------------------------------------*/
 			onMounted(() => {
-				if (opt?.initialValues) {
-					Object.keys(opt?.initialValues).forEach((key) => {
-						setValue(key as GetKeys<T>, opt?.initialValues![key]);
-					});
-				}
 				originalForm = JSON.stringify(forms[uid].values);
 			});
 
