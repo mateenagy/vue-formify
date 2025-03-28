@@ -327,7 +327,3 @@ export class EventEmitter {
 		}
 	}
 }
-
-/*
-/  TYPES
-*/
