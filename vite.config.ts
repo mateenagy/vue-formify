@@ -32,10 +32,8 @@ export default defineConfig({
 	],
 	build: {
 		cssCodeSplit: true,
-		terserOptions: {
-			compress: true,
-			mangle: true,
-		},
+		minify: 'esbuild',
+		target: 'esnext',
 		lib: {
 			entry: 'src/main.ts',
 			name: 'VueFormify',
@@ -50,6 +48,8 @@ export default defineConfig({
 				'vue',
 			],
 			output: {
+				compact: true,
+				inlineDynamicImports: true,
 				exports: 'named',
 				globals: {
 					vue: 'Vue',

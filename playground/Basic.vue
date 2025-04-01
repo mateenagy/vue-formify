@@ -4,24 +4,60 @@ import { useForm } from '@/composable/useForm';
 import { MassiveForm, MegaForm } from './Examples.types';
 import { ComponentProps, createInput } from '@/main';
 import CustomInput from './CustomInput.vue';
+import { onMounted } from 'vue';
 
 type BasicForm = {
 	username: string;
+	id: number;
 	links: {
 		name: string;
 		url: string;
-	}[]
+	}[];
+	bars: string[];
+	foo: {
+		bar: {
+			baz: string;
+		};
+	}
+	lol: {
+		boo: string[];
+	};
 }
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
+const { id = 2 } = defineProps<{
+	id?: number;
+}>();
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
-const { Form, Field, FieldArray, reset } = useForm<BasicForm>();
+const initial: Partial<BasicForm> = {
+	username: 'Heloka',
+	id: 31,
+	links: [
+		{
+			name: 'Google',
+			url: 'https://google.com',
+		},
+		{
+			name: 'Facebook',
+			url: 'https://facebook.com',
+		},
+	],
+	lol: {
+		boo: ['1', '2'],
+	},
+};
+const { Form, Field, FieldArray, reset, setValues } = useForm<BasicForm>({
+	initialValues: initial,
+});
 /*---------------------------------------------
 /  METHODS
 ---------------------------------------------*/
+const submit = (data: BasicForm) => {
+	console.log(data);
+};
 /*---------------------------------------------
 /  COMPUTED
 ---------------------------------------------*/
@@ -36,10 +72,15 @@ const { Form, Field, FieldArray, reset } = useForm<BasicForm>();
 ---------------------------------------------*/
 </script>
 <template>
-	<Form v-slot="{ values }">
+	<Form
+		v-slot="{ values }"
+		@submit="submit">
 		<fieldset>
 			<label>Username: </label>
-			<Field name="username" />
+			<Field
+				name="username" />
+			<Field
+				name="foo.bar.baz" /> 
 		</fieldset>
 		<fieldset>
 			<label>Array field: </label>
@@ -65,6 +106,9 @@ const { Form, Field, FieldArray, reset } = useForm<BasicForm>();
 			</FieldArray>
 		</fieldset>
 		<pre>{{ values }}</pre>
+		<button>
+			Send
+		</button>
 		<button
 			@click="reset"
 			type="button">

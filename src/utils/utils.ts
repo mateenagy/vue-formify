@@ -1,3 +1,5 @@
+import { forms } from './store';
+
 export const BETWEEN_BRACKETS_REGEX = /^\[(.+?)\]$/gm;
 export const REMOVE_BRACKETS_REGEX = /(^.*\[|\].*$)/g;
 export const ARRAY_INDEX_FROM_STRING_REGEX = /\[(\d*)\]/gm;
@@ -19,8 +21,15 @@ export const extractInitialValues = (key: string, initialValues: Record<string, 
 	if (!index) {
 		return getValueByPath(initialValues, name) ?? (options?.modelKey && props[options.modelKey]) ?? props?.modelValue ?? props?.default ?? options?.default ?? '';
 	}
-	
+
 	return getValueByPath(initialValues, name)?.[index] || '';
+};
+
+export const createFormInput = (name: string, uid: string | number, defaultValue: { value: any, error: any }) => {
+	if (name && !(name in forms[uid].values)) {
+		const obj = stringToObject(name, defaultValue);
+		forms[uid].values = mergeDeep(forms[uid].values, obj);
+	}
 };
 
 export const resolveTag = (props: Record<string, any>, slots: any) => {
@@ -94,20 +103,20 @@ export const stringToObject = (path: string, defaultValue: Record<string, any>) 
 };
 
 export const objectToString = (obj: Record<string, any>, parentKey: string = ''): Record<string, any> => {
-    let result: Record<string, any> = {};
+	let result: Record<string, any> = {};
 
-    for (const key in obj) {
-        const newKey = parentKey ? `${parentKey}.${key}` : key;
+	for (const key in obj) {
+		const newKey = parentKey ? `${parentKey}.${key}` : key;
 
-        if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
-            const nestedResult = objectToString(obj[key], newKey);
-            result = { ...result, ...nestedResult };
-        } else {
-            result[newKey] = obj[key];
-        }
-    }
+		if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
+			const nestedResult = objectToString(obj[key], newKey);
+			result = { ...result, ...nestedResult };
+		} else {
+			result[newKey] = obj[key];
+		}
+	}
 
-    return result;
+	return result;
 };
 
 export const getValueByPath = (object: Record<string, any>, path?: string) => {
@@ -213,18 +222,18 @@ export const flattenObject = (obj: any, type: 'value' | 'error' = 'value'): Reco
 				Array.isArray(obj[key].value) && (result[key] = []);
 				if (Object.keys(obj[key].value)?.[0]?.match?.(BETWEEN_BRACKETS_REGEX)) {
 					for (const arrayKey in obj[key].value) {
-						!result[key] && (result[key] = []);
+						(!result[key] && !obj[key].ignore) && (result[key] = []);
 						if (type in obj[key].value[arrayKey]) {
 							obj[key].value[arrayKey][type] && result[key].push(obj[key].value[arrayKey][type]);
 						} else {
-							result[key].push(flattenObject(obj[key].value[arrayKey], type));
+							!obj[key].ignore && result[key].push(flattenObject(obj[key].value[arrayKey], type));
 						}
 					}
 				} else {
-					result[key] = obj[key][type];
+					!obj[key].ignore && (result[key] = obj[key][type]);
 				}
 			} else {
-				result[key] = obj[key][type];
+				!obj[key].ignore && (result[key] = obj[key][type]);
 			}
 		} else if (typeof obj[key] === 'object') {
 			result[key] = flattenObject(obj[key], type);
@@ -318,7 +327,3 @@ export class EventEmitter {
 		}
 	}
 }
-
-/*
-/  TYPES
-*/
