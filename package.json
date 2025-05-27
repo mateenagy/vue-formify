@@ -93,6 +93,7 @@
 		"vue-tsc": "^2.1",
 		"yup": "^1.4",
 		"zod": "^3.23",
+		"arktype": "^2.1",
 		"radix-vue": "^1.9",
 		"vue-formify": "^1.2.7",
 		"oxlint": "^0.16",

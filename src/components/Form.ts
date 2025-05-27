@@ -247,10 +247,10 @@ export const FormCompBase = <T extends Record<string, any> = Record<string, any>
 					default: undefined,
 				},
 			},
+			emits: ['submit', 'value-change'],
 			slots: Object as SlotsType<{
 				default: { values: T, errors: any }
 			}>,
-			emits: ['submit', 'value-change'],
 		},
 	);
 

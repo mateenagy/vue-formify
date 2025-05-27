@@ -124,9 +124,9 @@ export const FieldArrayComp = <T extends Record<string, any> = Record<string, an
 				default: undefined,
 			},
 		},
+		emits: ['update:modelValue'],
 		slots: Object as SlotsType<{
 			default: { fields: { id: number }[], add: () => void, remove: (idx: number) => void, error: any }
 		}>,
-		emits: ['update:modelValue'],
 	},
 );

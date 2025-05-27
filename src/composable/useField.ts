@@ -70,6 +70,8 @@ export const useField = (props: Record<string, any>, emit: any, isArrayField: bo
 	};
 
 	const onFocus = () => {
+		console.log('focus');
+		
 		getValueByPath(forms[form.uid].values, name)?.error && (getValueByPath(forms[form.uid].values, name).error = undefined);
 		getValueByPath(forms[form.uid].values, name.replace(/\[\d+\]/, ''))?.error && (getValueByPath(forms[form.uid].values, name.replace(/\[\d+\]/, '')).error = undefined);
 	};

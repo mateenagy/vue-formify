@@ -1,16 +1,19 @@
-import { computed, getCurrentInstance, inject, nextTick, onBeforeUnmount, onMounted } from 'vue';
-import { FieldType } from './Field';
+import { computed, getCurrentInstance, inject, nextTick, onBeforeUnmount, onMounted, warn } from 'vue';
 import { forms } from '@/utils/store';
-import { createFormInput, deleteByPath, getPropBooleanValue, getValueByPath } from '@/utils/utils';
+import { createFormInput, deleteByPath, EventEmitter, getPropBooleanValue, getValueByPath } from '@/utils/utils';
+import { FieldType } from '@/utils/types';
+import { validateSchema } from './validator';
 
 export const useInput = (props: FieldType<any>, emit: any) => {
-	const { uid, preserveForm } = inject('formData', Object.create({}));
+	const { uid, preserveForm, mode } = inject('formData', Object.create({}));
 	const vm = getCurrentInstance();
 	const name = props.name;
 	const defaultValue: any = {
 		value: undefined,
 		error: undefined,
 		ignore: props.ignore,
+		isDirty: false,
+		isFocused: false,
 	};
 
 	/* COMPUTED */
@@ -30,6 +33,19 @@ export const useInput = (props: FieldType<any>, emit: any) => {
 
 	const getInitialValue = () => {
 		return props.modelValue ?? props.default ?? getValueByPath(forms[uid].initialValues, props.name) ?? '';
+	};
+
+	const validateField = async () => {
+		if (props?.schema) {
+			const result = await validateSchema(props.schema, value.value, setError, props.name);
+			getValueByPath(forms[uid].values, props.name).isValid = result;
+		}
+	};
+
+	const setError = (name: string, error: any) => {
+		if (getValueByPath(forms[uid].values, name as unknown as string)) {
+			getValueByPath(forms[uid].values, name as unknown as string).error = error;
+		}
 	};
 
 	const getValueByInputType = (target: HTMLInputElement) => {
@@ -55,17 +71,39 @@ export const useInput = (props: FieldType<any>, emit: any) => {
 	const getCheckValue = (checked: boolean): boolean => checked ? props.trueValue || true : props.falseValue || false;
 	const getError = () => getValueByPath(forms[uid].values, name)?.error;
 
-	const onInput = (evt: any) => {
-		(typeof evt === 'object' && 'target' in evt) ? setValue(getValueByInputType(evt.target)) : setValue(evt);
-	};
-
-	const onFocus = () => {
+	const resetError = () => {
 		getValueByPath(forms[uid].values, name)?.error && (getValueByPath(forms[uid].values, name).error = undefined);
 		getValueByPath(forms[uid].values, name.replace(/\[\d+\]/, ''))?.error && (getValueByPath(forms[uid].values, name.replace(/\[\d+\]/, '')).error = undefined);
 	};
 
-	createFormInput(props.name, uid, defaultValue);
-	getValueByPath(forms[uid].values, props.name).value = getInitialValue();
+	const onInput = async (evt: any) => {
+		resetError();
+		if (getValueByPath(forms[uid].values, props.name)?.isFocused && defaultValue.value !== value.value) {
+			getValueByPath(forms[uid].values, props.name).isDirty = true;
+		}
+		(typeof evt === 'object' && 'target' in evt) ? setValue(getValueByInputType(evt.target)) : setValue(evt);
+		if (mode === 'onChange') {
+			EventEmitter.emit('validate');
+			validateField();
+		}
+	};
+
+	const onFocus = () => {
+		resetError();
+		getValueByPath(forms[uid].values, props.name).isFocused = true;
+	};
+
+	const onBlur = async () => {
+		await validateField();
+	};
+
+	createFormInput(props.name, uid, JSON.parse(JSON.stringify(defaultValue)));
+
+	if (!props.name) {
+		warn('`name` prop is required');
+	} else {
+		getValueByPath(forms[uid].values, props.name).value = getInitialValue();
+	}
 
 	onBeforeUnmount(() => {
 		if (!getPropBooleanValue(preserveForm) || !getPropBooleanValue(props.preserve)) {
@@ -74,9 +112,7 @@ export const useInput = (props: FieldType<any>, emit: any) => {
 	});
 
 	onMounted(async () => {
-		console.log(name, forms[uid].initialValues, getInitialValue(), defaultValue);
 		await nextTick();
-		
 		if (vm?.subTree?.el) {
 			if (props.as === 'select') {
 				const options = Array.from((vm.subTree.el as unknown as HTMLSelectElement).options);
@@ -93,6 +129,8 @@ export const useInput = (props: FieldType<any>, emit: any) => {
 		value,
 		onInput,
 		onFocus,
+		onBlur,
 		getError,
+		setError,
 	};
 };
