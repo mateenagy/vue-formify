@@ -48,7 +48,7 @@ export const useField = (props: Record<string, any>, emit: any, isArrayField: bo
 		if (target.type === 'checkbox') {
 			return getCheckValue(target.checked);
 		}
-	
+
 		if (target.type === 'file') {
 			return target.multiple ? target.files : target.files?.[0];
 		}
@@ -71,7 +71,7 @@ export const useField = (props: Record<string, any>, emit: any, isArrayField: bo
 
 	const onFocus = () => {
 		console.log('focus');
-		
+
 		getValueByPath(forms[form.uid].values, name)?.error && (getValueByPath(forms[form.uid].values, name).error = undefined);
 		getValueByPath(forms[form.uid].values, name.replace(/\[\d+\]/, ''))?.error && (getValueByPath(forms[form.uid].values, name.replace(/\[\d+\]/, '')).error = undefined);
 	};

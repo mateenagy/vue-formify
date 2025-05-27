@@ -1,6 +1,6 @@
 import { FormOptions } from '@/utils/types';
 import { FieldComp } from './Field';
-import { FieldArrayComp } from '@/components/FieldArray';
+import { FieldArrayComp } from '@/components/new/FieldArray';
 import { FormComponent } from './Form';
 import { ErrorComp } from '@/components/Error';
 

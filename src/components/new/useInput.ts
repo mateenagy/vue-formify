@@ -1,10 +1,10 @@
 import { computed, getCurrentInstance, inject, nextTick, onBeforeUnmount, onMounted, warn } from 'vue';
 import { forms } from '@/utils/store';
-import { createFormInput, deleteByPath, EventEmitter, getPropBooleanValue, getValueByPath } from '@/utils/utils';
+import { createFormInput, deleteByPath, EventEmitter, getPropBooleanValue, getValueByPath, mergeDeep } from '@/utils/utils';
 import { FieldType } from '@/utils/types';
 import { validateSchema } from './validator';
 
-export const useInput = (props: FieldType<any>, emit: any) => {
+export const useInput = (props: FieldType<any>, emit: any, isArray: boolean = false) => {
 	const { uid, preserveForm, mode } = inject('formData', Object.create({}));
 	const vm = getCurrentInstance();
 	const name = props.name;
@@ -32,6 +32,10 @@ export const useInput = (props: FieldType<any>, emit: any) => {
 	});
 
 	const getInitialValue = () => {
+		if (isArray) {
+			return [];
+		}
+
 		return props.modelValue ?? props.default ?? getValueByPath(forms[uid].initialValues, props.name) ?? '';
 	};
 
@@ -97,6 +101,11 @@ export const useInput = (props: FieldType<any>, emit: any) => {
 		await validateField();
 	};
 
+	const setArrayValue = (value: any, key: any = name) => {
+		getValueByPath(forms[uid].values, key).value = mergeDeep(getValueByPath(forms[uid].values, key).value, value);
+		getValueByPath(forms[uid].values, key).error = undefined;
+	};
+	
 	createFormInput(props.name, uid, JSON.parse(JSON.stringify(defaultValue)));
 
 	if (!props.name) {
@@ -132,5 +141,6 @@ export const useInput = (props: FieldType<any>, emit: any) => {
 		onBlur,
 		getError,
 		setError,
+		setArrayValue,
 	};
 };

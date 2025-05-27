@@ -28,7 +28,9 @@ const schema = z.object({
 });
 const nameSchema = z.string().min(5, 'Username must be at least 5 characters long');
 const UserForm = type({
-	username: type.string.atLeastLength(5).configure({ message: 'Username must be at least 5 characters long' }),
+	firstName: type.string.atLeastLength(2).configure({ message: 'First name must be at least 2 characters long' }),
+	users: type.string.atLeastLength(5).configure({ message: 'User must be at least 5 characters long' })
+		.array().atLeastLength(1).configure({ message: 'At least one user is required' }),
 });
 // const schema = v.object({
 // 	email: v.pipe(v.string(), v.email('Email must be a valid email address')),
@@ -37,7 +39,11 @@ const UserForm = type({
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
-const { Form, Field, Error, reset, values, setInitalValues } = useForm({
+const { Form, Field, Error, reset, values, FieldArray } = useForm({
+	initialValues: {
+		firstName: 'John',
+		users: ['lorem', 'ipsum'],
+	},
 	schema: UserForm,
 });
 /*---------------------------------------------
@@ -58,16 +64,37 @@ const submit = (val: any) => {
 /*---------------------------------------------
 /  HOOKS
 ---------------------------------------------*/
-const arrayInputCount = ref<number>(1);
 </script>
 <template>
 	<div>
 		<h2>Basic</h2>
 		<Form
 			@submit="submit"
+			mode="onSubmit"
 			v-slot="{ getError, isDirty, isValid }">
-			<Field name="username" />
-			<Error error-for="username" />
+			<Field name="firstName" />
+			<Error error-for="firstName" />
+			<FieldArray
+				name="users"
+				v-slot="{ fields, add, remove }">
+				<div
+					v-for="(field, index) of fields"
+					:key="field.id">
+					<Field :name="`users[${index}]`" />
+					<Error :error-for="`users[${index}]`" />
+					<button
+						type="button"
+						@click="remove(index)">
+						Remove
+					</button>
+				</div>
+				<button
+					type="button"
+					@click="add">
+					Add
+				</button>
+				{{ getError('users') }}
+			</FieldArray>
 			<!-- <div>
 				<div>
 					<Field

@@ -42,7 +42,9 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 
 	const setValue = (name: GetKeys<T>, value: any) => {
 		if (getValueByPath(forms[uid].values, name as unknown as string)) {
-			getValueByPath(forms[uid].values, name as unknown as string).value = value;
+			if (!Array.isArray(value)) {
+				getValueByPath(forms[uid].values, name as unknown as string).value = value;
+			}
 		} else {
 			const obj = stringToObject(name as string, { value, error: undefined });
 			forms[uid].values = mergeDeep(forms[uid].values, obj);
