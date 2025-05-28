@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { useInput, type InputProps } from '@/main';
 import Select from 'primevue/select';
-import MultiSelect from 'primevue/multiselect';
+import MultiSelect, { MultiSelectProps } from 'primevue/multiselect';
 import Knob from 'primevue/knob';
 import { ref } from 'vue';
 const props = defineProps<InputProps>();
-const { inputProps } = useInput(props, true);
+const { inputProps } = useInput<MultiSelectProps>(props, true);
 
 const cities = ref([
 	{ name: 'New York', code: 'NY' },

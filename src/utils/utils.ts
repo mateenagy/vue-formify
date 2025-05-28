@@ -235,7 +235,7 @@ export const getErrorMessage = <T extends Record<string, any>>(values: Record<st
 export const flattenObject = (obj: any, type: 'value' | 'error' | 'isDirty' = 'value'): Record<string, any> => {
 	const result: any = {};
 	for (const key in obj) {
-		if (typeof obj[key] === 'object' && 'value' in obj[key]) {
+		if (obj[key] && typeof obj[key] === 'object' && 'value' in obj[key]) {
 			if (typeof obj[key].value === 'object') {
 				Array.isArray(obj[key].value) && (result[key] = []);
 				if (Object.keys(obj[key].value)?.[0]?.match?.(BETWEEN_BRACKETS_REGEX)) {

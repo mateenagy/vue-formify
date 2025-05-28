@@ -12,6 +12,7 @@ export type UseFormReturn<T extends Record<string, any>> = {
 	reset: ReturnType<typeof FormComponent<T>>['reset'];
 	setInitalValues: ReturnType<typeof FormComponent<T>>['setInitalValues'];
 	setValue: ReturnType<typeof FormComponent<T>>['setValue'];
+	setValues: ReturnType<typeof FormComponent<T>>['setValues'];
 	values: ReturnType<typeof FormComponent<T>>['values'];
 };
 
@@ -29,6 +30,7 @@ export const useForm = <T extends Record<string, any>>(opt?: FormOptions<T>): Us
 		reset: FormBase.reset,
 		setInitalValues: FormBase.setInitalValues,
 		setValue: FormBase.setValue,
+		setValues: FormBase.setValues,
 		values: FormBase.values,
 	};
 };

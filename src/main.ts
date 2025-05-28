@@ -1,6 +1,6 @@
 import { useForm } from '@/composable/useForm';
 import { useInput } from '@/composable/useInput';
-import { FormType, ComponentProps } from './index';
+import { FormType } from './index';
 import { InputProps } from '@/utils/types';
 
 export {
@@ -11,5 +11,4 @@ export {
 export type {
 	InputProps,
 	FormType,
-	ComponentProps,
 };

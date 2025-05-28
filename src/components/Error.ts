@@ -5,10 +5,10 @@ import { defineComponent, inject, h, SlotsType, PropType } from 'vue';
 
 export const ErrorComp = <T extends Record<string, any> = Record<string, any>>() => defineComponent(
 	(props: { errorFor: GetKeys<T> }, { slots, emit, attrs }) => {
-		const { uid, mode } = inject('formData', Object.create({}));
+		const { uid, mode, isSubmitted } = inject('formData', Object.create({}));
 		
 		const getError = () => {
-			if (mode === 'onSubmit' || getValueByPath(forms[uid].values, props.errorFor as string)?.isDirty) {
+			if (mode === 'onSubmit' || isSubmitted.value || getValueByPath(forms[uid].values, props.errorFor as string)?.isDirty) {
 				return getErrorMessage(forms[uid].values, props.errorFor as string);
 			}
 		};

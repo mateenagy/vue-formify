@@ -2,7 +2,6 @@
 <script lang="ts" setup>
 import { forms } from '@/utils/store';
 import { z } from 'zod';
-import MultiSelect from 'primevue/multiselect';
 import Knob from 'primevue/knob';
 import DatePicker from 'primevue/datepicker';
 import * as v from 'valibot';
@@ -12,26 +11,33 @@ import InputText from 'primevue/inputtext';
 import Select from 'primevue/select';
 import { useForm } from '@/main';
 import CustomInput from './CustomInput.vue';
+import InputField from './InputField.vue';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
-const { id = 2 } = defineProps<{
-	id?: number;
+const { progress = 20 } = defineProps<{
+	progress?: number;
 }>();
 const UserForm = type({
-	custom: {
-		cities: 'string[] >= 1',
-	},
-	knob: 'number > 60',
-	users: 'string[]',
-	dateTime: 'Date',
+	firstName: type.string.atLeastLength(2).configure({ message: 'First name is required' }),
+	lastName: type.string.atLeastLength(2).configure({ message: 'Last name is required' }),
+	email: type('string.email').configure({ message: 'Email is not valid' }),
+	shippingAddress: type({
+		street: type.string.atLeastLength(2).configure({ message: 'Street is required' }),
+		city: type.string.atLeastLength(2).configure({ message: 'City is required' }),
+		state: type.string.atLeastLength(2).configure({ message: 'State is required' }),
+		zip: type.string.atLeastLength(2).configure({ message: 'Zip code is required' }),
+	}).array().atLeastLength(1).configure({
+		message: 'At least one shipping address is required',
+	}),
 });
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
 const { Form, Field, Error, reset, values, FieldArray } = useForm({
 	initialValues: {
-		
+		firstName: 'John',
+		lastName: 'Doe',
 	},
 	schema: UserForm,
 });
@@ -62,64 +68,96 @@ const submit = (val: any) => {
 ---------------------------------------------*/
 </script>
 <template>
-	<div>
+	<div class="container">
 		<h2>Basic</h2>
 		<Form
 			@submit="submit"
-			mode="onSubmit"
-			v-slot="{ isDirty, isValid }">
-			<!-- <div>
-				<Field
-					name="custom.cities"
-					v-slot="{ field }">
-					<pre>{{ field }}</pre>
-					<MultiSelect
-						v-bind="field"
-						:options="cities"
-						option-label="name"
-						option-value="code"
-						placeholder="Select a City" />
-				</Field>
-			</div> -->
-			<div>
-				<CustomInput name="custom.cities" />
-			</div>
-			<div>
-				<Field
-					name="knob"
-					:default="0"
-					v-slot="{ field }">
-					{{ field }}
-					<Knob v-bind="field" />
-					<Error error-for="knob" />
-				</Field>
-			</div>
-			<div>
-				<FieldArray
-					name="users"
-					v-slot="{ fields, add, remove }">
-					<div
-						v-for="(field, index) of fields"
-						:key="field.id">
-						<Field :name="`users[${index}]`" />
+			mode="onChange"
+			v-slot="{ isValid }">
+			<div class="row">
+				<div class="col-6">
+					<InputField
+						name="firstName"
+						label="First name" />
+				</div>
+				<div class="col-6">
+					<InputField
+						name="lastName"
+						label="Last name" />
+				</div>
+				<div class="col-6">
+					<InputField
+						name="email"
+						label="Email" />
+				</div>
+				<div class="col-12">
+					<h2>Addresses</h2>
+					<FieldArray
+						name="shippingAddress"
+						label="Shipping Address"
+						v-slot="{ fields, add, remove }">
+						<fieldset
+							v-for="(field, index) in fields"
+							:key="field.id"
+							class="mb-1rem rd-10px">
+							<legend>{{ `Shipping Address ${index + 1}` }}</legend>
+							<div class="row">
+								<div class="col-6">
+									<InputField
+										:name="`shippingAddress[${index}].street`"
+										label="Street" />
+								</div>
+								<div class="col-6">
+									<Field
+										:name="`shippingAddress[${index}].city`"
+										v-slot="{ field: selectField }"
+										class="w-full">
+										<label
+											class="mb-0.5rem block ml-0.5rem">City</label>
+										<Select
+											:options="cities"
+											option-label="name"
+											option-value="code"
+											class="w-full"
+											:invalid="!selectField.isValid"
+											:placeholder="`Select a City`"
+											v-bind="selectField" />
+										<Error
+											:error-for="`shippingAddress[${index}].city`"
+											class="block color-red" />
+									</Field>
+								</div>
+								<div class="col-6">
+									<InputField
+										:name="`shippingAddress[${index}].state`"
+										label="State" />
+								</div>
+								<div class="col-6">
+									<InputField
+										:name="`shippingAddress[${index}].zip`"
+										label="Zip Code" />
+								</div>
+							</div>
+							<button
+								class="mt-1rem"
+								type="button"
+								@click="remove(index)">
+								Remove
+							</button>
+						</fieldset>
 						<button
 							type="button"
-							@click="remove(index)">
-							Remove
+							clas
+							mb-1rem
+							@click="add()">
+							Add Address
 						</button>
-					</div>
-					<button
-						type="button"
-						@click="add">
-						Add field
-					</button>
-				</FieldArray>
+						<Error
+							error-for="shippingAddress"
+							class="color-red block" />
+					</FieldArray>
+				</div>
 			</div>
-			<Field
-				name="dateTime"
-				v-slot="{ field }">
-				<DatePicker v-bind="field" />
-			</Field>
 			<button :disabled="!isValid">
 				submit
 			</button>
@@ -136,11 +174,6 @@ const submit = (val: any) => {
 				@click="reset(true)">
 				Force reset
 			</button>
-			<pre>isDirty: {{ isDirty }}</pre>
-			<pre>isValid: {{ isValid }}</pre>
-			<!-- errors: <pre>{{ errors }}</pre> -->
-			<p>Form data</p>
-			<pre>{{ forms }}</pre>
 			<p>Form values</p>
 			<pre>{{ values }}</pre>
 		</Form>

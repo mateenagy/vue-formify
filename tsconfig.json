@@ -11,7 +11,6 @@
 	"types": [
 		"node",
 		"vite/client",
-		"element-plus/global"
 	],
     "baseUrl": ".",
     "paths": {

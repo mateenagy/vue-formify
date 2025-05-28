@@ -4,6 +4,7 @@ import typescript2 from 'rollup-plugin-typescript2';
 // eslint-disable-next-line import/namespace
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
+import UnoCSS from 'unocss/vite'
 
 export default defineConfig({
 	server: {
@@ -11,6 +12,7 @@ export default defineConfig({
 	},
 	plugins: [
 		vue(),
+		UnoCSS(),
 		dts({
 			insertTypesEntry: true,
 			rollupTypes: true,

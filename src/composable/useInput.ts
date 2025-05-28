@@ -4,8 +4,8 @@ import { createFormInput, deleteByPath, EventEmitter, getPropBooleanValue, getVa
 import { FieldDefaults, FieldType, InputProps } from '@/utils/types';
 import { validateSchema } from '@/utils/validator';
 
-export const useInput = (props: FieldType<any> | InputProps<any>, isArray: boolean = false) => {
-	const { uid, preserveForm, mode } = inject('formData', Object.create({}));
+export const useInput = <T extends Record<string, any>>(props: FieldType<T> | InputProps<any>, isArray: boolean = false) => {
+	const { uid, preserveForm, mode, isSubmitted } = inject('formData', Object.create({}));
 	const vm = getCurrentInstance();
 	const name = props.name as string;
 	const defaultValue: FieldDefaults = {
@@ -40,7 +40,7 @@ export const useInput = (props: FieldType<any> | InputProps<any>, isArray: boole
 		},
 	});
 
-	const isValid = computed(() => !(fieldItem.value?.error && fieldItem.value.isDirty));
+	const isValid = computed(() => !(fieldItem.value?.error && (fieldItem.value.isDirty || isSubmitted.value || mode === 'onSubmit')));
 
 	const getInitialValue = () => {
 		if (isArray || Array.isArray(getValueByPath(forms[uid].initialValues, name))) {
@@ -100,7 +100,7 @@ export const useInput = (props: FieldType<any> | InputProps<any>, isArray: boole
 
 	const setValue = (newValue: any) => value.value = newValue;
 	const getCheckValue = (checked: boolean): boolean => checked ? props.trueValue || true : props.falseValue || false;
-	const getError = () => fieldItem.value?.error;
+	const getError = () => (fieldItem.value.isDirty || isSubmitted.value || mode === 'onSubmit') ? fieldItem.value?.error : undefined;
 
 	const resetError = () => {
 		fieldItem.value?.error && (fieldItem.value.error = undefined);
@@ -150,7 +150,7 @@ export const useInput = (props: FieldType<any> | InputProps<any>, isArray: boole
 
 	onMounted(async () => {
 		await nextTick();
-		value.value && (fieldItem.value.isDirty = true);
+		(value.value && !Array.isArray(value.value)) && (fieldItem.value.isDirty = true);
 		if (vm?.subTree?.el) {
 			if (props.as === 'select') {
 				const options = Array.from((vm.subTree.el as unknown as HTMLSelectElement).options);
@@ -179,7 +179,7 @@ export const useInput = (props: FieldType<any> | InputProps<any>, isArray: boole
 		onInput,
 		onFocus,
 		onBlur,
-	};
+	} as InputProps<T>;
 
 	return {
 		value,

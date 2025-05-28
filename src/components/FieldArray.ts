@@ -44,7 +44,6 @@ export const FieldArrayComp = <T extends Record<string, any> = Record<string, an
 			deleteByPath(forms[uid].values, `${fields.value[fields.value.length - 1].name}[${fields.value.length - 1}]`);
 			fields.value.splice(-1);
 		};
-
 		const init = async () => {
 			fields.value = [];
 			const initials = forms[uid].initialValues?.[props.name] || forms[uid].values[props.name].value;

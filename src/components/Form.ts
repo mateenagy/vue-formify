@@ -2,7 +2,7 @@ import { forms } from '@/utils/store';
 import { FormOptions, GetKeys, RecursivePartial } from '@/utils/types';
 import { createFormDataFromObject, EventEmitter, fetcher, flattenObject, getValueByPath, mergeDeep, objectToString, stringToObject, hasDirty, hasErrors, getErrorMessage } from '@/utils/utils';
 import { validateSchema } from '@/utils/validator';
-import { computed, defineComponent, h, onMounted, PropType, provide, ref, SlotsType, watch } from 'vue';
+import { computed, defineComponent, h, nextTick, onMounted, PropType, provide, ref, SlotsType, watch } from 'vue';
 
 type FormType<T extends Record<string, any>> = {
 	enctype?: 'application/x-www-form-urlencoded' | 'multipart/form-data';
@@ -23,13 +23,15 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 	const uid: number | string = opt?.name || Math.floor(Math.random() * Date.now());
 	const _value = ref<T>(opt?.initialValues || Object.create({}));
 	const isSubmitting = ref<boolean>(false);
-	const formState = ref<'unmounted' | 'mounted'>('unmounted');
+	const isFormReady = ref<boolean>(false);
+	const isSubmitted = ref<boolean>(false);
 	let originalForm = Object.create({});
 
 	/*---------------------------------------------
 	/  METHODS
 	---------------------------------------------*/
 	const reset = (force: boolean = false) => {
+		isSubmitted.value = false;
 		if (force) {
 			forms[uid].initialValues = Object.create({});
 			forms[uid].values = Object.create({});
@@ -48,6 +50,15 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 		} else {
 			const obj = stringToObject(name as string, { value, error: undefined });
 			forms[uid].values = mergeDeep(forms[uid].values, obj);
+		}
+	};
+
+	const setValues = (values: Partial<T>) => {
+		const convertedKeys = objectToString(values);
+		for (const key in convertedKeys) {
+			if (getValueByPath(forms[uid].values, key as string) && 'value' in getValueByPath(forms[uid].values, key as string)) {
+				getValueByPath(forms[uid].values, key as string).value = convertedKeys[key];
+			}
 		}
 	};
 
@@ -93,6 +104,7 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 		};
 		const submit = async ($event: any) => {
 			$event.preventDefault();
+			isSubmitted.value = true;
 			let _val = values.value;
 			
 			if (opt?.schema) {
@@ -126,7 +138,7 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 		---------------------------------------------*/
 		watch(values, (curr, prev) => {
 			_value.value = curr;
-			if (JSON.stringify(curr) !== JSON.stringify(prev) && props.onValueChange) {
+			if (isFormReady.value && JSON.stringify(curr) !== JSON.stringify(prev) && props.onValueChange) {
 				EventEmitter.emit('value-change', uid);
 			}
 			if (props.mode === 'onChange' && isDirty.value) {
@@ -144,12 +156,12 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 			uid,
 			preserveForm: props.preserve,
 			mode: props.mode,
+			isSubmitted,
 		});
 		/*---------------------------------------------
 		/  HOOKS
 		---------------------------------------------*/
 		onMounted(async () => {
-			formState.value = 'mounted';
 			initialValueToValue();
 			originalForm = JSON.stringify(forms[uid].values);
 
@@ -166,6 +178,8 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 					}
 				});
 			}
+			await nextTick();
+			isFormReady.value = true;
 		});
 
 		return () => {
@@ -202,5 +216,6 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 		reset,
 		setInitalValues,
 		setValue,
+		setValues,
 	};
 };
