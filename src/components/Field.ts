@@ -1,62 +1,27 @@
 import { normalizeChildren, resolveTag } from '@/utils/utils';
-import { computed, defineComponent, h, PropType, resolveDynamicComponent, SlotsType, InputHTMLAttributes } from 'vue';
-import { useField } from '../composable/useField';
-import { GetKeys } from '@/composable/useForm';
+import { computed, defineComponent, h, PropType, resolveDynamicComponent, SlotsType } from 'vue';
+import { FieldType } from '@/utils/types';
+import { useInput } from '@/composable/useInput';
 
-type UnwrapArray<T> = T extends (infer U)[] ? U : T;
-
-export type ExtractValue<T, K extends string> =
-	K extends `${infer Root}.${infer Rest}`
-		? Root extends keyof T
-			? ExtractValue<T[Root], Rest>
-			: Root extends `${infer ArrayRoot}[${number}]`
-				? ArrayRoot extends keyof T
-					? T[ArrayRoot] extends (infer U)[]
-						? ExtractValue<U, Rest>
-						: never
-					: never
-				: never
-	: K extends `${infer Root}[${number}]`
-		? Root extends keyof T
-			? T[Root] extends (infer U)
-				? UnwrapArray<U>
-				: never
-			: never
-	: K extends keyof T
-		? UnwrapArray<T[K]>
-		: never;
-
-export type FieldType<T extends Record<string, any>> = {
-	[K in GetKeys<T>]: {
-		name: K;
-		default?: ExtractValue<T, K>;
-	} & {
-		error?: any;
-		ignore?: boolean;
-		trueValue?: any;
-		modelValue?: any;
-		falseValue?: any;
-		preserve?: boolean;
-		as?: 'input' | 'select';
-	} & InputHTMLAttributes
-}[GetKeys<T>];
-
-//@ts-expect-error Object props throw error with `FieldWithAutoComplete` but it's working actually
+//@ts-expect-error `name` does not exist in type. Vue don't like `FieldType` type definition, but it works fine.
 export const FieldComp = <T extends Record<string, any> = Record<string, any>>() => defineComponent<
 	FieldType<T>,
 	any,
 	string,
 	SlotsType<{
-		default: { field: { value: any }, error: any }
+		default: { field: { value: any, modelValue: any, updateModelValue: (val: any) => void, isValid: boolean }, error: any, isValid: boolean, }
 	}>
 >(
-	(props: FieldType<T>, { emit, slots, attrs: baseAttrs }) => {
+	(props: FieldType<T>, { slots, attrs: baseAttrs }) => {
 		const {
 			value,
 			onInput,
 			onFocus,
+			onBlur,
 			getError,
-		} = useField(props, emit);
+			isValid,
+			inputProps,
+		} = useInput(props);
 
 		const sharedProps = computed(() => {
 			const attrs: Record<string, any> = {
@@ -81,7 +46,8 @@ export const FieldComp = <T extends Record<string, any> = Record<string, any>>()
 						baseAttrs.onFocus();
 					}
 				},
-				onBlur: () => {
+				onBlur: async () => {
+					onBlur();
 					if (typeof baseAttrs.onBlur === 'function') {
 						baseAttrs.onBlur();
 					}
@@ -102,15 +68,11 @@ export const FieldComp = <T extends Record<string, any> = Record<string, any>>()
 		const slotProps = () => {
 			return {
 				field: {
-					...sharedProps.value,
-					modelValue: value.value,
+					...inputProps,
+					isValid: isValid.value,
+					error: getError(),
 				},
-				componentField: {
-					value: value.value,
-				},
-				value: value.value,
-				modelValue: value.value,
-				error: getError(),
+
 			};
 		};
 
@@ -134,42 +96,12 @@ export const FieldComp = <T extends Record<string, any> = Record<string, any>>()
 		name: 'Field',
 		inheritAttrs: false,
 		props: {
-			name: {
-				type: String as PropType<any>,
-				required: true,
-			},
-			default: {
-				type: [String, Array, Boolean, Number, Object] as PropType<any>,
-				default: undefined,
-			},
-			error: {
-				type: String,
-				default: undefined,
-			},
-			ignore: {
-				type: Boolean,
-				default: false,
-			},
-			preserve: {
-				type: Boolean,
-				default: false,
-			},
-			trueValue: {
-				type: [Boolean, String, Number],
-				default: true,
-			},
-			falseValue: {
-				type: [Boolean, String, Number],
-				default: false,
-			},
-			modelValue: {
-				type: [String, Array, Boolean, Number, Object] as PropType<any>,
-				default: undefined,
-			},
-			as: {
-				type: String as PropType<'input' | 'select' | undefined>,
-				default: undefined,
-			},
+			name: { type: String as unknown as PropType<FieldType<T>['name']>, default: '' },
+			default: { type: [String, Array, Boolean, Number, Object] as PropType<FieldType<T>['default']>, default: undefined },
+			preserve: { type: Boolean as PropType<FieldType<T>['preserve']>, default: false },
+			modelValue: { type: [String, Array, Boolean, Number, Object] as PropType<FieldType<T>['modelValue']>, default: undefined },
+			as: { type: String as PropType<FieldType<T>['as']>, default: undefined },
+			schema: { type: [Object, Function] as PropType<FieldType<T>['schema']>, default: undefined },
 		},
 		emits: ['update:modelValue'],
 	},

@@ -1,5 +1,5 @@
-import { GetKeys } from '@/composable/useForm';
 import { forms } from '@/utils/store';
+import { GetKeys } from '@/utils/types';
 import { getErrorMessage, getValueByPath } from '@/utils/utils';
 import { defineComponent, inject, h, SlotsType, PropType } from 'vue';
 

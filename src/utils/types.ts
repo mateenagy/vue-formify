@@ -1,19 +1,54 @@
 import { InputHTMLAttributes } from 'vue';
 
-type GetNestedArray<T> = T extends object
+type IsPlainObject<T> =
+	T extends object
+	? T extends Date | RegExp | Map<any, any> | Set<any> | WeakMap<any, any> | WeakSet<any> | any[]
+	? false
+	: true
+	: false;
+
+type GetNestedArray<T> =
+	T extends object
+	? IsPlainObject<T> extends true
 	? {
 		[K in keyof T]: T[K] extends (infer U)[]
-		? `${K & string}[]${U extends object ? `.${GetNestedArray<U>}` : ''}` | `${K & string}[${number}]${U extends object ? `.${GetNestedArray<U>}` : ''}` | `${K & string}` | `${K & string}[${number}]`
-		: `${K & string}${T[K] extends object ? `.${GetNestedArray<T[K]>}` : `${GetNestedArray<T[K]>}`}`;
+		? U extends object
+		? IsPlainObject<U> extends true
+		? | `${K & string}[]`
+		| `${K & string}[${number}]`
+		| `${K & string}[].${GetNestedArray<U>}`
+		| `${K & string}[${number}].${GetNestedArray<U>}`
+		: `${K & string}[]` | `${K & string}[${number}]`
+		: `${K & string}[]` | `${K & string}[${number}]`
+		: T[K] extends object
+		? IsPlainObject<T[K]> extends true
+		? `${K & string}` | `${K & string}.${GetNestedArray<T[K]>}`
+		: `${K & string}`
+		: `${K & string}`;
 	}[keyof T]
+	: ''
 	: '';
+
 
 export type GetKeys<T extends Record<string, any>> = keyof {
 	[K in keyof T as (
-		T[K] extends (any | undefined)[] ? T[K] extends Record<string, any>[] ? `${K & string}[].${GetNestedArray<T[K][0]>}` | `${K & string}[${number}].${GetNestedArray<T[K][0]>}` | `${K & string}` : `${K & string}[]` | `${K & string}[${number}]` | `${K & string}` :
-		T[K] extends Record<string, any> ? `${K & string}.${GetNestedArray<T[K]> & string}` : `${K & string}`
+		T[K] extends (infer U)[]
+		? U extends object
+		? IsPlainObject<U> extends true
+		? `${K & string}` |
+		`${K & string}[]` |
+		`${K & string}[${number}]` |
+		`${K & string}[].${GetNestedArray<U>}` |
+		`${K & string}[${number}].${GetNestedArray<U>}`
+		: `${K & string}` | `${K & string}[]` | `${K & string}[${number}]`
+		: `${K & string}` | `${K & string}[]` | `${K & string}[${number}]`
+		: T[K] extends object
+		? IsPlainObject<T[K]> extends true
+		? `${K & string}` | `${K & string}.${GetNestedArray<T[K]>}`
+		: `${K & string}`
+		: `${K & string}`
 	)]: any;
-}
+};
 
 type UnwrapArray<T> = T extends (infer U)[] ? U[] | U : T;
 
@@ -53,6 +88,28 @@ export type FieldType<T extends Record<string, any>> = {
 		schema?: StandardSchemaV1;
 	} & InputHTMLAttributes
 }[GetKeys<T>];
+
+export type InputProps<T extends Record<string, any> = Record<string, any>> = {
+	name?: GetKeys<T>;
+	default?: any;
+	error?: any;
+	ignore?: boolean;
+	trueValue?: any;
+	modelValue?: any;
+	falseValue?: any;
+	preserve?: boolean;
+	as?: 'input' | 'select';
+	schema?: StandardSchemaV1;
+};
+
+export type FieldDefaults = {
+	value: any,
+	error: any,
+	ignore: boolean | undefined,
+	isDirty: boolean,
+	isFocused: boolean,
+	isValid: boolean,
+}
 
 export type RecursivePartial<T> = {
 	[P in keyof T]?: T[P] extends Record<string, any> ? RecursivePartial<T[P]> : T[P];

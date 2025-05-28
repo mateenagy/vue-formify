@@ -7,10 +7,6 @@ export const ARRAY_INDEX_FROM_STRING_REGEX = /\[(\d*)\]/gm;
 export const GET_INDEX_FROM_STRING_REGEX = /\[(\d+)\]/;
 export const REMOVE_ARRAY_INDEX_FROM_STRING_REGEX = /\[\d+\]/;
 
-export const extractInitialValues = (key: string, initialValues: Record<string, any>, props: Record<string, any>, options: any) => {
-	console.log(key, initialValues, props, options);
-};
-
 export const createFormInput = (name: string, uid: string | number, defaultValue: { value: any, error: any }) => {
 	if (name && !(name in forms[uid].values)) {
 		const obj = stringToObject(name, defaultValue);
@@ -206,11 +202,11 @@ export function hasDirty(dirty: any): boolean {
 	}
 
 	if (Array.isArray(dirty)) {
-		return dirty.some(item => hasDirty(item));
+		return dirty.every(item => hasDirty(item));
 	}
 
 	if (typeof dirty === 'object' && dirty !== null) {
-		return Object.values(dirty).some(value => hasDirty(value));
+		return Object.values(dirty).every(value => hasDirty(value));
 	}
 
 	return false;
@@ -260,6 +256,19 @@ export const flattenObject = (obj: any, type: 'value' | 'error' | 'isDirty' = 'v
 		} else if (typeof obj[key] === 'object') {
 			result[key] = flattenObject(obj[key], type);
 		}
+	}
+
+	return result;
+};
+
+export const objectToModelValue = (object: Record<string, any>): Record<string, any>[] => {
+	const result: Record<string, any>[] = [];
+	if (typeof object.value === 'object') {
+		for (const key in object.value) {
+			result.push(object.value[key].value);
+		}
+	} else {
+		return object.value;
 	}
 
 	return result;

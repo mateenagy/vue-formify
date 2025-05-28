@@ -1,30 +1,22 @@
-import { FieldComp } from '@/components/Field';
+import { FormOptions } from '@/utils/types';
 import { FieldArrayComp } from '@/components/FieldArray';
 import { ErrorComp } from '@/components/Error';
-import { FormCompBase, FormOptions } from '@/components/Form';
+import { FormComponent } from '@/components/Form';
+import { FieldComp } from '@/components/Field';
 
-type GetNestedArray<T> = T extends object
-	? {
-		[K in keyof T]: T[K] extends (infer U)[]
-		? `${K & string}[]${U extends object ? `.${GetNestedArray<U>}` : ''}` | `${K & string}[${number}]${U extends object ? `.${GetNestedArray<U>}` : ''}` | `${K & string}` | `${K & string}[${number}]`
-		: `${K & string}${T[K] extends object ? `.${GetNestedArray<T[K]>}` : `${GetNestedArray<T[K]>}`}`;
-	}[keyof T]
-	: '';
+export type UseFormReturn<T extends Record<string, any>> = {
+	Form: ReturnType<typeof FormComponent<T>>['cmp'];
+	Field: ReturnType<typeof FieldComp<T>>;
+	FieldArray: ReturnType<typeof FieldArrayComp<T>>;
+	Error: ReturnType<typeof ErrorComp<T>>;
+	reset: ReturnType<typeof FormComponent<T>>['reset'];
+	setInitalValues: ReturnType<typeof FormComponent<T>>['setInitalValues'];
+	setValue: ReturnType<typeof FormComponent<T>>['setValue'];
+	values: ReturnType<typeof FormComponent<T>>['values'];
+};
 
-export type GetKeys<T extends Record<string, any>> = keyof {
-	[K in keyof T as (
-		T[K] extends (any | undefined)[] ? T[K] extends Record<string, any>[] ? `${K & string}[].${GetNestedArray<T[K][0]>}` | `${K & string}[${number}].${GetNestedArray<T[K][0]>}` | `${K & string}` : `${K & string}[]` | `${K & string}[${number}]` | `${K & string}` :
-		T[K] extends Record<string, any> ? `${K & string}.${GetNestedArray<T[K]> & string}` : `${K & string}`
-	)]: any;
-}
-
-export const Form = FormCompBase().cmp;
-export const Field = FieldComp();
-export const FieldArray = FieldArrayComp();
-export const Error = ErrorComp();
-
-export const useForm = <T extends Record<string, any>>(opt?: FormOptions<T>) => {
-	const FormBase = FormCompBase<T>(opt);
+export const useForm = <T extends Record<string, any>>(opt?: FormOptions<T>): UseFormReturn<T> => {
+	const FormBase = FormComponent<T>(opt);
 	const Field = FieldComp<T>();
 	const FieldArray = FieldArrayComp<T>();
 	const Error = ErrorComp<T>();
@@ -34,13 +26,9 @@ export const useForm = <T extends Record<string, any>>(opt?: FormOptions<T>) => 
 		Field,
 		FieldArray,
 		Error,
-		handleSubmit: FormBase.handleSubmit,
-		setError: FormBase.setError,
-		setInitalValues: FormBase.setInitalValues,
-		setValues: FormBase.setValues,
-		setValue: FormBase.setValue,
 		reset: FormBase.reset,
-		isSubmitting: FormBase.isSubmitting,
+		setInitalValues: FormBase.setInitalValues,
+		setValue: FormBase.setValue,
 		values: FormBase.values,
 	};
 };

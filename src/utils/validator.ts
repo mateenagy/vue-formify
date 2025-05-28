@@ -8,6 +8,8 @@ export const validateSchema = async (
 	key?: string,
 ): Promise<boolean> => {
 	const result = await schema['~standard'].validate(value);
+	console.log(result.issues);
+	
 	if (result.issues) {
 		for (const issue of result.issues) {
 			setError(key ? key : getDotPath(issue) as string, issue.message);

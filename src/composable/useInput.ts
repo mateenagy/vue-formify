@@ -1,48 +1,75 @@
-import { computed, getCurrentInstance, inject, nextTick, onBeforeUnmount, onMounted, warn } from 'vue';
+import { computed, getCurrentInstance, inject, nextTick, onBeforeUnmount, onMounted, ref, warn } from 'vue';
 import { forms } from '@/utils/store';
-import { createFormInput, deleteByPath, EventEmitter, getPropBooleanValue, getValueByPath, mergeDeep } from '@/utils/utils';
-import { FieldType } from '@/utils/types';
-import { validateSchema } from './validator';
+import { createFormInput, deleteByPath, EventEmitter, getPropBooleanValue, getValueByPath, mergeDeep, objectToModelValue } from '@/utils/utils';
+import { FieldDefaults, FieldType, InputProps } from '@/utils/types';
+import { validateSchema } from '@/utils/validator';
 
-export const useInput = (props: FieldType<any>, emit: any, isArray: boolean = false) => {
+export const useInput = (props: FieldType<any> | InputProps<any>, isArray: boolean = false) => {
 	const { uid, preserveForm, mode } = inject('formData', Object.create({}));
 	const vm = getCurrentInstance();
-	const name = props.name;
-	const defaultValue: any = {
+	const name = props.name as string;
+	const defaultValue: FieldDefaults = {
 		value: undefined,
 		error: undefined,
 		ignore: props.ignore,
 		isDirty: false,
 		isFocused: false,
+		isValid: true,
 	};
-
 	/* COMPUTED */
+	const fieldItem = computed<FieldDefaults>(() => getValueByPath(forms[uid].values, name));
 	const value = computed({
 		get() {
-			if (!getValueByPath(forms[uid].values, name)) {
+			if (!fieldItem.value) {
 				return;
 			}
 
-			return getValueByPath(forms[uid].values, name).value;
+			return fieldItem.value.value;
 		},
 		set(newVal) {
-			getValueByPath(forms[uid].values, name).value = newVal;
-			emit('update:modelValue', newVal);
+			if (isArray || Array.isArray(newVal)) {
+				fieldItem.value.value = [];
+				for (let index = 0; index < newVal.length; index++) {
+					setArrayValue({ [`[${index}]`]: { value: newVal[index] } }, name);
+				}
+
+				return fieldItem.value.value;
+			}
+
+			fieldItem.value.value = newVal;
 		},
 	});
 
+	const isValid = computed(() => !(fieldItem.value?.error && fieldItem.value.isDirty));
+
 	const getInitialValue = () => {
-		if (isArray) {
+		if (isArray || Array.isArray(getValueByPath(forms[uid].initialValues, name))) {
+			if (getValueByPath(forms[uid].initialValues, name)) {
+				const items = getValueByPath(forms[uid].initialValues, name);
+				let result = {};
+				for (let index = 0; index < items.length; index++) {
+					result = {
+						...result,
+						[`[${index}]`]: {
+							value: items[index],
+							error: undefined,
+						},
+					};
+				}
+
+				return result;
+			}
+
 			return [];
 		}
 
-		return props.modelValue ?? props.default ?? getValueByPath(forms[uid].initialValues, props.name) ?? '';
+		return props.modelValue ?? props.default ?? getValueByPath(forms[uid].initialValues, name) ?? '';
 	};
 
 	const validateField = async () => {
 		if (props?.schema) {
-			const result = await validateSchema(props.schema, value.value, setError, props.name);
-			getValueByPath(forms[uid].values, props.name).isValid = result;
+			const result = await validateSchema(props.schema, value.value, setError, name);
+			fieldItem.value.isValid = result;
 		}
 	};
 
@@ -73,19 +100,20 @@ export const useInput = (props: FieldType<any>, emit: any, isArray: boolean = fa
 
 	const setValue = (newValue: any) => value.value = newValue;
 	const getCheckValue = (checked: boolean): boolean => checked ? props.trueValue || true : props.falseValue || false;
-	const getError = () => getValueByPath(forms[uid].values, name)?.error;
+	const getError = () => fieldItem.value?.error;
 
 	const resetError = () => {
-		getValueByPath(forms[uid].values, name)?.error && (getValueByPath(forms[uid].values, name).error = undefined);
+		fieldItem.value?.error && (fieldItem.value.error = undefined);
 		getValueByPath(forms[uid].values, name.replace(/\[\d+\]/, ''))?.error && (getValueByPath(forms[uid].values, name.replace(/\[\d+\]/, '')).error = undefined);
 	};
 
 	const onInput = async (evt: any) => {
-		resetError();
-		if (getValueByPath(forms[uid].values, props.name)?.isFocused && defaultValue.value !== value.value) {
-			getValueByPath(forms[uid].values, props.name).isDirty = true;
+		fieldItem.value.isFocused = true;
+		if (fieldItem.value?.isFocused && defaultValue.value !== value.value) {
+			fieldItem.value.isDirty = true;
 		}
 		(typeof evt === 'object' && 'target' in evt) ? setValue(getValueByInputType(evt.target)) : setValue(evt);
+		resetError();
 		if (mode === 'onChange') {
 			EventEmitter.emit('validate');
 			validateField();
@@ -94,7 +122,7 @@ export const useInput = (props: FieldType<any>, emit: any, isArray: boolean = fa
 
 	const onFocus = () => {
 		resetError();
-		getValueByPath(forms[uid].values, props.name).isFocused = true;
+		fieldItem.value?.isFocused && (fieldItem.value.isFocused = true);
 	};
 
 	const onBlur = async () => {
@@ -105,13 +133,13 @@ export const useInput = (props: FieldType<any>, emit: any, isArray: boolean = fa
 		getValueByPath(forms[uid].values, key).value = mergeDeep(getValueByPath(forms[uid].values, key).value, value);
 		getValueByPath(forms[uid].values, key).error = undefined;
 	};
-	
-	createFormInput(props.name, uid, JSON.parse(JSON.stringify(defaultValue)));
 
-	if (!props.name) {
+	createFormInput(name, uid, JSON.parse(JSON.stringify(defaultValue)));
+
+	if (!name) {
 		warn('`name` prop is required');
 	} else {
-		getValueByPath(forms[uid].values, props.name).value = getInitialValue();
+		fieldItem.value.value = getInitialValue();
 	}
 
 	onBeforeUnmount(() => {
@@ -122,6 +150,7 @@ export const useInput = (props: FieldType<any>, emit: any, isArray: boolean = fa
 
 	onMounted(async () => {
 		await nextTick();
+		value.value && (fieldItem.value.isDirty = true);
 		if (vm?.subTree?.el) {
 			if (props.as === 'select') {
 				const options = Array.from((vm.subTree.el as unknown as HTMLSelectElement).options);
@@ -134,8 +163,28 @@ export const useInput = (props: FieldType<any>, emit: any, isArray: boolean = fa
 		}
 	});
 
+
+	const inputProps = {
+		modelValue: ref(objectToModelValue(value)),
+		'onUpdate:modelValue': (val: any) => {
+			fieldItem.value.error = undefined;
+			fieldItem.value.isFocused = true;
+			fieldItem.value.isDirty = true;
+			value.value = val;
+			if (mode === 'onChange') {
+				EventEmitter.emit('validate');
+				validateField();
+			}
+		},
+		onInput,
+		onFocus,
+		onBlur,
+	};
+
 	return {
 		value,
+		isValid,
+		inputProps,
 		onInput,
 		onFocus,
 		onBlur,
