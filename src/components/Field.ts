@@ -15,12 +15,9 @@ export const FieldComp = <T extends Record<string, any> = Record<string, any>>()
 	(props: FieldType<T>, { slots, attrs: baseAttrs }) => {
 		const {
 			value,
-			onInput,
-			onFocus,
-			onBlur,
-			getError,
 			isValid,
 			inputProps,
+			getError,
 		} = useInput(props);
 
 		const sharedProps = computed(() => {
@@ -29,25 +26,25 @@ export const FieldComp = <T extends Record<string, any> = Record<string, any>>()
 				name: props.name,
 				error: getError(),
 				onInput: (evt: any) => {
-					onInput(evt);
+					inputProps.onInput?.(evt);
 					if (typeof baseAttrs.onInput === 'function') {
 						baseAttrs.onInput();
 					}
 				},
 				onChange: (evt: any) => {
-					onInput(evt);
+					inputProps.onInput?.(evt);
 					if (typeof baseAttrs.onChange === 'function') {
 						baseAttrs.onChange();
 					}
 				},
 				onFocus: () => {
-					onFocus();
+					inputProps.onFocus?.();
 					if (typeof baseAttrs.onFocus === 'function') {
 						baseAttrs.onFocus();
 					}
 				},
 				onBlur: async () => {
-					onBlur();
+					inputProps.onBlur?.();
 					if (typeof baseAttrs.onBlur === 'function') {
 						baseAttrs.onBlur();
 					}

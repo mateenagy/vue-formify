@@ -34,7 +34,7 @@ const UserForm = type({
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
-const { Form, Field, Error, reset, values, FieldArray } = useForm({
+const { Form, Field, Error, reset, setError, values, FieldArray } = useForm({
 	initialValues: {
 		firstName: 'John',
 		lastName: 'Doe',
@@ -124,7 +124,10 @@ const submit = (val: any) => {
 											v-bind="selectField" />
 										<Error
 											:error-for="`shippingAddress[${index}].city`"
-											class="block color-red" />
+											class="block color-red"
+											v-slot="{ error }">
+											<small>{{ error }}</small>
+										</Error>
 									</Field>
 								</div>
 								<div class="col-6">

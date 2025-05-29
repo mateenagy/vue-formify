@@ -100,6 +100,10 @@ export type InputProps<T extends Record<string, any> = Record<string, any>> = {
 	preserve?: boolean;
 	as?: 'input' | 'select';
 	schema?: StandardSchemaV1;
+	onInput?: (evt: any) => void;
+	onChange?: (evt: any) => void;
+	onFocus?: () => void;
+	onBlur?: () => void;
 };
 
 export type FieldDefaults = {

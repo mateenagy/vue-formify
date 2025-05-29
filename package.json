@@ -42,7 +42,7 @@
 	},
 	"scripts": {
 		"start": "vue-tsc && vite build --watch",
-		"build": "bun run oxl:lint && vue-tsc && vite build",
+		"build": "bun run vitest && bun run oxl:lint && vue-tsc && vite build",
 		"build:packages": "bun run oxl:lint && bun run vue-tsc && bun build.ts",
 		"build:local": "vite build",
 		"publish": "bun run build && bun run vitest && np",

@@ -217,5 +217,6 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 		setInitalValues,
 		setValue,
 		setValues,
+		setError,
 	};
 };
