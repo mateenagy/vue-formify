@@ -95,8 +95,7 @@
 		"arktype": "^2.1",
 		"oxlint": "^0.16",
 		"ajv": "^8.17",
-		"unocss": "^66.1",
-		"unocss-preset-grid": "^1.6"
+		"unocss": "^66.1"
 	},
 	"license": "MIT",
 	"repository": {
