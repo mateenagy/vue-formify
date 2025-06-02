@@ -1,6 +1,6 @@
 import { computed, getCurrentInstance, inject, nextTick, onBeforeUnmount, onMounted, ref, warn } from 'vue';
 import { forms } from '@/utils/store';
-import { createFormInput, deleteByPath, EventEmitter, getPropBooleanValue, getValueByPath, mergeDeep, objectToModelValue } from '@/utils/utils';
+import { createFormInput, deleteByPath, EventEmitter, getValueByPath, mergeDeep, objectToModelValue } from '@/utils/utils';
 import { FieldDefaults, FieldType, InputProps } from '@/utils/types';
 import { validateSchema } from '@/utils/validator';
 
@@ -9,7 +9,7 @@ export const useInput = <T extends Record<string, any>>(props: FieldType<T> | In
 	const vm = getCurrentInstance();
 	const name = props.name as string;
 	const defaultValue: FieldDefaults = {
-		value: undefined,
+		value: getValueByPath(forms[uid].values, name)?.value ?? undefined,
 		error: undefined,
 		ignore: props.ignore,
 		isDirty: false,
@@ -62,8 +62,8 @@ export const useInput = <T extends Record<string, any>>(props: FieldType<T> | In
 
 			return [];
 		}
-
-		return props.modelValue ?? props.default ?? getValueByPath(forms[uid].initialValues, name) ?? '';
+		
+		return getValueByPath(forms[uid].values, name).value ?? props.modelValue ?? props.default ?? getValueByPath(forms[uid].initialValues, name) ?? '';
 	};
 
 	const validateField = async () => {
@@ -108,7 +108,7 @@ export const useInput = <T extends Record<string, any>>(props: FieldType<T> | In
 	};
 
 	const onInput = async (evt: any) => {
-		fieldItem.value.isTouched = true;
+		fieldItem.value?.isTouched && (fieldItem.value.isTouched = true);
 		if (fieldItem.value?.isTouched && defaultValue.value !== value.value) {
 			fieldItem.value.isDirty = true;
 		}
@@ -143,9 +143,10 @@ export const useInput = <T extends Record<string, any>>(props: FieldType<T> | In
 	}
 
 	onBeforeUnmount(() => {
-		if (!getPropBooleanValue(preserveForm) || !getPropBooleanValue(props.preserve)) {
-			deleteByPath(forms[uid].values, name);
-		};
+		if (props.preserve || preserveForm) {
+			return;
+		}
+		deleteByPath(forms[uid].values, name);
 	});
 
 	onMounted(async () => {

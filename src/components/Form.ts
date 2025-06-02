@@ -2,7 +2,7 @@ import { forms } from '@/utils/store';
 import { FormOptions, GetKeys, RecursivePartial } from '@/utils/types';
 import { createFormDataFromObject, EventEmitter, fetcher, flattenObject, getValueByPath, mergeDeep, objectToString, stringToObject, hasDirty, hasErrors, getErrorMessage } from '@/utils/utils';
 import { validateSchema } from '@/utils/validator';
-import { computed, defineComponent, h, nextTick, onMounted, PropType, provide, ref, SlotsType, watch } from 'vue';
+import { computed, defineComponent, h, nextTick, onMounted, onUnmounted, PropType, provide, ref, SlotsType, watch } from 'vue';
 
 type FormType<T extends Record<string, any>> = {
 	enctype?: 'application/x-www-form-urlencoded' | 'multipart/form-data';
@@ -89,7 +89,16 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 			initialValues: opt?.initialValues || Object.create({}),
 			key: 0,
 		};
+	} else {
+		_value.value = flattenObject(forms[uid].values) as T;
 	}
+
+	provide('formData', {
+		uid,
+		preserveForm: opt?.preserve,
+		mode: opt?.mode,
+		isSubmitted,
+	});
 
 	const cmp = defineComponent((props: FormType<T>, { slots, emit, attrs }) => {
 		/*---------------------------------------------
@@ -112,7 +121,7 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 			$event.preventDefault();
 			isSubmitted.value = true;
 			let _val = values.value;
-			
+
 			if (opt?.schema) {
 				const isValid = await validateSchema(opt.schema, flattenObject(forms[uid].values), setError);
 				if (!isValid) {
@@ -136,7 +145,7 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 		const initialValueToValue = () => {
 			const convertedKeys = objectToString(forms[uid].initialValues);
 			for (const key in convertedKeys) {
-				setValue(key as GetKeys<T>, convertedKeys[key]);
+				!forms[uid].values[key].value && setValue(key as GetKeys<T>, convertedKeys[key]);
 			}
 		};
 		/*---------------------------------------------
@@ -157,13 +166,6 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 		if (Object.keys(props.initialValues as Record<string, any>).length) {
 			forms[uid].initialValues = mergeDeep(forms[uid].initialValues, props.initialValues as Record<string, any>);
 		}
-
-		provide('formData', {
-			uid,
-			preserveForm: props.preserve,
-			mode: props.mode,
-			isSubmitted,
-		});
 		/*---------------------------------------------
 		/  HOOKS
 		---------------------------------------------*/
@@ -188,6 +190,12 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 			}
 			await nextTick();
 			isFormReady.value = true;
+		});
+
+		onUnmounted(() => {
+			if (!opt?.preserve) {
+				delete forms[uid];
+			}
 		});
 
 		return () => {

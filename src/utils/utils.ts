@@ -42,14 +42,6 @@ export const normalizeChildren = (
 	};
 };
 
-export const getPropBooleanValue = (props: any) => {
-	if (typeof props === 'string' && props === '') {
-		return true;
-	}
-
-	return !!props;
-};
-
 export const stringToObject = (path: string, defaultValue: Record<string, any> | string) => {
 	const disable_matches = path.match(BETWEEN_BRACKETS_REGEX);
 

@@ -122,7 +122,9 @@ export type RecursivePartial<T> = {
 export type FormOptions<T extends Record<string, any>> = {
 	initialValues?: T extends Record<string, any> ? RecursivePartial<T> : Record<string, any>;
 	schema?: StandardSchemaV1<any, T>;
-	name?: string // Refactor to use standard-schema
+	name?: string;
+	preserve?: boolean;
+	mode?: 'onChange' | 'onSubmit';
 }
 
 /** The Standard Schema interface. */
