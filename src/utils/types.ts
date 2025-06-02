@@ -111,7 +111,7 @@ export type FieldDefaults = {
 	error: any,
 	ignore: boolean | undefined,
 	isDirty: boolean,
-	isFocused: boolean,
+	isTouched: boolean,
 	isValid: boolean,
 }
 

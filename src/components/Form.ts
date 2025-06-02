@@ -42,6 +42,12 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 		forms[uid].key++;
 	};
 
+	const handleSubmit = (cb?: (data?: T) => void | Promise<any>) => {
+		return async () => {
+			await cb?.(_value.value as T);
+		};
+	};
+
 	const setValue = (name: GetKeys<T>, value: any) => {
 		if (getValueByPath(forms[uid].values, name as unknown as string)) {
 			if (!Array.isArray(value)) {
@@ -165,11 +171,13 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 			initialValueToValue();
 			originalForm = JSON.stringify(forms[uid].values);
 
-			EventEmitter.on('value-change', (id: string) => {
-				if (id === uid && props?.onValueChange && forms[uid]) {
-					emit('value-change', values.value);
-				}
-			});
+			if (props?.onValueChange && forms[uid]) {
+				EventEmitter.on('value-change', (id: string) => {
+					if (id === uid) {
+						emit('value-change', values.value);
+					}
+				});
+			}
 
 			if (props.mode === 'onChange') {
 				EventEmitter.on('validate', async () => {
@@ -213,10 +221,12 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 	return {
 		cmp,
 		values: _value,
+		isSubmitting: isSubmitting,
 		reset,
 		setInitalValues,
 		setValue,
 		setValues,
 		setError,
+		handleSubmit,
 	};
 };

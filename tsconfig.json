@@ -42,10 +42,12 @@
 	"src/**/*.tsx",
 	"src/**/*.vue",
 	"playground/**/*.vue",
+	"docs/**/*.vue",
 	"playground/**/*.ts",
-  ],
-  "exclude": [
+],
+"exclude": [
 	"node_modules",
+	"docs/**/*.css",
   ],
   
   "references": [{ "path": "./tsconfig.node.json" }]

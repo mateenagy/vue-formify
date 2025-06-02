@@ -14,7 +14,9 @@ export type UseFormReturn<T extends Record<string, any>> = {
 	setValue: ReturnType<typeof FormComponent<T>>['setValue'];
 	setValues: ReturnType<typeof FormComponent<T>>['setValues'];
 	setError: ReturnType<typeof FormComponent<T>>['setError'];
+	handleSubmit: ReturnType<typeof FormComponent<T>>['handleSubmit'];
 	values: ReturnType<typeof FormComponent<T>>['values'];
+	isSubmitting: ReturnType<typeof FormComponent<T>>['isSubmitting'];
 };
 
 export const useForm = <T extends Record<string, any>>(opt?: FormOptions<T>): UseFormReturn<T> => {
@@ -33,6 +35,8 @@ export const useForm = <T extends Record<string, any>>(opt?: FormOptions<T>): Us
 		setValue: FormBase.setValue,
 		setValues: FormBase.setValues,
 		setError: FormBase.setError,
+		handleSubmit: FormBase.handleSubmit,
 		values: FormBase.values,
+		isSubmitting: FormBase.isSubmitting,
 	};
 };

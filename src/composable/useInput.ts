@@ -13,7 +13,7 @@ export const useInput = <T extends Record<string, any>>(props: FieldType<T> | In
 		error: undefined,
 		ignore: props.ignore,
 		isDirty: false,
-		isFocused: false,
+		isTouched: false,
 		isValid: true,
 	};
 	/* COMPUTED */
@@ -100,7 +100,7 @@ export const useInput = <T extends Record<string, any>>(props: FieldType<T> | In
 
 	const setValue = (newValue: any) => value.value = newValue;
 	const getCheckValue = (checked: boolean): boolean => checked ? props.trueValue || true : props.falseValue || false;
-	const getError = () => (fieldItem.value.isDirty || isSubmitted.value || mode === 'onSubmit') ? fieldItem.value?.error : undefined;
+	const getError = () => (fieldItem.value?.isDirty || isSubmitted.value || mode === 'onSubmit') ? fieldItem.value?.error : undefined;
 
 	const resetError = () => {
 		fieldItem.value?.error && (fieldItem.value.error = undefined);
@@ -108,8 +108,8 @@ export const useInput = <T extends Record<string, any>>(props: FieldType<T> | In
 	};
 
 	const onInput = async (evt: any) => {
-		fieldItem.value.isFocused = true;
-		if (fieldItem.value?.isFocused && defaultValue.value !== value.value) {
+		fieldItem.value.isTouched = true;
+		if (fieldItem.value?.isTouched && defaultValue.value !== value.value) {
 			fieldItem.value.isDirty = true;
 		}
 		(typeof evt === 'object' && 'target' in evt) ? setValue(getValueByInputType(evt.target)) : setValue(evt);
@@ -122,10 +122,10 @@ export const useInput = <T extends Record<string, any>>(props: FieldType<T> | In
 
 	const onFocus = () => {
 		resetError();
-		fieldItem.value?.isFocused && (fieldItem.value.isFocused = true);
 	};
-
+	
 	const onBlur = async () => {
+		fieldItem.value?.isTouched && (fieldItem.value.isTouched = true);
 		await validateField();
 	};
 
@@ -168,7 +168,7 @@ export const useInput = <T extends Record<string, any>>(props: FieldType<T> | In
 		modelValue: ref(objectToModelValue(value)),
 		'onUpdate:modelValue': (val: any) => {
 			fieldItem.value.error = undefined;
-			fieldItem.value.isFocused = true;
+			fieldItem.value.isTouched = true;
 			fieldItem.value.isDirty = true;
 			value.value = val;
 			if (mode === 'onChange') {
