@@ -3,9 +3,10 @@
 You can create nested objects by passing strings with dot path to name attribute (same as you do with JavaScript).
 
 There is no limitation, you can nest as musch as you like.
+::: code-group
 ```vue
 <script lang="ts" setup>
-import { Form, Field } from 'vue-formify';
+import { useForm } from 'vue-formify';
 
 type NestedObject = {
 	social: {
@@ -13,7 +14,9 @@ type NestedObject = {
 		github: string;
 	};
 }
-const sendForm = (data: NestedObject) => {
+
+const { Form, Field, handleSubmit } = useForm<NestedObject>();
+const sendForm = handleSubmit((data)) => {
 	console.log(data);
 };
 
@@ -26,6 +29,7 @@ const sendForm = (data: NestedObject) => {
 	</Form>
 </template>
 ```
+:::
 :::warning Disable object nesting behaviour
 You can disable object nesting behaviour if your wrap it between square brackets
 ```vue
@@ -42,11 +46,17 @@ You can create arrays using square brackets.
 
 ✅ **Good**: `movies[0]`, `movies[1]`, `movies[2]`
 :::
+::: code-group
 ```vue
 <script lang="ts" setup>
-import { Form, Field } from 'vue-formify';
+import { useForm } from 'vue-formify';
 
-const sendForm = (data) => {
+type NestedObject = {
+	social: string[];
+}
+
+const { Form, Field, handleSubmit } = useForm<NestedObject>();
+const sendForm = handleSubmit((data)) => {
 	console.log(data);
 };
 
@@ -59,13 +69,23 @@ const sendForm = (data) => {
 	</Form>
 </template>
 ```
-
+:::
 Also you can nesting objects and arrays together as much as you like:`foo.bar[0].baz`
+::: code-group
 ```vue
 <script lang="ts" setup>
-import { Form, Field } from 'vue-formify';
+import { useForm } from 'vue-formify';
 
-const sendForm = (data) => {
+type NestedObject = {
+	social: {
+		links: {
+			url: string
+		}[];
+	};
+}
+
+const { Form, Field, handleSubmit } = useForm<NestedObject>();
+const sendForm = handleSubmit((data)) => {
 	console.log(data);
 };
 
@@ -78,3 +98,4 @@ const sendForm = (data) => {
 	</Form>
 </template>
 ```
+:::

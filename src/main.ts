@@ -1,18 +1,14 @@
-import { FormType, ComponentProps } from './index';
-import { createInput } from '@/composable/createInput';
-import { useForm, Form, Field, FieldArray, Error } from '@/composable/useForm';
+import { useForm } from '@/composable/useForm';
+import { useInput } from '@/composable/useInput';
+import { FormType } from './index';
+import { InputProps } from '@/utils/types';
 
 export {
-	createInput,
-	Form as FormifyForm,
-	Form,
-	Error,
-	FieldArray,
-	Field,
+	useInput,
 	useForm,
 };
 
 export type {
+	InputProps,
 	FormType,
-	ComponentProps,
 };

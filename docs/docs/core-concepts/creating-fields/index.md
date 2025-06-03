@@ -5,6 +5,8 @@ It can also render native `<select>` and `<select multiple>` elements when the `
 
 For more details, see the [Field Component](/docs/components/field/) section.
 
+## Rendering simple field
+::: code-group
 ```vue
 <script setup lang="ts">
 import { useForm } from 'vue-formify';
@@ -19,12 +21,33 @@ const { Form, Field } = useForm<LoginForm>(); // [!code highlight]
 </script>
 <template>
 	<Form>
-		<Field name="username" /> // [!code highlight]
-		<Field name="password" type="password" /> // [!code highlight]
+		<Field name="username" /> <!-- [!code highlight] -->
+		<Field name="password" type="password" /> <!-- [!code highlight] -->
 	</Form>
 </template>
 ```
+:::
+## Rendering complex field with scoped slots
+::: code-group
+```vue
+<script setup lang="ts">
+import { useForm } from 'vue-formify';
 
+type LoginForm = {
+	username: string;
+	password: string;
+}
 
+const { Form, Field } = useForm<LoginForm>(); // [!code highlight]
 
-
+</script>
+<template>
+	<Form>
+		<Field name="username" v-slot={ field }>
+			<label>Username</label>
+			<input v-bind="field" />
+		</Field>
+	</Form>
+</template>
+```
+:::

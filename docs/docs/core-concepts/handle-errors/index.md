@@ -2,7 +2,7 @@
 To handle errors easily, use the `Error` component along with the `setError` function if you’re not using a validator package.
 
 For more details, see the [Error Component](/docs/components/error/) section.
-
+::: code-group
 ```vue {12-14}
 <script setup lang="ts">
 import { useForm } from 'vue-formify';
@@ -24,11 +24,12 @@ const submit = handleSubmit((data) => {
 <template>
 	<Form @submit="submit">
 		<Field name="username" />
-		<Error error-for="username" /> // [!code highlight]
+		<Error error-for="username" /> <!-- [!code highlight] -->
 
 		<Field name="password" type="password" />
-		<Error error-for="password" /> // [!code highlight]
+		<Error error-for="password" /> <!-- [!code highlight] -->
 		<button>Submit</button>
 	</Form>
 </template>
 ```
+:::

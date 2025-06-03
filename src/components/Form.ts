@@ -1,51 +1,59 @@
-import { GetKeys } from '@/composable/useForm';
 import { forms } from '@/utils/store';
-import { getValueByPath, mergeDeep, flattenObject, createFormDataFromObject, fetcher, EventEmitter, objectToString, stringToObject } from '@/utils/utils';
-import { TypedSchema } from '@packages/utils/types';
-import { ref, defineComponent, computed, onMounted, provide, h, PropType, SlotsType, watch } from 'vue';
-
-type RecursivePartial<T> = {
-	[P in keyof T]?: T[P] extends Record<string, any> ? RecursivePartial<T[P]> : T[P];
-};
+import { FormOptions, GetKeys, RecursivePartial } from '@/utils/types';
+import { createFormDataFromObject, EventEmitter, fetcher, flattenObject, getValueByPath, mergeDeep, objectToString, stringToObject, hasDirty, hasErrors, getErrorMessage } from '@/utils/utils';
+import { validateSchema } from '@/utils/validator';
+import { computed, defineComponent, h, nextTick, onMounted, onUnmounted, PropType, provide, ref, SlotsType, watch } from 'vue';
 
 type FormType<T extends Record<string, any>> = {
 	enctype?: 'application/x-www-form-urlencoded' | 'multipart/form-data';
-	validationSchema?: any;
 	action?: string;
 	initialValues?: RecursivePartial<T>;
 	name?: string;
-	preserve?: boolean;
 	onValueChange?: (value?: any) => void;
 	onSubmit?: (value?: any, $event?: SubmitEvent) => void | Promise<any>;
 }
 
-export type FormOptions<T extends Record<string, any>> = {
-	initialValues?: T extends Record<string, any> ? RecursivePartial<T> : Record<string, any>;
-	schema?: TypedSchema<any, T>;
-}
-
-export const FormCompBase = <T extends Record<string, any> = Record<string, any>>(opt?: FormOptions<T>) => {
-	let uid: number | string = Math.floor(Math.random() * Date.now());
-	let originalForm = Object.create({});
-	const _val = ref<T>(opt?.initialValues || Object.create({}));
-	
+export const FormComponent = <T extends Record<string, any> = Record<string, any>>(opt?: FormOptions<T>) => {
+	/*---------------------------------------------
+	/  VARIABLES
+	---------------------------------------------*/
+	const uid: number | string = opt?.name || Math.floor(Math.random() * Date.now());
+	const _value = ref<T>(opt?.initialValues || Object.create({}));
 	const isSubmitting = ref<boolean>(false);
+	const isFormReady = ref<boolean>(false);
+	const isSubmitted = ref<boolean>(false);
+	let originalForm = Object.create({});
+
+	/*---------------------------------------------
+	/  METHODS
+	---------------------------------------------*/
+	const reset = (force: boolean = false) => {
+		isSubmitted.value = false;
+		if (force) {
+			forms[uid].initialValues = Object.create({});
+			forms[uid].values = Object.create({});
+			originalForm = JSON.stringify(Object.create({}));
+		} else {
+			forms[uid].values = JSON.parse(originalForm);
+		}
+		forms[uid].key++;
+	};
 
 	const handleSubmit = (cb?: (data?: T) => void | Promise<any>) => {
 		return async () => {
-			await cb?.(_val.value as T);
+			await cb?.(_value.value as T);
 		};
 	};
 
-	const setError = (name: GetKeys<T>, error: any) => {
+	const setValue = (name: GetKeys<T>, value: any) => {
 		if (getValueByPath(forms[uid].values, name as unknown as string)) {
-			getValueByPath(forms[uid].values, name as unknown as string).error = error;
+			if (!Array.isArray(value)) {
+				getValueByPath(forms[uid].values, name as unknown as string).value = value;
+			}
+		} else {
+			const obj = stringToObject(name as string, { value, error: undefined });
+			forms[uid].values = mergeDeep(forms[uid].values, obj);
 		}
-	};
-
-	const setInitalValues = (initials: Partial<T>) => {
-		forms[uid].initialValues = mergeDeep(flattenObject(forms[uid].values), initials);
-		forms[uid].key++;
 	};
 
 	const setValues = (values: Partial<T>) => {
@@ -57,212 +65,171 @@ export const FormCompBase = <T extends Record<string, any> = Record<string, any>
 		}
 	};
 
-	const setValue = (name: GetKeys<T>, value: any) => {
-		if (getValueByPath(forms[uid].values, name as unknown as string)) {
-			getValueByPath(forms[uid].values, name as unknown as string).value = value;
-		} else {
-			const obj = stringToObject(name as string, { value, error: undefined });
-			forms[uid].values = mergeDeep(forms[uid].values, obj);
-		}
-	};
-
-	const reset = () => {
-		forms[uid].values = JSON.parse(originalForm);
+	const setInitalValues = (initials: Partial<T>) => {
+		forms[uid].initialValues = mergeDeep(forms[uid].initialValues, flattenObject(forms[uid].values), initials);
 		forms[uid].key++;
 	};
 
-	const cmp = defineComponent(
-		(props: FormType<T>, { slots, emit, attrs, expose }) => {
-			props.name && (uid = props.name);
-			
-			const updateField = (name: string, value: any) => {
-				if (getValueByPath(forms[uid].values, name)) {
-					getValueByPath(forms[uid].values, name).value = value;
-					EventEmitter.emit('value-change', uid);
+	const setError = (name: GetKeys<T>, error: any) => {
+		if (getValueByPath(forms[uid].values, name as unknown as string)) {
+			getValueByPath(forms[uid].values, name as unknown as string).error = error;
+			getValueByPath(forms[uid].values, name as unknown as string).isValid = false;
+		}
+	};
+
+	/*---------------------------------------------
+	/  CREATED
+	---------------------------------------------*/
+	if (!forms[uid]) {
+		forms[uid] = {
+			values: Object.create({}),
+			initialValues: opt?.initialValues || Object.create({}),
+			key: 0,
+		};
+	} else {
+		_value.value = flattenObject(forms[uid].values) as T;
+	}
+
+	provide('formData', {
+		uid,
+		preserveForm: opt?.preserve,
+		mode: opt?.mode,
+		isSubmitted,
+	});
+
+	const cmp = defineComponent((props: FormType<T>, { slots, emit, attrs }) => {
+		/*---------------------------------------------
+		/  VARIABLES
+		---------------------------------------------*/
+
+		/*---------------------------------------------
+		/  COMPUTED
+		---------------------------------------------*/
+		const values = computed(() => flattenObject(forms[uid]?.values) as T);
+		const isDirty = computed(() => hasDirty(flattenObject(forms[uid]?.values, 'isDirty')));
+		const isValid = computed(() => isDirty.value && !hasErrors(flattenObject(forms[uid]?.values, 'error')));
+		/*---------------------------------------------
+		/  METHODS
+		---------------------------------------------*/
+		const getError = (name: GetKeys<T>) => {
+			return getErrorMessage<T>(forms[uid].values, name);
+		};
+		const submit = async ($event: any) => {
+			$event.preventDefault();
+			isSubmitted.value = true;
+			let _val = values.value;
+
+			if (opt?.schema) {
+				const isValid = await validateSchema(opt.schema, flattenObject(forms[uid].values), setError);
+				if (!isValid) {
+					return $event.preventDefault();
 				}
-			};
-
-			EventEmitter.on('value-change', (id: string) => {
-				if (id === uid && props?.onValueChange && forms[uid]) {
-					emit('value-change', values.value);
-				}
-			});
-
-			const submit = async ($event: any) => {
-				$event.preventDefault();
-				let _val = values.value;
-
-				if (props.validationSchema || opt?.schema) {
-					const _schema = props.validationSchema || opt?.schema;
-					const result = await _schema.parse(flattenObject(forms[uid].values));
-					if (Object.keys(result.errors).length) {
-						for (const key in result.errors) {
-							setError(key as any, result.errors[key]);
-						}
-
-						return $event.preventDefault();
-					}
-				}
-
-				if (props?.enctype === 'multipart/form-data') {
-					_val = createFormDataFromObject(flattenObject(forms[uid].values)) as any;
-				}
-
-				if (props.action) {
-					return;
-				}
-				$event.preventDefault();
-				isSubmitting.value = true;
-				await fetcher(props.onSubmit?.(_val, $event));
-				isSubmitting.value = false;
-			};
-
-			const flush = () => {
-				forms[uid].initialValues = Object.create({});
-				forms[uid].values = Object.create({});
-				forms[uid].key++;
-			};
-
-			/*---------------------------------------------
-			/  COMPUTED
-			---------------------------------------------*/
-			const errors = computed(() => {
-				return flattenObject(forms[uid].values, 'error');
-			});
-			const values = computed(() => {
-				return flattenObject(forms[uid]?.values) as T;
-			});
-
-			watch(values, (curr, prev) => {
-				_val.value = curr;
-				if (JSON.stringify(curr) !== JSON.stringify(prev) && props.onValueChange) {
-					EventEmitter.emit('value-change', uid);
-				}
-			}, { deep: true });
-
-			/*---------------------------------------------
-			/  CREATED
-			---------------------------------------------*/
-			if (!forms[uid]) {
-				forms[uid] = {
-					values: Object.create({}),
-					initialValues: props.initialValues || {},
-					key: 0,
-				};
-			} else {
-				props.initialValues && (forms[uid].initialValues = opt?.initialValues || props.initialValues);
 			}
 
-			if (opt?.initialValues) {
-				forms[uid].initialValues = opt?.initialValues;
+			if (props?.enctype === 'multipart/form-data') {
+				_val = createFormDataFromObject(flattenObject(forms[uid].values)) as any;
+			}
 
-				Object.keys(opt?.initialValues).forEach((key) => {
-					if (!Array.isArray(opt?.initialValues![key])) {
-						setValue(key as GetKeys<T>, opt?.initialValues![key]);
-					} else {
-						opt?.initialValues![key].forEach((value: any, index: number) => {
-							if (typeof value === 'object') {
-								Object.keys(value).forEach((k) => {
-									setValue(`${key}[${index}].${k}` as GetKeys<T>, value[k]);
-								});
-							} else {
-								setValue(`${key}[${index}]` as GetKeys<T>, value);
-							}
-						});
+			if (props.action) {
+				return;
+			}
+			$event.preventDefault();
+			isSubmitting.value = true;
+
+			await fetcher(props.onSubmit?.(_val, $event));
+			isSubmitting.value = false;
+		};
+		const initialValueToValue = () => {
+			const convertedKeys = objectToString(forms[uid].initialValues);
+			for (const key in convertedKeys) {
+				!forms[uid].values[key].value && setValue(key as GetKeys<T>, convertedKeys[key]);
+			}
+		};
+		/*---------------------------------------------
+		/  WATCHERS
+		---------------------------------------------*/
+		watch(values, (curr, prev) => {
+			_value.value = curr;
+			if (isFormReady.value && JSON.stringify(curr) !== JSON.stringify(prev) && props.onValueChange) {
+				EventEmitter.emit('value-change', uid);
+			}
+			if (opt?.mode === 'onChange' && isDirty.value) {
+				EventEmitter.emit('validate');
+			}
+		}, { deep: true });
+		/*---------------------------------------------
+		/  CREATED
+		---------------------------------------------*/
+		if (Object.keys(props.initialValues as Record<string, any>).length) {
+			forms[uid].initialValues = mergeDeep(forms[uid].initialValues, props.initialValues as Record<string, any>);
+		}
+		/*---------------------------------------------
+		/  HOOKS
+		---------------------------------------------*/
+		onMounted(async () => {
+			initialValueToValue();
+			originalForm = JSON.stringify(forms[uid].values);
+
+			if (props?.onValueChange && forms[uid]) {
+				EventEmitter.on('value-change', (id: string) => {
+					if (id === uid) {
+						emit('value-change', values.value);
 					}
 				});
 			}
 
-			if (props.validationSchema && typeof props.validationSchema.cast === 'function') {
-				forms[uid].initialValues = props.initialValues ? mergeDeep(props.initialValues, opt?.initialValues || {}, props.validationSchema.cast(flattenObject(forms[uid].values))) : mergeDeep(opt?.initialValues || {}, props.validationSchema.cast(flattenObject(forms[uid].values)));
+			if (opt?.mode === 'onChange') {
+				EventEmitter.on('validate', async () => {
+					if (opt?.schema) {
+						return await validateSchema(opt.schema, flattenObject(forms[uid].values), setError);
+					}
+				});
 			}
+			await nextTick();
+			isFormReady.value = true;
+		});
 
-			if (opt?.schema && typeof opt?.schema.cast === 'function') {
-				forms[uid].initialValues = props.initialValues ? mergeDeep(props.initialValues, opt?.initialValues || {}, opt?.schema.cast(flattenObject(forms[uid].values))) : mergeDeep(opt?.initialValues || {}, opt?.schema.cast(flattenObject(forms[uid].values)));
+		onUnmounted(() => {
+			if (!opt?.preserve) {
+				// delete forms[uid];
 			}
-			
-			/*---------------------------------------------
-			/  HOOKS
-			---------------------------------------------*/
-			onMounted(() => {
-				originalForm = JSON.stringify(forms[uid].values);
-			});
+		});
 
-			provide('formData', {
-				uid,
-				preserve: props.preserve,
-			});
-
-			expose({
-				values,
-				errors,
-				setError,
-				updateField,
-				reset,
-				flush,
-				isSubmitting,
-			});
-
-
-			return () => {
-				return h('form',
-					{ ...props, ...attrs, ...emit, key: forms[uid].key, onSubmit: submit },
-					slots.default?.({ values: values.value, errors: errors.value }),
-				);
-			};
-		},
-		{
-			name: 'FormifyForm',
-			props: {
-				enctype: {
-					type: String as PropType<'application/x-www-form-urlencoded' | 'multipart/form-data'>,
-					default: undefined,
-				},
-				validationSchema: {
-					type: Object as PropType<Record<string, any>>,
-					default: undefined,
-				},
-				initialValues: {
-					type: Object as PropType<any>,
-					default: undefined,
-				},
-				name: {
-					type: String as PropType<string>,
-					default: undefined,
-				},
-				action: {
-					type: String as PropType<string>,
-					default: undefined,
-				},
-				preserve: {
-					type: Boolean as PropType<boolean>,
-					default: undefined,
-				},
-				onValueChange: {
-					type: Function as PropType<(value?: any) => void>,
-					default: undefined,
-				},
-				onSubmit: {
-					type: Function as PropType<(value?: any, $event?: SubmitEvent) => void | Promise<any>>,
-					default: undefined,
-				},
+		return () => {
+			return h('form',
+				{ ...props, ...attrs, ...emit, key: forms[uid].key, onSubmit: submit },
+				slots.default?.({ values: values.value, getError, isDirty: isDirty.value, isValid: isValid.value }),
+			);
+		};
+	}, {
+		name: 'FormComponent',
+		props: {
+			enctype: { type: String as PropType<FormType<T>['enctype']>, default: 'application/x-www-form-urlencoded' },
+			initialValues: { type: Object as PropType<FormType<T>['initialValues']>, default: Object.create({}) },
+			onValueChange: {
+				type: Function as PropType<(value?: any) => void>,
+				default: undefined,
 			},
-			slots: Object as SlotsType<{
-				default: { values: T, errors: any }
-			}>,
-			emits: ['submit', 'value-change'],
+			onSubmit: {
+				type: Function as PropType<(value?: any, $event?: SubmitEvent) => void | Promise<any>>,
+				default: undefined,
+			},
 		},
-	);
+		emits: ['submit', 'value-change'],
+		slots: Object as SlotsType<{
+			default: { values: T, getError: (name: GetKeys<T>) => string, isDirty: boolean, isValid: boolean }
+		}>,
+	});
 
 	return {
 		cmp,
-		handleSubmit,
-		setError,
-		setInitalValues,
-		setValues,
-		setValue,
+		values: _value,
+		isSubmitting: isSubmitting,
 		reset,
-		values: _val,
-		isSubmitting,
+		setInitalValues,
+		setValue,
+		setValues,
+		setError,
+		handleSubmit,
 	};
 };

@@ -11,7 +11,6 @@
 	"types": [
 		"node",
 		"vite/client",
-		"element-plus/global"
 	],
     "baseUrl": ".",
     "paths": {
@@ -42,17 +41,14 @@
 	"src/**/*.d.ts",
 	"src/**/*.tsx",
 	"src/**/*.vue",
-	// "packages/**/*.ts",
-	// "packages/**/*.d.ts",
-	// "packages/**/*.tsx",
-	// "packages/**/*.vue",
-	// "packages/**/**/*.ts",
-	// "packages/**/**/*.d.ts",
 	"playground/**/*.vue",
+	"docs/**/*.vue",
 	"playground/**/*.ts",
-  ],
-  "exclude": [
+],
+"exclude": [
 	"node_modules",
+	"docs/**/*.css",
+	"docs/**/*.vue",
   ],
   
   "references": [{ "path": "./tsconfig.node.json" }]

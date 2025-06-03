@@ -1,29 +1,11 @@
 import { forms } from './store';
+import { GetKeys, StandardSchemaV1 } from './types';
 
 export const BETWEEN_BRACKETS_REGEX = /^\[(.+?)\]$/gm;
 export const REMOVE_BRACKETS_REGEX = /(^.*\[|\].*$)/g;
 export const ARRAY_INDEX_FROM_STRING_REGEX = /\[(\d*)\]/gm;
 export const GET_INDEX_FROM_STRING_REGEX = /\[(\d+)\]/;
 export const REMOVE_ARRAY_INDEX_FROM_STRING_REGEX = /\[\d+\]/;
-
-export const getKey = (name: string = '', modelKey: string, useKey: boolean = false): string => {
-	if (name) {
-		return useKey ? name : `${name}.${modelKey}`;
-	}
-
-	return modelKey;
-};
-
-export const extractInitialValues = (key: string, initialValues: Record<string, any>, props: Record<string, any>, options: any) => {
-	const name = key.replace(REMOVE_ARRAY_INDEX_FROM_STRING_REGEX, '');
-	const index = key.match(GET_INDEX_FROM_STRING_REGEX)?.[1];
-
-	if (!index) {
-		return getValueByPath(initialValues, name) ?? (options?.modelKey && props[options.modelKey]) ?? props?.modelValue ?? props?.default ?? options?.default ?? '';
-	}
-
-	return getValueByPath(initialValues, name)?.[index] || '';
-};
 
 export const createFormInput = (name: string, uid: string | number, defaultValue: { value: any, error: any }) => {
 	if (name && !(name in forms[uid].values)) {
@@ -60,15 +42,7 @@ export const normalizeChildren = (
 	};
 };
 
-export const getPropBooleanValue = (props: any) => {
-	if (typeof props === 'string' && props === '') {
-		return true;
-	}
-
-	return !!props;
-};
-
-export const stringToObject = (path: string, defaultValue: Record<string, any>) => {
+export const stringToObject = (path: string, defaultValue: Record<string, any> | string) => {
 	const disable_matches = path.match(BETWEEN_BRACKETS_REGEX);
 
 	/* DISABLE NESTING BEHAVIOUR */
@@ -214,10 +188,46 @@ export const deleteByPath = (object: Record<string, any>, path: string) => {
 	}
 };
 
-export const flattenObject = (obj: any, type: 'value' | 'error' = 'value'): Record<string, any> => {
+export function hasDirty(dirty: any): boolean {
+	if (typeof dirty === 'boolean') {
+		return dirty;
+	}
+
+	if (Array.isArray(dirty)) {
+		return dirty.every(item => hasDirty(item));
+	}
+
+	if (typeof dirty === 'object' && dirty !== null) {
+		return Object.values(dirty).every(value => hasDirty(value));
+	}
+
+	return false;
+}
+
+export function hasErrors(errors: any): boolean {
+	if (typeof errors === 'string' && errors) {
+		return true;
+	}
+
+	if (Array.isArray(errors)) {
+		return errors.some(err => hasErrors(err));
+	}
+
+	if (typeof errors === 'object' && errors !== null) {
+		return Object.values(errors).some(value => hasErrors(value));
+	}
+
+	return false;
+}
+
+export const getErrorMessage = <T extends Record<string, any>>(values: Record<string, any>, errorFor: GetKeys<T>) => {
+	return getValueByPath(values, errorFor as string)?.error;
+};
+
+export const flattenObject = (obj: any, type: 'value' | 'error' | 'isDirty' = 'value'): Record<string, any> => {
 	const result: any = {};
 	for (const key in obj) {
-		if (typeof obj[key] === 'object' && 'value' in obj[key]) {
+		if (obj[key] && typeof obj[key] === 'object' && 'value' in obj[key]) {
 			if (typeof obj[key].value === 'object') {
 				Array.isArray(obj[key].value) && (result[key] = []);
 				if (Object.keys(obj[key].value)?.[0]?.match?.(BETWEEN_BRACKETS_REGEX)) {
@@ -238,6 +248,19 @@ export const flattenObject = (obj: any, type: 'value' | 'error' = 'value'): Reco
 		} else if (typeof obj[key] === 'object') {
 			result[key] = flattenObject(obj[key], type);
 		}
+	}
+
+	return result;
+};
+
+export const objectToModelValue = (object: Record<string, any>): Record<string, any>[] => {
+	const result: Record<string, any>[] = [];
+	if (typeof object.value === 'object') {
+		for (const key in object.value) {
+			result.push(object.value[key].value);
+		}
+	} else {
+		return object.value;
 	}
 
 	return result;
@@ -287,6 +310,30 @@ export const createFormDataFromObject = (obj: Record<string, any>, parentKey = '
 	}, '');
 
 	return formData;
+};
+
+export const getDotPath = (issue: StandardSchemaV1.Issue): string | null => {
+	if (issue.path?.length) {
+		let dotPath = '';
+		for (const item of issue.path) {
+			const key = typeof item === 'object' ? item.key : item;
+			if (typeof key === 'string') {
+				if (dotPath) {
+					dotPath += `.${key}`;
+				} else {
+					dotPath += key;
+				}
+			} else if (typeof key === 'number') {
+				dotPath += `[${key}]`;
+			} else {
+				return null;
+			}
+		}
+
+		return dotPath;
+	}
+
+	return null;
 };
 
 export const fetcher = async (promise?: void | Promise<any>) => {

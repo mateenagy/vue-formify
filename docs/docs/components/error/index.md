@@ -1,7 +1,8 @@
 # Error
-The `<Error />` component is for show error message for defined input field. By default it will be between a `<span>` element.
+The `<Error>` component is for show error message for defined input field. By default it will be between a `<span>` element.
 
 ### Basic usage
+::: code-group
 ```vue
 <script lang="ts" setup>
 import { useForm } from 'vue-formify';
@@ -23,10 +24,12 @@ const sendForm = (data) => {
 	</Form>
 </template>
 ```
+:::
 :::warning Important note if you are not using `useForm` composable
-For setting and showing the `<Error />` component you should use template ref on `<Form>`.
+For setting and showing the `<Error>` component you should use template ref on `<Form>`.
 :::
 However you can customize how it rendered using slot.
+::: code-group
 ```vue
 <template>
     <Error error-for="email" v-slot="{ error }">
@@ -34,6 +37,7 @@ However you can customize how it rendered using slot.
     </Error>
 </template>
 ```
+:::
 ::: info Rendering errors
 `<Error>` component will not rendering anything when no error for the field.
 :::

@@ -1,2 +1,0 @@
-# Documentation
-## Why VueFormify?

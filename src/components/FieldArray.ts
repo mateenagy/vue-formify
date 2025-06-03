@@ -1,25 +1,17 @@
 import { deleteByPath, getValueByPath } from '@/utils/utils';
 import { defineComponent, h, inject, nextTick, PropType, ref, SlotsType, toValue } from 'vue';
 import { forms } from '@/utils/store';
-import { useField } from '../composable/useField';
-import { GetKeys } from '@/composable/useForm';
+import { FieldType } from '@/utils/types';
+import { useInput } from '@/composable/useInput';
 
-type FieldArrayType<T extends Record<string, any>> = {
-	name: GetKeys<T>;
-	error?: any;
-	ignore?: boolean;
-	initialValues?: any[];
-	preserve?: boolean;
-	default?: any[];
-}
-
+//@ts-expect-error `name` does not exist in type. Vue don't like `FieldType` type definition, but it works fine.
 export const FieldArrayComp = <T extends Record<string, any> = Record<string, any>>() => defineComponent(
-	(props: FieldArrayType<T>, { slots, emit, attrs }) => {
+	(props: FieldType<T>, { slots, emit, attrs }) => {
 		/*---------------------------------------------
 		/  VARIABLES
 		---------------------------------------------*/
 		const fields = ref<any[]>([]);
-		const { setArrayValue, getError } = useField(props, emit, true);
+		const { getError, setArrayValue } = useInput(props, true);
 		const { uid } = inject('formData', Object.create({}));
 
 		/*---------------------------------------------
@@ -34,27 +26,27 @@ export const FieldArrayComp = <T extends Record<string, any> = Record<string, an
 			});
 		};
 
-		const remove = (idx: number) => {
+		const remove = async (idx: number) => {
 			getValueByPath(forms[uid].values, props.name as string).error = undefined;
 			const removedIndex = fields.value.findIndex(field => field.id === idx);
 
 			for (let index = removedIndex + 1; index < fields.value.length; index++) {
 				const currentPath = `${props.name as string}[${index}]`;
 				const previousPath = `${props.name as string}[${index - 1}]`;
-
-				const tmp = getValueByPath(forms[uid].values, currentPath);
+				getValueByPath(forms[uid].values, currentPath).error = undefined;
+				getValueByPath(forms[uid].values, previousPath).error = undefined;
 
 				if (getValueByPath(forms[uid].values, previousPath)) {
-					setArrayValue({ [`[${index - 1}]`]: JSON.parse(JSON.stringify(tmp)) });
+					setArrayValue({ [`[${index - 1}]`]: JSON.parse(JSON.stringify(getValueByPath(forms[uid].values, currentPath))) });
 				}
 			}
+			await nextTick();
 			deleteByPath(forms[uid].values, `${fields.value[fields.value.length - 1].name}[${fields.value.length - 1}]`);
 			fields.value.splice(-1);
 		};
-
 		const init = async () => {
 			fields.value = [];
-			const initials = props.initialValues || forms[uid].initialValues?.[props.name] || forms[uid].values[props.name].value;
+			const initials = forms[uid].initialValues?.[props.name] || forms[uid].values[props.name].value;
 			if (initials) {
 				initials.forEach?.(() => {
 					fields.value.push({
@@ -92,41 +84,23 @@ export const FieldArrayComp = <T extends Record<string, any> = Record<string, an
 		return () => {
 			return h('div',
 				{ ...props, ...attrs, ...emit },
-				slots.default?.({ fields: toValue(fields), add, remove, error: getError() }),
+				slots.default?.({ fields: toValue(fields), add, remove, error: getError }),
 			);
 		};
 	},
 	{
 		name: 'FieldArray',
 		props: {
-			name: {
-				type: String as PropType<any>,
-				required: true,
-			},
-			error: {
-				type: String as PropType<string>,
-				default: undefined,
-			},
-			ignore: {
-				type: Boolean as PropType<boolean>,
-				default: undefined,
-			},
-			initialValues: {
-				type: Object as PropType<any>,
-				default: undefined,
-			},
-			default: {
-				type: Array as PropType<any[]>,
-				default: undefined,
-			},
-			preserve: {
-				type: Boolean as PropType<boolean>,
-				default: undefined,
-			},
+			name: { type: String as unknown as PropType<FieldType<T>['name']>, default: '' },
+			default: { type: [String, Array, Boolean, Number, Object] as PropType<FieldType<T>['default']>, default: undefined },
+			preserve: { type: Boolean as PropType<FieldType<T>['preserve']>, default: false },
+			modelValue: { type: [String, Array, Boolean, Number, Object] as PropType<FieldType<T>['modelValue']>, default: undefined },
+			as: { type: String as PropType<FieldType<T>['as']>, default: 'input' },
+			schema: { type: Object as PropType<FieldType<T>['schema']>, default: undefined },
 		},
+		emits: ['update:modelValue'],
 		slots: Object as SlotsType<{
 			default: { fields: { id: number }[], add: () => void, remove: (idx: number) => void, error: any }
 		}>,
-		emits: ['update:modelValue'],
 	},
 );

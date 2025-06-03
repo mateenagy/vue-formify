@@ -1,7 +1,4 @@
 # Creating forms
-In <strong>VueFormify</strong>, you can create forms using either the `useForm` composable or by importing components directly from the package.
-
-Throughout the <strong>Core Concepts</strong> section, we'll use the `useForm` composable, as it enables type safety for our forms.
 
 ## Define our form
 Since we're using TypeScript, we’ll start by defining the type for our form. Type definitions help reduce errors and provide autocompletion suggestions.
@@ -16,27 +13,6 @@ type FirstForm = {
 	numbers: number[];
 }
 ```
-
-### Infer types from validation schema
-If we are using a validation package then we can infer types from them and use it as our type definition. Here is an example with `yup`
-
-```ts
-import * as yup from 'yup';
-
-const yupSchema = yup.object({
-	name: yup.string();
-	checked: yup.boolean();
-	nested: yup.object({
-		text: yup.string();
-	})
-	numbers: yup.array().of(yup.number());
-});
-
-type FirstForm = yup.InferType<typeof yupSchema>;
-```
-::: warning Type rule
-Your types should represent the data you expect when submitting the form. 
-:::
 
 For simplicity in the next part we will create a login form so our type will look like this:
 ```ts

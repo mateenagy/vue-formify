@@ -1,13 +1,18 @@
 <script setup lang="ts">
-const firstName = defineModel<string>();
-const emits = defineEmits(['focus']);
+import { useInput, type InputProps } from '@/main';
+
+const props = defineProps<InputProps>();
+const { inputProps, getError } = useInput(props);
+
 </script>
 
 <template>
 	<div>
-		<input
-			type="text"
-			v-model="firstName"
-			@blur="emits('focus')" />
+		<label for="">Custom Input</label>
+		<div>
+			<input
+				v-bind="inputProps" />
+			<small class="color-red">{{ getError() }}</small>
+		</div>
 	</div>
 </template>
