@@ -9,7 +9,7 @@ export const FieldComp = <T extends Record<string, any> = Record<string, any>>()
 	any,
 	string,
 	SlotsType<{
-		default: { field: { value: any, modelValue: any, updateModelValue: (val: any) => void, isValid: boolean }, error: any, isValid: boolean, }
+		default: { field: { value: any, modelValue: any, updateModelValue: (val: any) => void, isValid: boolean, error: any } }
 	}>
 >(
 	(props: FieldType<T>, { slots, attrs: baseAttrs }) => {

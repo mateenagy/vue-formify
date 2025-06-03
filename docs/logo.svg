@@ -1,1 +1,36 @@
-<svg viewBox="0 0 590.32 423.12" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><linearGradient id="a" gradientUnits="userSpaceOnUse" x1="1" x2="589.32" y1="211.56" y2="211.56"><stop offset="0" stop-color="#42b883"/><stop offset="1" stop-color="#42b883" stop-opacity=".4"/></linearGradient><path d="m269.48 401.93c26.68-53.79 53.37-107.57 80.05-161.36 2.66-5.35 8.11-8.74 14.09-8.74h94.43c5.83 0 11.18-3.23 13.91-8.38l27.81-52.65c5.53-10.47-2.06-23.07-13.91-23.07h-70.08c-12.26 0-19.8-13.4-13.45-23.88l16.72-27.6c2.85-4.7 7.95-7.58 13.45-7.58h108.59c5.62 0 10.81-3 13.62-7.86l32.46-56.23c6.05-10.48-1.51-23.59-13.62-23.59h-536.54c-27.68 0-44.98 29.97-31.14 53.94 67.19 116.34 134.38 232.68 201.56 349.01 14.51 25.12 49.15 23.96 62.04-2.02z" fill="url(#a)" stroke="#42b883" stroke-miterlimit="10" stroke-width="2"/></svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 821.98 549.69">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #34495e;
+      }
+
+      .cls-1, .cls-2, .cls-3 {
+        stroke-width: 0px;
+      }
+
+      .cls-2 {
+        fill: #42b883;
+      }
+
+      .cls-3 {
+        fill: #41b883;
+      }
+    </style>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <g>
+      <g>
+        <polygon class="cls-1" points="658.92 225.08 405.98 225.08 405.98 314.44 603.09 314.44 658.92 225.08"/>
+        <polygon class="cls-2" points="695.98 196 346.98 196 346.98 293 642.29 293 695.98 196"/>
+        <polygon class="cls-1" points="791.38 29 538.44 29 538.44 118.35 735.54 118.35 791.38 29"/>
+        <polygon class="cls-2" points="821.98 0 472.98 0 472.98 97 768.29 97 821.98 0"/>
+      </g>
+      <g>
+        <path class="cls-3" d="M390.65,0l-73.29,126.94L244.07,0H0l317.36,549.69L634.72,0h-244.07Z"/>
+        <path class="cls-1" d="M390.65,0l-73.29,126.94L244.07,0h-117.12l190.42,329.81L507.77,0h-117.12Z"/>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -1,52 +1,37 @@
-# `createInput` composable
-The `createInput` composable is a core part of this package. It allows you to turn custom inputs into `Formify` components, making them compatible with the package.
+# `useInput` composable
+`useInput` composable helps to create custom component. It is really easy to use the only caveat is it loses the type safety feature in the template, but don't worry I will present some workaround.
 
-You can also wrap components from any UI library while maintaining type safety for attributes.
-
-### Basic usage
-First, we’ll create a custom component—a simple color picker for demonstration. As you can see, there's nothing additional required beyond standard Vue setup.
-
-`ColorPicker.vue`
+We create our component and use the `useInput` composable to create the field. We should pass the props to make everything work.
+::: code-group
 ```vue
-<script lang="ts" setup>
-const modelValue = defineModel();
+<script setup lang="ts">
+import { useInput, type InputProps } from '@/main';
+
+const props = defineProps<InputProps>();
+const { inputProps, getError } = useInput(props);
+
 </script>
+
 <template>
-	<input type="color" v-model="modelValue" />
+	<div>
+		<label for="">Custom Input</label>
+		<div>
+			<input
+				v-bind="inputProps" />
+			<small class="color-red">{{ getError() }}</small>
+		</div>
+	</div>
 </template>
 ```
-All we need to do is pass it through the createInput composable, and it becomes compatible and ready to use.
-```ts
-const ColorPickerInput = createInput<ComponentProps<typeof ColorPicker>>(ColorPicker);
-```
-:::info `ComponentProps<typeof Component>` type utility
-It helps maintain the original component's props and types, in addition to the props added by createInput.
 :::
+### API
+#### Variables
+| Variable name  |        Description
+| -------------  | :-------------------- |
+| inputProps     | 	Required data for input fields  |
+| isValid     | 	Is the field valid or not  |
 
-## Type safe
-When using it with the `useForm` composable, we want all the type-safe features for our custom input. To ensure this, we need to pass the same type to define the field as we use for the `useForm` composable.
-We do this by adding the type as the sencond type argument
-```ts
-const ColorPickerInput = createInput<ComponentProps<typeof ColorPicker>, LoginForm>(ColorPicker);
-```
-
-## Best practice
-If you want to use your custom components throughout your project, I recommend creating a composable to store your custom inputs. Then, pass down the type from there to make it more generic and reusable.
-```ts
-const useCutomInputs = <T>() => {
-	const ColorPickerInput = createInput<ComponentProps<typeof ColorPicker>, T>(ColorPicker);
-
-	return {
-		ColorPickerInput
-	}
-}
-```
-
-## Api reference
-### Options
-| Option      |      Parameter      |        Description
+#### Methods
+| Function      |      Parameter      |        Description
 | -------------  | :-------------------- | :-------------------- |
-| modelKey      | `string` | Custom model key |
-| useModelKeyAsState      | `boolean` | Set `true` if you use custom model key as state so the the form don't use it as a key |
-| default      | `any` | default value for the component |
-| defaultValueKey      | `any` | You need to set this if you use different `prop` name for default value |
+| getError      | `() => void) => void` | Get error message for field |

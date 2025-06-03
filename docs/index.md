@@ -22,8 +22,8 @@ features:
     details: Ensures accurate data types and autocompletion across fields
   - title:  📥 Auto collect values
     details: Seamlessly gathers form data.
-  - title: 🚧 Form level validators
-    details: Use yup, zod, valibot ot joi for form validation. (additional package needed)
+  - title: 🚧 Validation
+    details: Use schema based validators like Zod, Valibot or ArkType.
   - title: 🔗 Share data between forms
     details: Share data between forms without using any addtional store logic.
   - title: 🚀 Easy integration

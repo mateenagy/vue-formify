@@ -48,6 +48,7 @@
 "exclude": [
 	"node_modules",
 	"docs/**/*.css",
+	"docs/**/*.vue",
   ],
   
   "references": [{ "path": "./tsconfig.node.json" }]

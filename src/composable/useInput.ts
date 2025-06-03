@@ -4,7 +4,7 @@ import { createFormInput, deleteByPath, EventEmitter, getValueByPath, mergeDeep,
 import { FieldDefaults, FieldType, InputProps } from '@/utils/types';
 import { validateSchema } from '@/utils/validator';
 
-export const useInput = <T extends Record<string, any>>(props: FieldType<T> | InputProps<any>, isArray: boolean = false) => {
+export const useInput = <T extends Record<string, any> = InputProps>(props: FieldType<T> | InputProps<any>, isArray: boolean = false) => {
 	const { uid, preserveForm, mode, isSubmitted } = inject('formData', Object.create({}));
 	const vm = getCurrentInstance();
 	const name = props.name as string;

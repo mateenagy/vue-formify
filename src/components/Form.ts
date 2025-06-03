@@ -6,12 +6,9 @@ import { computed, defineComponent, h, nextTick, onMounted, onUnmounted, PropTyp
 
 type FormType<T extends Record<string, any>> = {
 	enctype?: 'application/x-www-form-urlencoded' | 'multipart/form-data';
-	validationSchema?: any;
 	action?: string;
 	initialValues?: RecursivePartial<T>;
 	name?: string;
-	preserve?: boolean;
-	mode?: 'onChange' | 'onSubmit';
 	onValueChange?: (value?: any) => void;
 	onSubmit?: (value?: any, $event?: SubmitEvent) => void | Promise<any>;
 }
@@ -156,7 +153,7 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 			if (isFormReady.value && JSON.stringify(curr) !== JSON.stringify(prev) && props.onValueChange) {
 				EventEmitter.emit('value-change', uid);
 			}
-			if (props.mode === 'onChange' && isDirty.value) {
+			if (opt?.mode === 'onChange' && isDirty.value) {
 				EventEmitter.emit('validate');
 			}
 		}, { deep: true });
@@ -181,7 +178,7 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 				});
 			}
 
-			if (props.mode === 'onChange') {
+			if (opt?.mode === 'onChange') {
 				EventEmitter.on('validate', async () => {
 					if (opt?.schema) {
 						return await validateSchema(opt.schema, flattenObject(forms[uid].values), setError);
@@ -194,7 +191,7 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 
 		onUnmounted(() => {
 			if (!opt?.preserve) {
-				delete forms[uid];
+				// delete forms[uid];
 			}
 		});
 
@@ -208,8 +205,6 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 		name: 'FormComponent',
 		props: {
 			enctype: { type: String as PropType<FormType<T>['enctype']>, default: 'application/x-www-form-urlencoded' },
-			preserve: { type: Boolean as PropType<FormType<T>['preserve']>, default: false },
-			mode: { type: String as PropType<FormType<T>['mode']>, default: 'onSubmit' },
 			initialValues: { type: Object as PropType<FormType<T>['initialValues']>, default: Object.create({}) },
 			onValueChange: {
 				type: Function as PropType<(value?: any) => void>,

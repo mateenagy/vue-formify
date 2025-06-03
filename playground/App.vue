@@ -12,6 +12,7 @@ import Select from 'primevue/select';
 import { useForm } from '@/main';
 import CustomInput from './CustomInput.vue';
 import InputField from './InputField.vue';
+import SimpleForm from './SimpleForm.vue';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
@@ -34,13 +35,17 @@ const UserForm = type({
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
-const { Form, Field, Error, reset, setError, values, FieldArray } = useForm({
-	initialValues: {
-		firstName: 'John',
-		lastName: 'Doe',
-	},
-	schema: UserForm,
-});
+const { Form, Field, Error, FieldArray,
+	reset, setError, setInitalValues, setValue, setValues, handleSubmit,
+	isSubmitting, values } = useForm({
+		name: 'UserForm',
+		mode: 'onSubmit',
+		initialValues: {
+			firstName: 'John',
+			lastName: 'Doe',
+		},
+		schema: UserForm,
+	});
 const cities = ref([
 	{ name: 'New York', code: 'NY' },
 	{ name: 'Rome', code: 'RM' },
@@ -63,17 +68,42 @@ const submit = (val: any) => {
 /*---------------------------------------------
 /  CREATED
 ---------------------------------------------*/
+const test = ref<string>('asd');
+const toggle = ref<boolean>(false);
 /*---------------------------------------------
 /  HOOKS
 ---------------------------------------------*/
 </script>
 <template>
 	<div class="container">
+		<h2>Simple</h2>
+		<button
+			type="button"
+			@click="toggle = !toggle">
+			Toggle
+		</button>
+		<SimpleForm
+			:id="1"
+			v-if="!toggle" />
+		<SimpleForm
+			:id="2"
+			v-else />
+		<pre>{{ forms }}</pre>
 		<h2>Basic</h2>
 		<Form
 			@submit="submit"
 			mode="onChange"
 			v-slot="{ isValid }">
+			<CustomInput name="email" />
+			<Field
+				name="email"
+				v-slot="{ field }">
+				asd: {{ field.isValid }}
+				<input
+					v-bind="field"
+					:class="!field.isValid && 'bg-red'" />
+				{{ field.error }}
+			</Field>
 			<div class="row">
 				<div class="col-6">
 					<InputField
@@ -177,6 +207,7 @@ const submit = (val: any) => {
 				@click="reset(true)">
 				Force reset
 			</button>
+			<pre>{{ forms }}</pre>
 			<p>Form values</p>
 			<pre>{{ values }}</pre>
 		</Form>

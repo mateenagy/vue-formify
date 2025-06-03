@@ -10,8 +10,8 @@
 - <strong>Auto Collect Values</strong>: Seamlessly gathers form data.
 - <strong>Supports Nested Objects and Arrays</strong>: Easily handle complex data structures. 
 - <strong>Easy Third-Party Integrations</strong>: Flexible to work with other libraries.
-- <strong>Customizable Components</strong>: Easily build and integrate custom components.
-- <strong>Lightweight</strong>: Small footprint for a faster, more responsive app. 
+- <strong>Validation</strong>: Use schema based validators like `Zod`, `Valibot` or `ArkType`.
+- <strong>Lightweight (~4kb)</strong>: Small footprint for a faster, more responsive app. 
 
 ## Credits
 

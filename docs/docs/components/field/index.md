@@ -1,6 +1,6 @@
 # Field
-The `<Field />` is a flexible component designed to handle most use cases. By default, it renders an HTML input element.
-
+The `<Field>` is a flexible component designed to handle most use cases. By default, it renders an HTML input element.
+::: code-group
 ```vue
 <script lang="ts" setup>
 import { useForm } from 'vue-formify';
@@ -15,6 +15,7 @@ const { Form, Field } = useForm();
 	</Form>
 </template>
 ```
+:::
 ::: tip
 You can set any other input attributes to this component like `disbaled` or `maxlength` 
 :::
@@ -22,6 +23,7 @@ You can set any other input attributes to this component like `disbaled` or `max
 ### Select
 To use the native `select` input you need to set `as="select"` property and then use it as the native.
 ##### Simple select
+::: code-group
 ```vue
 <template>
     <Form @submit="sendForm">
@@ -33,8 +35,10 @@ To use the native `select` input you need to set `as="select"` property and then
     </Form>
 </template>
 ```
+:::
 ##### Multiple select
 Add `multiple` attribute for multi select input.
+::: code-group
 ```vue
 <template>
     <Form @submit="sendForm">
@@ -46,10 +50,11 @@ Add `multiple` attribute for multi select input.
     </Form>
 </template>
 ```
-
+:::
 
 ### Basic custom input
 You can also wrap your custom input between `Field` component and binding the `field` value to the input.
+::: code-group
 ```vue
 <template>
     <Form @submit="sendForm">
@@ -61,12 +66,14 @@ You can also wrap your custom input between `Field` component and binding the `f
     </Form>
 </template>
 ```
+:::
 ## Api reference
 ### Props
 | Prop                 |      Description      |
 | --------------------- | :----------- |
 | name               | Field name |
 | default               | Field default value |
+| schema               | Schema valdation |
 | ignore               | Ignore field when extract data |
 | trueValue               | Custom true value |
 | falseValue               | Custom false value |
@@ -76,4 +83,4 @@ You can also wrap your custom input between `Field` component and binding the `f
 ### Slots
 | Slot      |      Parameter      |        Description
 | -------------  | :-------------------- | :-------------------- |
-| default      | `{ field: { value: T }, errors }` | Gives back the field data and errors. |
+| default      | `{ field: { value: any, modelValue: any, updateModelValue: (val: any) => void, isValid: boolean, error: any } }` | Gives back the field data and errors. |

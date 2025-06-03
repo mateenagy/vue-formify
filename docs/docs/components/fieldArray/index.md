@@ -3,6 +3,7 @@
 The `<FieldArray>` is a component for create repeatable array fields.
 
 ### Basic usage
+::: code-group
 ```vue
 <script lang="ts" setup>
 import { useForm } from 'vue-formify';
@@ -27,6 +28,7 @@ const sendForm = handleSubmit((data) => {
 	</Form>
 </template>
 ```
+:::
 ::: warning Important note
 When you using `v-for` on the `fields` always use the `field.id` in the `:key` attribute and use the `index` as array index. Otherwise it won't works as expected.
 :::
@@ -35,7 +37,7 @@ When you using `v-for` on the `fields` always use the `field.id` in the `:key` a
 | Prop                 |      Description      |
 | --------------------- | :----------- |
 | name               | Field name |
-| initial-values               | Field default value |
+| schema               | Schema valdation |
 | ignore               | Ignore field when extract data |
 | preserve               | Preserve field value when field is unmounted |
 

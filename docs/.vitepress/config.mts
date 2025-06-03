@@ -1,13 +1,24 @@
-import { defineConfig } from 'vitepress'
+import { defineConfig } from 'vitepress';
+import { groupIconMdPlugin, groupIconVitePlugin } from 'vitepress-plugin-group-icons';
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
+	markdown: {
+		config(md) {
+			md.use(groupIconMdPlugin)
+		},
+	},
+	vite: {
+		plugins: [
+			groupIconVitePlugin()
+		],
+	},
 	title: "VueFormify",
 	description: "Build powerful, type-safe forms in Vue.",
 	sitemap: {
 		hostname: 'https://vue-formify.matenagy.me'
 	},
 	head: [
-		['link', { rel: 'icon', href: '/favicon.png' }],
+		['link', { rel: 'icon', href: '/logo.svg' }],
 		['meta', { name: 'description', content: 'Build powerful, type-safe forms in Vue.' }],
 		['meta', { name: 'og:title', content: 'VueFormify' }],
 		['meta', { name: 'og:description', content: 'Build powerful, type-safe forms in Vue.' }],
@@ -66,7 +77,7 @@ export default defineConfig({
 							link: '/docs/core-concepts/handle-errors/index.md',
 						},
 						{
-							text: 'Validators',
+							text: 'Validation',
 							link: '/docs/core-concepts/validators/index.md',
 						},
 					]
@@ -88,29 +99,23 @@ export default defineConfig({
 							link: '/docs/composables/use-form/index.md',
 						},
 						{
-							text: 'createInput',
+							text: 'useInput',
 							link: '/docs/composables/create-input/index.md',
 						},
 					]
 				},
-				{
-					text: 'Form level validation',
-					link: '/docs/form-level-validation/index.md',
-					items: [
-						{ text: 'Yup', link: '/docs/form-level-validation/yup/index.md' },
-						{ text: 'Zod', link: '/docs/form-level-validation/zod/index.md' },
-						{ text: 'Valibot', link: '/docs/form-level-validation/valibot/index.md' },
-						{ text: 'Joi', link: '/docs/form-level-validation/joi/index.md' },
-					]
-				},
+				// {
+				// 	text: 'Validation',
+				// 	link: '/docs/form-level-validation/index.md',
+				// },
 				{
 					text: 'Examples',
 					items: [
 						{ text: 'Nested objects and arrays', link: '/docs/examples/nested-objects-and-arrays/index.md' },
 						{ text: 'Shared form values', link: '/docs/examples/shared-form-values/index.md' },
-						{ text: 'Custom inputs', link: '/docs/examples/custom-inputs/index.md' },
+						// { text: 'Custom inputs', link: '/docs/examples/custom-inputs/index.md' },
 						{ text: 'Third party UI components', link: '/docs/examples/third-party-components/index.md' },
-						{ text: 'Multi step form', link: '/docs/examples/multi-step-form/index.md' },
+						// { text: 'Multi step form', link: '/docs/examples/multi-step-form/index.md' },
 					]
 				},
 				// {

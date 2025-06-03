@@ -1,6 +1,6 @@
 # Handle submission
 To handle form submissions, use the `handleSubmit` method. This method takes a callback function that provides the form data with autocompletion.
-
+::: code-group
 ```vue {11-13}
 <script setup lang="ts">
 import { useForm } from 'vue-formify';
@@ -18,10 +18,11 @@ const submit = handleSubmit((data) => {
 
 </script>
 <template>
-	<Form @submit="submit"> // [!code highlight]
+	<Form @submit="submit"> <!-- [!code highlight] -->
 		<Field name="username" />
 		<Field name="password" type="password" />
 		<button>Submit</button>
 	</Form>
 </template>
 ```
+:::
