@@ -34,10 +34,6 @@
 			"types": "./dist/index.d.ts",
 			"import": "./dist/vue-formify.es.js",
 			"require": "./dist/vue-formify.umd.js"
-		},
-		"./dist/vue-formify.css": {
-			"import": "./dist/vue-formify.css",
-			"require": "./dist/vue-formify.css"
 		}
 	},
 	"scripts": {
