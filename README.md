@@ -53,3 +53,29 @@ const sendForm = handleSubmit((data) => {
 	</Form>
 </template>
 ```
+### ArkType example
+```vue
+<script lang="ts" setup>
+import { type } from 'arktype';
+import { useForm } from 'vue-formify';
+
+const { Form, Field, handleSubmit } = useForm({
+	schema: type({
+		first_name: 'string >= 1';
+		last_name: 'string >= 1';
+	})
+});
+
+const sendForm = handleSubmit((data) => {
+	console.log(data);
+});
+
+</script>
+<template>
+	<Form @submit="sendForm">
+        <Field name="first_name" />
+        <Field name="last_name" />
+    <button>Submit</button>
+  </Form>
+</template>
+```
