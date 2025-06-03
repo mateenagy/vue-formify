@@ -13,9 +13,9 @@ hero:
     - theme: brand
       text: Get started
       link: /docs/getting-started/
-    - theme: alt
-      text: Playground
-      link: /playground/basic/simple/
+    # - theme: alt
+    #   text: Playground
+    #   link: /playground/basic/simple/
 
 features:
   - title: 🔒 Type safe 

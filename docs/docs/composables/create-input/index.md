@@ -34,4 +34,4 @@ const { inputProps, getError } = useInput(props);
 #### Methods
 | Function      |      Parameter      |        Description
 | -------------  | :-------------------- | :-------------------- |
-| getError      | `() => void) => void` | Get error message for field |
+| getError      | `() => void` | Get error message for field |

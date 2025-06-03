@@ -30,7 +30,7 @@ export default defineConfig({
 		nav: [
 			{ text: 'Home', link: '/' },
 			{ text: 'Documentation', link: '/docs/introduction/index.md', activeMatch: '/docs/' },
-			{ text: 'Playground', link: '/playground/basic/simple/index.md', activeMatch: '/playground/' },
+			// { text: 'Playground', link: '/playground/basic/simple/index.md', activeMatch: '/playground/' },
 			{ text: '<img src="https://img.shields.io/npm/v/vue-formify" />', link: 'https://www.npmjs.com/package/vue-formify' },
 		],
 

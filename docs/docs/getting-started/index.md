@@ -1,12 +1,18 @@
 # Getting started
 ## Installation
-Install the package with a package manager like `bun` or `npm`:
+Install the package with a package manager you like:
 ::: code-group
 ```sh [bun]
 bun i vue-formify
 ```
 ```sh [npm]
 npm i vue-formify
+```
+```sh [pnpm]
+pnpm i vue-formify
+```
+```sh [yarn]
+yarn i vue-formify
 ```
 :::
 ## Create your first form

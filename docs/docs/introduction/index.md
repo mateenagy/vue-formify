@@ -2,7 +2,7 @@
 
 ## What is VueFormify?
 
-<strong>VueFormify</strong> is a form-building library for Vue that simplifies creating both simple and complex forms. It offers type safety and a minimal bundle size (~4kb gzipped), making it both secure and efficient.
+<strong>VueFormify</strong> is a form-building library for Vue that simplifies creating both simple and complex forms. It offers type safety, schama validations and a minimal bundle size (~4kb gzipped), making it both secure and efficient.
 
 ## Core Features
 
