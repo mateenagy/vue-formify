@@ -75,7 +75,7 @@ const sendForm = handleSubmit((data) => {
 	<Form @submit="sendForm">
 		<Field name="first_name" />
 		<Field name="last_name" />
-	<button>Submit</button>
-  </Form>
+		<button>Submit</button>
+	</Form>
 </template>
 ```
