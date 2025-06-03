@@ -73,9 +73,9 @@ const sendForm = handleSubmit((data) => {
 </script>
 <template>
 	<Form @submit="sendForm">
-        <Field name="first_name" />
-        <Field name="last_name" />
-    <button>Submit</button>
+		<Field name="first_name" />
+		<Field name="last_name" />
+	<button>Submit</button>
   </Form>
 </template>
 ```
