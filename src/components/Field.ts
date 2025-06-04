@@ -66,7 +66,6 @@ export const FieldComp = <T extends Record<string, any> = Record<string, any>>()
 			return {
 				field: {
 					...inputProps.value,
-					modelValue: value.value,
 					value: value.value,
 					error: getError(),
 					isValid: isValid.value,

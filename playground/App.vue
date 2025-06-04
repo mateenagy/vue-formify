@@ -9,10 +9,12 @@ import { type } from 'arktype';
 import { ref } from 'vue';
 import InputText from 'primevue/inputtext';
 import Select from 'primevue/select';
+import MultiSelect from 'primevue/multiselect';
 import { useForm } from '@/main';
 import CustomInput from './CustomInput.vue';
 import InputField from './InputField.vue';
 import SimpleForm from './SimpleForm.vue';
+import CustomMultiSelect from './CustomMultiSelect.vue';
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
@@ -23,6 +25,7 @@ const UserForm = type({
 	firstName: type.string.atLeastLength(2).configure({ message: 'First name is required' }),
 	lastName: type.string.atLeastLength(2).configure({ message: 'Last name is required' }),
 	email: type('string.email').configure({ message: 'Email is not valid' }),
+	foo: 'string[]',
 	shippingAddress: type({
 		street: type.string.atLeastLength(2).configure({ message: 'Street is required' }),
 		city: type.string.atLeastLength(2).configure({ message: 'City is required' }),
@@ -87,7 +90,21 @@ const toggle = ref<boolean>(false);
 			@submit="submit"
 			mode="onChange"
 			v-slot="{ isValid }">
+			<p>Form values</p>
+			<pre>{{ values }}</pre>
 			<!-- <CustomInput name="email" /> -->
+			<!-- <CustomMultiSelect name="foo" /> -->
+			<Field
+				name="foo"
+				:default="[]"
+				v-slot="{ field }">
+				{{ field }}
+				<MultiSelect
+					v-bind="field"
+					:options="cities"
+					option-label="name"
+					option-value="code" />
+			</Field>
 			<Field name="email" />
 			<Field name="email" />
 			<Field
@@ -203,8 +220,6 @@ const toggle = ref<boolean>(false);
 				Force reset
 			</button>
 			<pre>{{ forms }}</pre>
-			<p>Form values</p>
-			<pre>{{ values }}</pre>
 		</Form>
 	</div>
 </template>
