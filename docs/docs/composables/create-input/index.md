@@ -25,13 +25,20 @@ const { inputProps, getError } = useInput(props);
 ```
 :::
 ### API
-#### Variables
+#### Composable arguments
+| Arguments      |      Typw      |        Description
+| -------------  | :-------------------- | :-------------------- |
+| props      | `InputProps \| {name: string}` | Pass the props which needed. `name` is always required. |
+| isArray      | `boolean` | Set the default input value to an empty array. (Default is false) |
+
+
+#### Returned variables
 | Variable name  |        Description
 | -------------  | :-------------------- |
 | inputProps     | 	Required data for input fields  |
 | isValid     | 	Is the field valid or not  |
 
-#### Methods
+#### Returned methods
 | Function      |      Parameter      |        Description
 | -------------  | :-------------------- | :-------------------- |
 | getError      | `() => void` | Get error message for field |

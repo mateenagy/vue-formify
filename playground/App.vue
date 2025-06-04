@@ -39,7 +39,7 @@ const { Form, Field, Error, FieldArray,
 	reset, setError, setInitalValues, setValue, setValues, handleSubmit,
 	isSubmitting, values } = useForm({
 		name: 'UserForm',
-		mode: 'onSubmit',
+		mode: 'onChange',
 		initialValues: {
 			firstName: 'John',
 			lastName: 'Doe',
@@ -82,27 +82,22 @@ const toggle = ref<boolean>(false);
 			@click="toggle = !toggle">
 			Toggle
 		</button>
-		<SimpleForm
-			:id="1"
-			v-if="!toggle" />
-		<SimpleForm
-			:id="2"
-			v-else />
-		<pre>{{ forms }}</pre>
 		<h2>Basic</h2>
 		<Form
 			@submit="submit"
 			mode="onChange"
 			v-slot="{ isValid }">
-			<CustomInput name="email" />
+			<!-- <CustomInput name="email" /> -->
+			<Field name="email" />
+			<Field name="email" />
 			<Field
 				name="email"
 				v-slot="{ field }">
-				asd: {{ field.isValid }}
+				<label for="">{{ field }}</label>
+				<pre>{{ field }}</pre>
 				<input
 					v-bind="field"
 					:class="!field.isValid && 'bg-red'" />
-				{{ field.error }}
 			</Field>
 			<div class="row">
 				<div class="col-6">

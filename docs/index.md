@@ -6,7 +6,7 @@ hero:
   name: "<span>Vue</span>Formify"
   text: "Build powerful, <strong>type-safe</strong> forms in Vue."
   image:
-    src: /logo.svg
+    src: /logo-new.svg
     alt: VueFormify logo
   tagline: Designed for intuitive use, it keeps your app lightweight and efficient while offering robust form handling capabilities.
   actions:

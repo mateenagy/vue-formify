@@ -1,4 +1,4 @@
-import { computed, getCurrentInstance, inject, nextTick, onBeforeUnmount, onMounted, ref, warn } from 'vue';
+import { computed, getCurrentInstance, inject, nextTick, onBeforeUnmount, onMounted, Ref, ref, warn } from 'vue';
 import { forms } from '@/utils/store';
 import { createFormInput, deleteByPath, EventEmitter, getValueByPath, mergeDeep, objectToModelValue } from '@/utils/utils';
 import { FieldDefaults, FieldType, InputProps } from '@/utils/types';
@@ -17,7 +17,6 @@ export const useInput = <T extends Record<string, any> = InputProps>(props: Fiel
 		isValid: true,
 	};
 	/* COMPUTED */
-	const fieldItem = computed<FieldDefaults>(() => getValueByPath(forms[uid].values, name));
 	const value = computed({
 		get() {
 			if (!fieldItem.value) {
@@ -39,9 +38,13 @@ export const useInput = <T extends Record<string, any> = InputProps>(props: Fiel
 			fieldItem.value.value = newVal;
 		},
 	});
-
+	const fieldItem = computed<FieldDefaults>(() => getValueByPath(forms[uid].values, name));
 	const isValid = computed(() => !(fieldItem.value?.error && (fieldItem.value.isDirty || isSubmitted.value || mode === 'onSubmit')));
+	const model = computed(() => {
+		return objectToModelValue(value);
+	});
 
+	/* METRHODS */
 	const getInitialValue = () => {
 		if (isArray || Array.isArray(getValueByPath(forms[uid].initialValues, name))) {
 			if (getValueByPath(forms[uid].initialValues, name)) {
@@ -62,7 +65,7 @@ export const useInput = <T extends Record<string, any> = InputProps>(props: Fiel
 
 			return [];
 		}
-		
+
 		return getValueByPath(forms[uid].values, name).value ?? props.modelValue ?? props.default ?? getValueByPath(forms[uid].initialValues, name) ?? '';
 	};
 
@@ -108,11 +111,12 @@ export const useInput = <T extends Record<string, any> = InputProps>(props: Fiel
 	};
 
 	const onInput = async (evt: any) => {
-		fieldItem.value?.isTouched && (fieldItem.value.isTouched = true);
+		(typeof evt === 'object' && 'target' in evt) ? setValue(getValueByInputType(evt.target)) : setValue(evt);
+		fieldItem.value.error = undefined;
+		fieldItem.value.isTouched = true;
 		if (fieldItem.value?.isTouched && defaultValue.value !== value.value) {
 			fieldItem.value.isDirty = true;
 		}
-		(typeof evt === 'object' && 'target' in evt) ? setValue(getValueByInputType(evt.target)) : setValue(evt);
 		resetError();
 		if (mode === 'onChange') {
 			EventEmitter.emit('validate');
@@ -123,9 +127,9 @@ export const useInput = <T extends Record<string, any> = InputProps>(props: Fiel
 	const onFocus = () => {
 		resetError();
 	};
-	
+
 	const onBlur = async () => {
-		fieldItem.value?.isTouched && (fieldItem.value.isTouched = true);
+		!fieldItem.value?.isTouched && (fieldItem.value.isTouched = true);
 		await validateField();
 	};
 
@@ -164,13 +168,9 @@ export const useInput = <T extends Record<string, any> = InputProps>(props: Fiel
 		}
 	});
 
-
-	const inputProps = {
-		modelValue: ref(objectToModelValue(value)),
+	const inputProps = ref({
+		modelValue: model,
 		'onUpdate:modelValue': (val: any) => {
-			fieldItem.value.error = undefined;
-			fieldItem.value.isTouched = true;
-			fieldItem.value.isDirty = true;
 			value.value = val;
 			if (mode === 'onChange') {
 				EventEmitter.emit('validate');
@@ -180,7 +180,7 @@ export const useInput = <T extends Record<string, any> = InputProps>(props: Fiel
 		onInput,
 		onFocus,
 		onBlur,
-	} as InputProps<T>;
+	}) as Ref<any>;
 
 	return {
 		value,

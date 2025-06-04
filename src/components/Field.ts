@@ -26,25 +26,25 @@ export const FieldComp = <T extends Record<string, any> = Record<string, any>>()
 				name: props.name,
 				error: getError(),
 				onInput: (evt: any) => {
-					inputProps.onInput?.(evt);
+					inputProps.value.onInput?.(evt);
 					if (typeof baseAttrs.onInput === 'function') {
 						baseAttrs.onInput();
 					}
 				},
 				onChange: (evt: any) => {
-					inputProps.onInput?.(evt);
+					inputProps.value.onInput?.(evt);
 					if (typeof baseAttrs.onChange === 'function') {
 						baseAttrs.onChange();
 					}
 				},
 				onFocus: () => {
-					inputProps.onFocus?.();
+					inputProps.value.onFocus?.();
 					if (typeof baseAttrs.onFocus === 'function') {
 						baseAttrs.onFocus();
 					}
 				},
 				onBlur: async () => {
-					inputProps.onBlur?.();
+					inputProps.value.onBlur?.();
 					if (typeof baseAttrs.onBlur === 'function') {
 						baseAttrs.onBlur();
 					}
@@ -65,22 +65,30 @@ export const FieldComp = <T extends Record<string, any> = Record<string, any>>()
 		const slotProps = () => {
 			return {
 				field: {
-					...inputProps,
-					isValid: isValid.value,
+					...inputProps.value,
+					modelValue: value.value,
+					value: value.value,
 					error: getError(),
+					isValid: isValid.value,
+					onFocus: inputProps.value.onFocus,
+					onBlur: inputProps.value.onBlur,
 				},
 
 			};
 		};
 
 		return () => {
-			const tag = resolveDynamicComponent(resolveTag(props, slots)) as string;
+			const tag = resolveDynamicComponent(resolveTag(props, !!slots.default)) as string;
 			const children = normalizeChildren(tag, slots, slotProps);
+			
+			
 			if (tag) {
 				return h(tag,
 					{
 						...props,
 						...sharedProps.value,
+						...inputProps.value,
+						modelValue: value.value,
 					},
 					children,
 				);

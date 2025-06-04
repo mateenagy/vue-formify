@@ -18,14 +18,14 @@ export default defineConfig({
 		hostname: 'https://vue-formify.matenagy.me'
 	},
 	head: [
-		['link', { rel: 'icon', href: '/logo.svg' }],
+		['link', { rel: 'icon', href: '/logo-new.svg' }],
 		['meta', { name: 'description', content: 'Build powerful, type-safe forms in Vue.' }],
 		['meta', { name: 'og:title', content: 'VueFormify' }],
 		['meta', { name: 'og:description', content: 'Build powerful, type-safe forms in Vue.' }],
 		['meta', { name: 'og:image', content: 'https://vue-formify.matenagy.me/share.jpg' }],
 	],
 	themeConfig: {
-		logo: '/logo.svg',
+		logo: '/logo-new.svg',
 		// https://vitepress.dev/reference/default-theme-config
 		nav: [
 			{ text: 'Home', link: '/' },

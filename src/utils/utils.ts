@@ -14,10 +14,10 @@ export const createFormInput = (name: string, uid: string | number, defaultValue
 	}
 };
 
-export const resolveTag = (props: Record<string, any>, slots: any) => {
+export const resolveTag = (props: Record<string, any>, isSlot: boolean) => {
 	let tag = props.as || '';
-
-	if (!props.as && !slots.default) {
+	
+	if (!props.as && !isSlot) {
 		tag = 'input';
 	}
 
