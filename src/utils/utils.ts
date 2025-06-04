@@ -255,12 +255,12 @@ export const flattenObject = (obj: any, type: 'value' | 'error' | 'isDirty' = 'v
 
 export const objectToModelValue = (object: Record<string, any>): Record<string, any>[] => {
 	const result: Record<string, any>[] = [];
-	if (typeof object.value === 'object') {
+	if (typeof object.value === 'object' && !(object.value instanceof Date)) {
 		for (const key in object.value) {
 			result.push(object.value[key].value);
 		}
 	} else {
-		return object.value;
+		return object.value || '';
 	}
 
 	return result;

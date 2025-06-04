@@ -9,12 +9,16 @@ import { type } from 'arktype';
 import { ref } from 'vue';
 import InputText from 'primevue/inputtext';
 import Select from 'primevue/select';
+import Listbox from 'primevue/listbox';
 import MultiSelect from 'primevue/multiselect';
 import { useForm } from '@/main';
 import CustomInput from './CustomInput.vue';
 import InputField from './InputField.vue';
 import SimpleForm from './SimpleForm.vue';
 import CustomMultiSelect from './CustomMultiSelect.vue';
+import ToggleButton from 'primevue/togglebutton';
+import RadioButton from 'primevue/radiobutton';
+
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/
@@ -26,6 +30,10 @@ const UserForm = type({
 	lastName: type.string.atLeastLength(2).configure({ message: 'Last name is required' }),
 	email: type('string.email').configure({ message: 'Email is not valid' }),
 	foo: 'string[]',
+	date: 'Date',
+	// list: 'string',
+	radio: 'string',
+	toggle: 'boolean',
 	shippingAddress: type({
 		street: type.string.atLeastLength(2).configure({ message: 'Street is required' }),
 		city: type.string.atLeastLength(2).configure({ message: 'City is required' }),
@@ -73,6 +81,7 @@ const submit = (val: any) => {
 ---------------------------------------------*/
 const test = ref<string>('asd');
 const toggle = ref<boolean>(false);
+const ph = ref();
 /*---------------------------------------------
 /  HOOKS
 ---------------------------------------------*/
@@ -92,8 +101,57 @@ const toggle = ref<boolean>(false);
 			v-slot="{ isValid }">
 			<p>Form values</p>
 			<pre>{{ values }}</pre>
-			<!-- <CustomInput name="email" /> -->
-			<!-- <CustomMultiSelect name="foo" /> -->
+			<CustomInput name="email" />
+			<CustomMultiSelect name="foo" />
+			<Field
+				name="radio"
+				v-slot="{ field }">
+				<RadioButton
+					v-bind="field"
+					input-id="ingredient1"
+					name="pizza"
+					value="Cheese" />
+				<label for="ingredient1">Cheese</label>
+				<RadioButton
+					v-bind="field"
+					input-id="ingredient2"
+					name="pizza"
+					value="Salami" />
+				<label for="ingredient2">Salami</label>
+				<RadioButton
+					v-bind="field"
+					input-id="ingredient3"
+					name="pizza"
+					value="Mushroom" />
+				<label for="ingredient3">Mushroom</label>
+			</Field>
+			<Field
+				name="toggle"
+				:default="true"
+				v-slot="{ field }">
+				<ToggleButton
+					v-bind="field"
+					on-label="On"
+					off-label="Off" />
+			</Field>
+			<Field
+				name="foo"
+				:default="[]"
+				v-slot="{ field }">
+				<Listbox
+					multiple
+					v-bind="field"
+					:options="cities"
+					option-label="name"
+					option-value="code" />
+			</Field>
+			<Field
+				name="date"
+				:default="new Date()"
+				v-slot="{ field }">
+				<DatePicker v-bind="field" />
+			</Field>
+			
 			<Field
 				name="foo"
 				:default="[]"

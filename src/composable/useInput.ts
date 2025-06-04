@@ -35,7 +35,7 @@ export const useInput = <T extends Record<string, any> = InputProps>(props: Fiel
 				return fieldItem.value.value;
 			}
 
-			fieldItem.value.value = newVal;
+			fieldItem.value.value = newVal || typeof newVal === 'boolean' ? newVal : '';
 		},
 	});
 	const fieldItem = computed<FieldDefaults>(() => getValueByPath(forms[uid].values, name));
