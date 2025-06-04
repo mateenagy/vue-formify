@@ -170,6 +170,7 @@ export const useInput = <T extends Record<string, any> = InputProps>(props: Fiel
 
 	const inputProps = ref({
 		modelValue: model,
+		value: model,
 		'onUpdate:modelValue': (val: any) => {
 			value.value = val;
 			if (mode === 'onChange') {

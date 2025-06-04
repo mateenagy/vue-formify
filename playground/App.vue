@@ -6,7 +6,7 @@ import Knob from 'primevue/knob';
 import DatePicker from 'primevue/datepicker';
 import * as v from 'valibot';
 import { type } from 'arktype';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import InputText from 'primevue/inputtext';
 import Select from 'primevue/select';
 import Listbox from 'primevue/listbox';
@@ -34,6 +34,7 @@ const UserForm = type({
 	// list: 'string',
 	radio: 'string',
 	toggle: 'boolean',
+	test: 'string',
 	shippingAddress: type({
 		street: type.string.atLeastLength(2).configure({ message: 'Street is required' }),
 		city: type.string.atLeastLength(2).configure({ message: 'City is required' }),
@@ -54,6 +55,11 @@ const { Form, Field, Error, FieldArray,
 		initialValues: {
 			firstName: 'John',
 			lastName: 'Doe',
+			radio: 'Salami',
+			foo: [
+				'NY',
+			],
+			toggle: true,
 		},
 		schema: UserForm,
 	});
@@ -127,7 +133,6 @@ const ph = ref();
 			</Field>
 			<Field
 				name="toggle"
-				:default="true"
 				v-slot="{ field }">
 				<ToggleButton
 					v-bind="field"
@@ -156,7 +161,6 @@ const ph = ref();
 				name="foo"
 				:default="[]"
 				v-slot="{ field }">
-				{{ field }}
 				<MultiSelect
 					v-bind="field"
 					:options="cities"
@@ -168,8 +172,6 @@ const ph = ref();
 			<Field
 				name="email"
 				v-slot="{ field }">
-				<label for="">{{ field }}</label>
-				<pre>{{ field }}</pre>
 				<input
 					v-bind="field"
 					:class="!field.isValid && 'bg-red'" />

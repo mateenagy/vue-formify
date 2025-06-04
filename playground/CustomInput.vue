@@ -10,6 +10,7 @@ const { inputProps, getError } = useInput(props);
 	<div>
 		<label for="">Custom Input</label>
 		<div>
+			{{ inputProps }}
 			<input
 				v-bind="inputProps" />
 			<small class="color-red">{{ getError() }}</small>
