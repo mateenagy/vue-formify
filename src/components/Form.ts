@@ -142,7 +142,7 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 		const initialValueToValue = () => {
 			const convertedKeys = objectToString(forms[uid].initialValues);
 			for (const key in convertedKeys) {
-				!forms[uid].values[key].value && setValue(key as GetKeys<T>, convertedKeys[key]);
+				!forms[uid].values[key]?.value && setValue(key as GetKeys<T>, convertedKeys[key]);
 			}
 		};
 		/*---------------------------------------------

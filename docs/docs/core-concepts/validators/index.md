@@ -40,6 +40,26 @@ const submit = handleSubmit((data) => {
 </template>
 ```
 :::
+## Validation modes
+You can choose between two modes to trigger validations. The deafult mode is `onSubmit` which runs the validation after the the form was submitted.
+
+The other mode is `onChange` which run validation every time when the input changes.
+::: code-group
+```vue:line-numbers {6}
+<script setup lang="ts">
+import { useForm } from 'vue-formify';
+import { type } from 'arktype'
+
+const { Form, Field, Error, handleSubmit } = useForm({
+	mode: 'onChange',
+	schema: type({
+		username: 'string >= 1',
+		password: 'string >= 1',
+	})
+});
+</script>
+```
+:::
 ## Form types
 Using a schema enables full type inference for form values, field names, and default values.
 

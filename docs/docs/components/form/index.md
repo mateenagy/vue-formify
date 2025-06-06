@@ -22,6 +22,31 @@ const sendForm = handleSubmit((data) => {
 	</Form>
 </template>
 ```
+### Set initial values
+You can set intial value by passing it as an option in the composable or pass it as a prop on the `Form` component:
+::: code-group
+```vue
+<script lang="ts" setup>
+import { useForm } from 'vue-formify';
+
+const { Form, Field, handleSubmit } = useForm({
+	initialValues: {
+		first_name: 'John',
+		last_name: 'Doe'
+	}
+});
+</script>
+```
+::: code-group
+```vue
+<template>
+	<Form @submit="sendForm" :initial-values: { first_name: 'John', last_name: 'Doe' }>
+		<Field name="first_name" />
+		<Field name="last_name" />
+		<button>Send</button>
+	</Form>
+</template>
+```
 :::
 ## Api reference
 ### Props

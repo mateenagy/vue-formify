@@ -14,7 +14,7 @@ const { inputProps, getError } = useInput(props);
 
 <template>
 	<div>
-		<label for="">Custom Input</label>
+		<label>Custom Input</label>
 		<div>
 			<input
 				v-bind="inputProps" />

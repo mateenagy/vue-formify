@@ -66,6 +66,14 @@ You can also wrap your custom input between `Field` component and binding the `f
     </Form>
 </template>
 ```
+### `Field` outside `Form` component
+If you want you can use fields outside the Form component
+::: code-group
+```vue
+<template>
+	<Field name="search" />
+</template>
+```
 :::
 ## Api reference
 ### Props
