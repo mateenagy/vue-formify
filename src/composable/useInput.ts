@@ -40,6 +40,8 @@ export const useInput = <T extends Record<string, any> = InputProps>(props: Fiel
 	});
 	const fieldItem = computed<FieldDefaults>(() => getValueByPath(forms[uid].values, name));
 	const isValid = computed(() => !(fieldItem.value?.error && (fieldItem.value.isDirty || isSubmitted.value || mode === 'onSubmit')));
+	const isTouched = computed(() => fieldItem.value?.isTouched);
+	const isDirty = computed(() => fieldItem.value?.isDirty);
 	const model = computed(() => {
 		return objectToModelValue(value);
 	});
@@ -113,7 +115,7 @@ export const useInput = <T extends Record<string, any> = InputProps>(props: Fiel
 	const onInput = async (evt: any) => {
 		(typeof evt === 'object' && 'target' in evt) ? setValue(getValueByInputType(evt.target)) : setValue(evt);
 		fieldItem.value.error = undefined;
-		fieldItem.value.isTouched = true;
+		(fieldItem.value && !fieldItem.value?.isTouched) && (fieldItem.value.isTouched = true);
 		if (fieldItem.value?.isTouched && defaultValue.value !== value.value) {
 			fieldItem.value.isDirty = true;
 		}
@@ -129,7 +131,7 @@ export const useInput = <T extends Record<string, any> = InputProps>(props: Fiel
 	};
 
 	const onBlur = async () => {
-		!fieldItem.value?.isTouched && (fieldItem.value.isTouched = true);
+		(fieldItem.value && !fieldItem.value?.isTouched) && (fieldItem.value.isTouched = true);
 		await validateField();
 	};
 
@@ -178,6 +180,7 @@ export const useInput = <T extends Record<string, any> = InputProps>(props: Fiel
 				validateField();
 			}
 		},
+		isTouched: isTouched.value,
 		onInput,
 		onFocus,
 		onBlur,
@@ -186,6 +189,8 @@ export const useInput = <T extends Record<string, any> = InputProps>(props: Fiel
 	return {
 		value,
 		isValid,
+		isTouched,
+		isDirty,
 		inputProps,
 		getError,
 		setError,

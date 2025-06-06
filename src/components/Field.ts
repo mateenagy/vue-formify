@@ -9,13 +9,15 @@ export const FieldComp = <T extends Record<string, any> = Record<string, any>>()
 	any,
 	string,
 	SlotsType<{
-		default: { field: { value: any, modelValue: any, updateModelValue: (val: any) => void, isValid: boolean, error: any } }
+		default: { field: { value: any, modelValue: any, isValid: boolean, error: any } }
 	}>
 >(
 	(props: FieldType<T>, { slots, attrs: baseAttrs }) => {
 		const {
 			value,
 			isValid,
+			isTouched,
+			isDirty,
 			inputProps,
 			getError,
 		} = useInput(props);
@@ -69,6 +71,8 @@ export const FieldComp = <T extends Record<string, any> = Record<string, any>>()
 					value: value.value,
 					error: getError(),
 					isValid: isValid.value,
+					isTouched: isTouched.value,
+					isDirty: isDirty.value,
 					onFocus: inputProps.value.onFocus,
 					onBlur: inputProps.value.onBlur,
 				},
@@ -79,8 +83,8 @@ export const FieldComp = <T extends Record<string, any> = Record<string, any>>()
 		return () => {
 			const tag = resolveDynamicComponent(resolveTag(props, !!slots.default)) as string;
 			const children = normalizeChildren(tag, slots, slotProps);
-			
-			
+
+
 			if (tag) {
 				return h(tag,
 					{
@@ -88,6 +92,9 @@ export const FieldComp = <T extends Record<string, any> = Record<string, any>>()
 						...sharedProps.value,
 						...inputProps.value,
 						modelValue: value.value,
+						isValid: isValid.value,
+						isTouched: isTouched.value,
+						isDirty: isDirty.value,
 					},
 					children,
 				);
