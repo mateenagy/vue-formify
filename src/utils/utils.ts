@@ -253,14 +253,14 @@ export const flattenObject = (obj: any, type: 'value' | 'error' | 'isDirty' = 'v
 	return result;
 };
 
-export const objectToModelValue = (object: Record<string, any>): Record<string, any>[] => {
+export const objectToModelValue = (object: Record<string, any>): Record<string, any>[] | string => {
 	const result: Record<string, any>[] = [];
 	if (typeof object.value === 'object' && !(object.value instanceof Date)) {
 		for (const key in object.value) {
 			result.push(object.value[key].value);
 		}
 	} else {
-		return object.value || '';
+		return object.value || typeof object.value === 'boolean' ? object.value : '';
 	}
 
 	return result;

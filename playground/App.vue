@@ -18,6 +18,7 @@ import SimpleForm from './SimpleForm.vue';
 import CustomMultiSelect from './CustomMultiSelect.vue';
 import ToggleButton from 'primevue/togglebutton';
 import RadioButton from 'primevue/radiobutton';
+import CustomCheckbox from './CustomCheckbox.vue';
 
 /*---------------------------------------------
 /  PROPS & EMITS
@@ -34,6 +35,7 @@ const UserForm = type({
 	// list: 'string',
 	radio: 'string',
 	toggle: 'boolean',
+	check: 'boolean',
 	test: 'string',
 	shippingAddress: type({
 		street: type.string.atLeastLength(2).configure({ message: 'Street is required' }),
@@ -108,6 +110,16 @@ const ph = ref();
 			<p>Form values</p>
 			<pre>{{ values }}</pre>
 			<CustomInput name="email" />
+			<Field
+				name="check"
+				v-slot="{ field }">
+				{{ field }}
+				<CustomCheckbox
+					id="toggle"
+					v-bind="field">
+					Toggle this
+				</CustomCheckbox>
+			</Field>
 			<CustomMultiSelect name="foo" />
 			<Field
 				name="radio"
