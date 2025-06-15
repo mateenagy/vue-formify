@@ -46,6 +46,8 @@ const UserForm = type({
 		message: 'At least one shipping address is required',
 	}),
 });
+
+const stringType = type.string.atLeastLength(2).configure({ message: 'Last name is required' });
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
@@ -78,6 +80,9 @@ const cities = ref([
 const submit = (val: any) => {
 	console.log('Submit', val);
 };
+const submitSingle = () => {
+	console.log('Submit', values.value);
+};
 /*---------------------------------------------
 /  COMPUTED
 ---------------------------------------------*/
@@ -97,11 +102,17 @@ const ph = ref();
 <template>
 	<div class="container">
 		<h2>Simple</h2>
+		<pre>{{ values }}</pre>
 		<button
 			type="button"
 			@click="toggle = !toggle">
 			Toggle
 		</button>
+		<!-- <Field name="date" />
+		<Field name="firstName" />
+		<button @click="submitSingle">
+			Submit
+		</button> -->
 		<h2>Basic</h2>
 		<Form
 			@submit="submit"
@@ -109,10 +120,14 @@ const ph = ref();
 			v-slot="{ isValid }">
 			<p>Form values</p>
 			<pre>{{ values }}</pre>
+			<Field
+				name="test"
+				:schema="stringType" />
 			<CustomInput name="email" />
 			<Field
 				name="check"
-				v-slot="{ field }">
+				v-slot="{ field }"
+				:default="false">
 				{{ field }}
 				<CustomCheckbox
 					id="toggle"

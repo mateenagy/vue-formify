@@ -112,7 +112,7 @@ export const FieldComp = <T extends Record<string, any> = Record<string, any>>()
 			preserve: { type: Boolean as PropType<FieldType<T>['preserve']>, default: false },
 			modelValue: { type: [String, Array, Boolean, Number, Object] as PropType<FieldType<T>['modelValue']>, default: undefined },
 			as: { type: String as PropType<FieldType<T>['as']>, default: undefined },
-			schema: { type: [Object, Function] as PropType<FieldType<T>['schema']>, default: undefined },
+			rule: { type: [Object, Function] as PropType<FieldType<T>['rule']>, default: undefined },
 		},
 		emits: ['update:modelValue'],
 	},

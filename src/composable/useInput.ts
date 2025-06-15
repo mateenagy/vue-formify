@@ -72,8 +72,8 @@ export const useInput = <T extends Record<string, any> = InputProps>(props: Fiel
 	};
 
 	const validateField = async () => {
-		if (props?.schema) {
-			const result = await validateSchema(props.schema, value.value, setError, name);
+		if (props?.rule) {
+			const result = await validateSchema(props.rule, value.value, setError, name);
 			fieldItem.value.isValid = result;
 		}
 	};

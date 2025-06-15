@@ -85,7 +85,7 @@ export type FieldType<T extends Record<string, any>> = {
 		falseValue?: any;
 		preserve?: boolean;
 		as?: 'input' | 'select';
-		schema?: StandardSchemaV1;
+		rule?: StandardSchemaV1;
 	} & InputHTMLAttributes
 }[GetKeys<T>];
 
@@ -99,7 +99,7 @@ export type InputProps<T extends Record<string, any> = Record<string, any>> = {
 	falseValue?: any;
 	preserve?: boolean;
 	as?: 'input' | 'select';
-	schema?: StandardSchemaV1;
+	rule?: StandardSchemaV1;
 	onInput?: (evt: any) => void;
 	onChange?: (evt: any) => void;
 	onFocus?: () => void;

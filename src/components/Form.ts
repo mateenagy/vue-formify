@@ -2,7 +2,7 @@ import { forms } from '@/utils/store';
 import { FormOptions, GetKeys, RecursivePartial } from '@/utils/types';
 import { createFormDataFromObject, EventEmitter, fetcher, flattenObject, getValueByPath, mergeDeep, objectToString, stringToObject, hasDirty, hasErrors, getErrorMessage } from '@/utils/utils';
 import { validateSchema } from '@/utils/validator';
-import { computed, defineComponent, h, nextTick, onMounted, onUnmounted, PropType, provide, ref, SlotsType, watch } from 'vue';
+import { computed, defineComponent, h, nextTick, onMounted, PropType, provide, ref, SlotsType, watch } from 'vue';
 
 type FormType<T extends Record<string, any>> = {
 	enctype?: 'application/x-www-form-urlencoded' | 'multipart/form-data';
@@ -18,7 +18,6 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 	/  VARIABLES
 	---------------------------------------------*/
 	const uid: number | string = opt?.name || Math.floor(Math.random() * Date.now());
-	const _value = ref<T>(opt?.initialValues || Object.create({}));
 	const isSubmitting = ref<boolean>(false);
 	const isFormReady = ref<boolean>(false);
 	const isSubmitted = ref<boolean>(false);
@@ -41,7 +40,7 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 
 	const handleSubmit = (cb?: (data?: T) => void | Promise<any>) => {
 		return async () => {
-			await cb?.(_value.value as T);
+			await cb?.(values.value as T);
 		};
 	};
 
@@ -76,7 +75,15 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 			getValueByPath(forms[uid].values, name as unknown as string).isValid = false;
 		}
 	};
-
+	/*---------------------------------------------
+	/  COMPUTED
+	---------------------------------------------*/
+	const values = computed({
+		get: () => flattenObject(forms[uid]?.values) as T,
+		set: (newValue: T) => newValue,
+	});
+	const isDirty = computed(() => hasDirty(flattenObject(forms[uid]?.values, 'isDirty')));
+	const isValid = computed(() => isDirty.value && !hasErrors(flattenObject(forms[uid]?.values, 'error')));
 	/*---------------------------------------------
 	/  CREATED
 	---------------------------------------------*/
@@ -87,7 +94,7 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 			key: 0,
 		};
 	} else {
-		_value.value = flattenObject(forms[uid].values) as T;
+		values.value = flattenObject(forms[uid].values) as T;
 	}
 
 	provide('formData', {
@@ -96,18 +103,7 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 		mode: opt?.mode,
 		isSubmitted,
 	});
-
 	const cmp = defineComponent((props: FormType<T>, { slots, emit, attrs }) => {
-		/*---------------------------------------------
-		/  VARIABLES
-		---------------------------------------------*/
-
-		/*---------------------------------------------
-		/  COMPUTED
-		---------------------------------------------*/
-		const values = computed(() => flattenObject(forms[uid]?.values) as T);
-		const isDirty = computed(() => hasDirty(flattenObject(forms[uid]?.values, 'isDirty')));
-		const isValid = computed(() => isDirty.value && !hasErrors(flattenObject(forms[uid]?.values, 'error')));
 		/*---------------------------------------------
 		/  METHODS
 		---------------------------------------------*/
@@ -149,7 +145,7 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 		/  WATCHERS
 		---------------------------------------------*/
 		watch(values, (curr, prev) => {
-			_value.value = curr;
+			values.value = curr;
 			if (isFormReady.value && JSON.stringify(curr) !== JSON.stringify(prev) && props.onValueChange) {
 				EventEmitter.emit('value-change', uid);
 			}
@@ -189,12 +185,6 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 			isFormReady.value = true;
 		});
 
-		onUnmounted(() => {
-			if (!opt?.preserve) {
-				// delete forms[uid];
-			}
-		});
-
 		return () => {
 			return h('form',
 				{ ...props, ...attrs, ...emit, key: forms[uid].key, onSubmit: submit },
@@ -223,7 +213,7 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 
 	return {
 		cmp,
-		values: _value,
+		values,
 		isSubmitting: isSubmitting,
 		reset,
 		setInitalValues,
