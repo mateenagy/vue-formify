@@ -36,4 +36,8 @@ iframe {
 	width: 100%;
 	height: 700px;
 	margin-top: 2rem;
+
+	nav {
+		display: none;
+	}
 }

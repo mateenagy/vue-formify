@@ -1,0 +1,12 @@
+---
+aside: false
+---
+# Validation Mode
+
+Vue Formify provides two validation modes for forms:
+
+- `onSubmit` (default): Validation occurs only when the form is submitted. This mode is useful when you want to minimize validation feedback until the user is ready to submit their data.
+- `onChange`: Validation runs on every input event, providing immediate feedback as the user types or changes form values.
+
+Choose the mode that best fits your user experience needs.
+<iframe src="https://play.vuejs.org/#eNq1VW1P2zAQ/itWvrTV2oTBNk1dQGwIpCEEE+yjpclNrq3Bb7OdUlT1v+9st2lgjKFJ+9AquXvu8XMvvqyyz8bkiwaycVa6ynLjiQPfGCKYmh3SzDuaHVHFpdHWkxVpHJxpK8maTK2WpIehoyka+PSh96mD8w8GtiCaMXsXDDSjiqpKKxcggWdIzjiIekhOrdV2SOZM1QJumonkfkgWTDTgkOZwe25/RRUhUtcwJj2tThA/g94wGF01B8nG8eQEI2TKrfM/FJMID/bcecvVLGf+ApjDPzXz8/7+IEdNUz5rLEYSCc6xWTjgGn423EKNPCiyR9aDeBLB4vwH2vWAqvUAi7gtkYtlwOS7Ven3a+bZgBwekZgkE2B9//zm6nKjAjsRIUPSqBqmXAGWt0ep7w22B5RFajU2Fl88SCOYB3wjpKz5glSYn8PmowzPkMDGGQiJl7H5x0kZItJD607x7Qu+CjYBcXQW+hDqVRbJ0EHEASDBiXy7htGslRHmaxS0WC3QXHSj49wQCP9hDp9S7LBl0VX2vMwLbN5rVLbt/2eRXYbXapw03mvVHjjxiuBvZCyXzD4Q6UcH2Ig0JWWR0H+iNhZaok3gatXet3VZIGDb8iL0PA3HhqQsOjNTOv8gwsPx5vL35t4bNy6Kqlb5ratB8IXNFfhCGVlMtPY4qMwcv88P8g/I6HxRObdz5JKrHC1hn1CVdwubRl6y5eie134+Jgd7e2aJuHWAOsNUQlRaaDsmjgmpVXLjzG90ZkPcaulmojytcPXFoDDv0nC8T1fGc7yBNBsnuuBjQuj782jztoHNIsCYOVR3z9jDZazwZjw133FzwScnIeo3561bBhvNvllwYBc4Ha3PMzuDyEez05tLWOJz68SF2AhEv+C8BqdFE/JKsC+4HTDVDi5m+DX2ENfId3e69KDcthBBaNxSEU8zXPwnL5RrJ/cgfxfjsAtY+TQjI4ltflz75HhM0vm4JNEvTlYHfbyf7+Uf02x1zDk4DOumvP0u/ZV8g0Tit/n+XvEGnAxfs01e61+7Bmll" />

@@ -1,8 +1,9 @@
-# Nested objects and arrays
-## Objects
-You can create nested objects by passing strings with dot path to name attribute (same as you do with JavaScript).
+# Nested Objects and Arrays
 
-There is no limitation, you can nest as musch as you like.
+## Objects
+
+You can create nested objects by using dot notation in the `name` attribute, just like in JavaScript. There are no limits—you can nest as deeply as you need.
+
 ::: code-group
 ```vue
 <script lang="ts" setup>
@@ -16,11 +17,11 @@ type NestedObject = {
 }
 
 const { Form, Field, handleSubmit } = useForm<NestedObject>();
-const sendForm = handleSubmit((data)) => {
+const sendForm = handleSubmit((data) => {
 	console.log(data);
-};
-
+});
 </script>
+
 <template>
 	<Form @submit="sendForm">
 		<Field name="social.twitter" />
@@ -30,22 +31,26 @@ const sendForm = handleSubmit((data)) => {
 </template>
 ```
 :::
+
 :::warning Disable object nesting behaviour
-You can disable object nesting behaviour if your wrap it between square brackets
+To treat a dot in a field name as a literal string (not as a path), wrap the name in square brackets:
 ```vue
 <Field name="[foo.bar]" />
 ```
 :::
 
 ## Arrays
-You can create arrays using square brackets.
 
-**Important: You have to use numbers between brackets because it represents the index of the array. If you put string or anything else it will not work.**
+Arrays are created using square brackets in the field name.
+
+**Important:** Use numbers inside the brackets to represent array indices. Using strings or other values will not work.
+
 ::: tip Best practice
-❌ **Bad**: `movies[]`, `movies[foo]` or `movies[0foo]`
+❌ **Bad**: `movies[]`, `movies[foo]`, `movies[0foo]`
 
 ✅ **Good**: `movies[0]`, `movies[1]`, `movies[2]`
 :::
+
 ::: code-group
 ```vue
 <script lang="ts" setup>
@@ -56,11 +61,11 @@ type NestedObject = {
 }
 
 const { Form, Field, handleSubmit } = useForm<NestedObject>();
-const sendForm = handleSubmit((data)) => {
+const sendForm = handleSubmit((data) => {
 	console.log(data);
-};
-
+});
 </script>
+
 <template>
 	<Form @submit="sendForm">
 		<Field name="social[0]" />
@@ -70,7 +75,9 @@ const sendForm = handleSubmit((data)) => {
 </template>
 ```
 :::
-Also you can nesting objects and arrays together as much as you like:`foo.bar[0].baz`
+
+You can also combine objects and arrays as deeply as you like. For example: `foo.bar[0].baz`
+
 ::: code-group
 ```vue
 <script lang="ts" setup>
@@ -79,17 +86,17 @@ import { useForm } from 'vue-formify';
 type NestedObject = {
 	social: {
 		links: {
-			url: string
+			url: string;
 		}[];
 	};
 }
 
 const { Form, Field, handleSubmit } = useForm<NestedObject>();
-const sendForm = handleSubmit((data)) => {
+const sendForm = handleSubmit((data) => {
 	console.log(data);
-};
-
+});
 </script>
+
 <template>
 	<Form @submit="sendForm">
 		<Field name="social.links[0].url" />

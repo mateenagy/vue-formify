@@ -30,9 +30,9 @@ export default defineConfig({
 		nav: [
 			{ text: 'Home', link: '/' },
 			{ text: 'Documentation', link: '/docs/introduction/index.md', activeMatch: '/docs/' },
-			// { text: 'Playground', link: '/playground/basic/simple/index.md', activeMatch: '/playground/' },
+			{ text: 'Playground', link: '/playground/basic/simple/index.md', activeMatch: '/playground/' },
 			{ text: '<img src="https://img.shields.io/npm/v/vue-formify" />', link: 'https://www.npmjs.com/package/vue-formify' },
-			{ text: '<img src="https://badgen.net/bundlephobia/minzip/vue-formify?label=%F0%9F%92%BE" />', link: 'https://bundlephobia.com/package/vue-formify@2.0.3' },
+			{ text: '<img src="https://badgen.net/bundlephobia/minzip/vue-formify?label=%F0%9F%92%BE" />', link: 'https://bundlephobia.com/package/vue-formify@2.0.8' },
 		],
 
 		search: {
@@ -84,15 +84,6 @@ export default defineConfig({
 					]
 				},
 				{
-					text: 'Components',
-					items: [
-						{ text: 'Form', link: '/docs/components/form/index.md' },
-						{ text: 'Field', link: '/docs/components/field/index.md' },
-						{ text: 'FieldArray', link: '/docs/components/fieldArray/index.md' },
-						{ text: 'Error', link: '/docs/components/error/index.md' },
-					]
-				},
-				{
 					text: 'Composables',
 					items: [
 						{
@@ -105,42 +96,23 @@ export default defineConfig({
 						},
 					]
 				},
-				// {
-				// 	text: 'Validation',
-				// 	link: '/docs/form-level-validation/index.md',
-				// },
+				{
+					text: 'Components',
+					items: [
+						{ text: 'Form', link: '/docs/components/form/index.md' },
+						{ text: 'Field', link: '/docs/components/field/index.md' },
+						{ text: 'FieldArray', link: '/docs/components/fieldArray/index.md' },
+						{ text: 'Error', link: '/docs/components/error/index.md' },
+					]
+				},
 				{
 					text: 'Examples',
 					items: [
 						{ text: 'Nested objects and arrays', link: '/docs/examples/nested-objects-and-arrays/index.md' },
 						{ text: 'Shared form values', link: '/docs/examples/shared-form-values/index.md' },
-						// { text: 'Custom inputs', link: '/docs/examples/custom-inputs/index.md' },
 						{ text: 'Third party UI components', link: '/docs/examples/third-party-components/index.md' },
-						// { text: 'Multi step form', link: '/docs/examples/multi-step-form/index.md' },
 					]
 				},
-				// {
-				//     text: 'Third party UI library integrations',
-				//     link: '/docs/third-party-ui-integrations/index.md',
-				//     items: [
-				//         {
-				//             text: 'PrimeVue',
-				//             link: '/docs/third-party-ui-integrations/primevue/index.md',
-				//         },
-				//         {
-				//             text: 'Element Plus',
-				//             link: '/docs/third-party-ui-integrations/element-plus/index.md',
-				//         },
-				//         {
-				//             text: 'Ionic Vue',
-				//             link: '/docs/third-party-ui-integrations/ionic-vue/index.md',
-				//         },
-				//         {
-				//             text: 'Radix Vue',
-				//             link: '/docs/third-party-ui-integrations/radix-vue/index.md',
-				//         }
-				//     ],
-				// }
 			],
 			'/playground/': [
 				{
@@ -151,7 +123,41 @@ export default defineConfig({
 							link: '/playground/basic/simple/index.md',
 						},
 						{
-							text: 'More coming soon...',
+							text: 'Nested objects',
+							link: '/playground/basic/nested-object/index.md',
+						},
+						{
+							text: 'Arrays',
+							link: '/playground/basic/arrays/index.md',
+						},
+						{
+							text: 'Custom component',
+							link: '/playground/basic/custom-component/index.md',
+						},
+						{
+							text: 'Shared form data',
+							link: '/playground/basic/shared/index.md',
+						},
+					]
+				},
+				{
+					text: 'Validators',
+					items: [
+						{
+							text: 'ArkType',
+							link: '/playground/validators/arktype/index.md',
+						},
+						{
+							text: 'Valibot',
+							link: '/playground/validators/valibot/index.md',
+						},
+						{
+							text: 'Zod',
+							link: '/playground/validators/zod/index.md',
+						},
+						{
+							text: 'Validation mode',
+							link: '/playground/validators/validation-mode/index.md',
 						},
 					]
 				},

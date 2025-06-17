@@ -1,6 +1,9 @@
 # Field
-The `<Field>` is a flexible component designed to handle most use cases. By default, it renders an HTML input element.
-::: code-group
+
+The `<Field>` component is a versatile input handler in `vue-formify`. By default, it renders a standard HTML input, but it can be customized for various use cases.
+
+## Basic Usage
+
 ```vue
 <script lang="ts" setup>
 import { useForm } from 'vue-formify';
@@ -15,80 +18,90 @@ const { Form, Field } = useForm();
 	</Form>
 </template>
 ```
-:::
-::: tip
-You can set any other input attributes to this component like `disbaled` or `maxlength` 
-:::
-## Render inputs
-### Select
-To use the native `select` input you need to set `as="select"` property and then use it as the native.
-##### Simple select
-::: code-group
-```vue
-<template>
-    <Form @submit="sendForm">
-        <Field name="favourite_fruit" as="select">
-            <option value="apple">Apple</option>
-            <option value="banana">Banana</option>
-            <option value="orange">Orange</option>
-        </Field>
-    </Form>
-</template>
-```
-:::
-##### Multiple select
-Add `multiple` attribute for multi select input.
-::: code-group
-```vue
-<template>
-    <Form @submit="sendForm">
-        <Field name="favourite_fruit" as="select" multiple>
-            <option value="apple">Apple</option>
-            <option value="banana">Banana</option>
-            <option value="orange">Orange</option>
-        </Field>
-    </Form>
-</template>
-```
-:::
 
-### Basic custom input
-You can also wrap your custom input between `Field` component and binding the `field` value to the input.
-::: code-group
+> **Tip:**  
+> You can pass any standard input attributes (like `disabled` or `maxlength`) to the `<Field>` component.
+
+## Rendering Different Inputs
+
+### Select Input
+
+To render a native `<select>`, set the `as="select"` prop:
+
+#### Simple Select
+
 ```vue
 <template>
-    <Form @submit="sendForm">
-        <Field name="favourite_fruit" v-slot="{field, error}">
-            <label>Email</label>
-            <input type="email" v-bind="field" />
-            <small>{{ error }}</small>
-        </Field>
-    </Form>
+	<Form @submit="sendForm">
+		<Field name="favourite_fruit" as="select">
+			<option value="apple">Apple</option>
+			<option value="banana">Banana</option>
+			<option value="orange">Orange</option>
+		</Field>
+	</Form>
 </template>
 ```
-### `Field` outside `Form` component
-If you want you can use fields outside the Form component
-::: code-group
+
+#### Multiple Select
+
+Add the `multiple` attribute for multi-select:
+
+```vue
+<template>
+	<Form @submit="sendForm">
+		<Field name="favourite_fruit" as="select" multiple>
+			<option value="apple">Apple</option>
+			<option value="banana">Banana</option>
+			<option value="orange">Orange</option>
+		</Field>
+	</Form>
+</template>
+```
+
+### Custom Inputs
+
+You can use custom inputs by leveraging the `Field` slot and binding the `field` object:
+
+```vue
+<template>
+	<Form @submit="sendForm">
+		<Field name="favourite_fruit" v-slot="{ field, error }">
+			<label>Email</label>
+			<input type="email" v-bind="field" />
+			<small>{{ error }}</small>
+		</Field>
+	</Form>
+</template>
+```
+
+### Using `Field` Outside `Form`
+
+Fields can also be used independently of a `Form`:
+
 ```vue
 <template>
 	<Field name="search" />
 </template>
 ```
-:::
-## Api reference
+
+## API Reference
+
 ### Props
-| Prop                 |      Description      |
-| --------------------- | :----------- |
-| name               | Field name |
-| default               | Field default value |
-| schema               | Schema valdation |
-| ignore               | Ignore field when extract data |
-| trueValue               | Custom true value |
-| falseValue               | Custom false value |
-| preserve               | Preserve field value when field is unmounted |
-| as               | Render field as `input` (default), `select` |
+
+| Prop        | Description                                              |
+|-------------|---------------------------------------------------------|
+| name        | Field name                                              |
+| default     | Field default value                                     |
+| schema      | Schema validation                                       |
+| ignore      | Ignore field when extracting data                       |
+| trueValue   | Custom true value                                       |
+| falseValue  | Custom false value                                      |
+| preserve    | Preserve value when field is unmounted                  |
+| as          | Render as `input` (default) or `select`                 |
 
 ### Slots
-| Slot      |      Parameter      |        Description
-| -------------  | :-------------------- | :-------------------- |
-| default      | `{ field: { value: any, modelValue: any, updateModelValue: (val: any) => void, isValid: boolean, error: any } }` | Gives back the field data and errors. |
+
+| Slot    | Parameter                                                                                                    | Description                                 |
+|---------|-------------------------------------------------------------------------------------------------------------|---------------------------------------------|
+| default | `{ field: { value, modelValue, updateModelValue, isValid, error } }`                                        | Provides field data and validation errors   |
+

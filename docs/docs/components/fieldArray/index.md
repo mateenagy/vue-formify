@@ -1,8 +1,9 @@
 # FieldArray
 
-The `<FieldArray>` is a component for create repeatable array fields.
+The `<FieldArray>` component lets you create repeatable array fields in your forms.
 
-### Basic usage
+## Basic Usage
+
 ::: code-group
 ```vue
 <script lang="ts" setup>
@@ -13,35 +14,40 @@ const { Form, FieldArray, handleSubmit } = useForm();
 const sendForm = handleSubmit((data) => {
 	console.log(data);
 });
-
 </script>
+
 <template>
 	<Form @submit="sendForm">
-        <FieldArray name="links" v-slot="{fields, add, remove}">
-            <fieldset v-for="(field, index) of fields" :key="field.id">
-                <Field :name="`links[${index}]`" />
-                <button type="button" @click="remove(index)">Remove</button>
-            </fieldset>
-            <button type="button" @click="add">Add</button>
-        </FieldArray>
+		<FieldArray name="links" v-slot="{ fields, add, remove }">
+			<fieldset v-for="(field, index) in fields" :key="field.id">
+				<Field :name="`links[${index}]`" />
+				<button type="button" @click="remove(index)">Remove</button>
+			</fieldset>
+			<button type="button" @click="add">Add</button>
+		</FieldArray>
 		<button>Send</button>
 	</Form>
 </template>
 ```
 :::
+
 ::: warning Important note
-When you using `v-for` on the `fields` always use the `field.id` in the `:key` attribute and use the `index` as array index. Otherwise it won't works as expected.
+When using `v-for` on `fields`, always use `field.id` for the `:key` attribute and use `index` as the array index. Otherwise, it may not work as expected.
 :::
-## Api reference
+
+## API Reference
+
 ### Props
-| Prop                 |      Description      |
-| --------------------- | :----------- |
-| name               | Field name |
-| schema               | Schema valdation |
-| ignore               | Ignore field when extract data |
-| preserve               | Preserve field value when field is unmounted |
+
+| Prop      | Description                                      |
+|-----------|--------------------------------------------------|
+| name      | Field name                                       |
+| schema    | Schema validation                                |
+| ignore    | Ignore field when extracting data                |
+| preserve  | Preserve field value when the field is unmounted |
 
 ### Slots
-| Slot      |      Parameter      |        Description
-| -------------  | :-------------------- | :-------------------- |
-| default      | `{ fields, add, remove, error }` | `fields`: Generated fields for render <br /> `error`: FieldArray error value <br /> `add`: Function for add new field <br /> `remove`: Remove field from array |
+
+| Slot    | Parameter                          | Description                                                                                                  |
+|---------|------------------------------------|--------------------------------------------------------------------------------------------------------------|
+| default | `{ fields, add, remove, error }`   | `fields`: Generated fields for rendering<br/>`error`: FieldArray error value<br/>`add`: Add new field<br/>`remove`: Remove field from array |

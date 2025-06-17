@@ -1,7 +1,8 @@
 # `useInput` composable
-`useInput` composable helps to create custom component. It is really easy to use the only caveat is it loses the type safety feature in the template, but don't worry I will present some workaround.
+The `useInput` composable is designed to simplify the creation of custom input components in Vue. While it streamlines the process, note that type safety in the template is limited. However, there are workarounds to address this limitation.
 
-We create our component and use the `useInput` composable to create the field. We should pass the props to make everything work.
+To use `useInput`, define your component and pass the necessary props. The composable returns useful properties and methods for managing input state and validation.
+
 ::: code-group
 ```vue
 <script setup lang="ts">
@@ -16,29 +17,33 @@ const { inputProps, getError } = useInput(props);
 	<div>
 		<label>Custom Input</label>
 		<div>
-			<input
-				v-bind="inputProps" />
+			<input v-bind="inputProps" />
 			<small class="color-red">{{ getError() }}</small>
 		</div>
 	</div>
 </template>
 ```
 :::
-### API
-#### Composable arguments
-| Arguments      |      Typw      |        Description
-| -------------  | :-------------------- | :-------------------- |
-| props      | `InputProps \| {name: string}` | Pass the props which needed. `name` is always required. |
-| isArray      | `boolean` | Set the default input value to an empty array. (Default is false) |
 
+## API Reference
 
-#### Returned variables
-| Variable name  |        Description
-| -------------  | :-------------------- |
-| inputProps     | 	Required data for input fields  |
-| isValid     | 	Is the field valid or not  |
+### Composable Arguments
 
-#### Returned methods
-| Function      |      Parameter      |        Description
-| -------------  | :-------------------- | :-------------------- |
-| getError      | `() => void` | Get error message for field |
+| Argument   | Type                                 | Description                                                      |
+|------------|--------------------------------------|------------------------------------------------------------------|
+| props      | `InputProps \| { name: string }`     | Props required for the input. The `name` property is mandatory.  |
+| isArray    | `boolean`                            | If `true`, sets the default input value to an empty array. Default is `false`. |
+
+### Returned Variables
+
+| Variable     | Description                        |
+|--------------|------------------------------------|
+| inputProps   | Data required for input fields     |
+| isValid      | Indicates if the field is valid    |
+
+### Returned Methods
+
+| Function   | Parameter      | Description                        |
+|------------|---------------|------------------------------------|
+| getError   | `() => void`   | Returns the error message for the field |
+
