@@ -68,7 +68,6 @@ export const FieldComp = <T extends Record<string, any> = Record<string, any>>()
 			return {
 				field: {
 					...inputProps.value,
-					value: value.value,
 					error: getError(),
 					isValid: isValid.value,
 					isTouched: isTouched.value,
@@ -91,7 +90,6 @@ export const FieldComp = <T extends Record<string, any> = Record<string, any>>()
 						...props,
 						...sharedProps.value,
 						...inputProps.value,
-						modelValue: value.value,
 						isValid: isValid.value,
 						isTouched: isTouched.value,
 						isDirty: isDirty.value,

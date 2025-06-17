@@ -16,7 +16,7 @@ export const createFormInput = (name: string, uid: string | number, defaultValue
 
 export const resolveTag = (props: Record<string, any>, isSlot: boolean) => {
 	let tag = props.as || '';
-	
+
 	if (!props.as && !isSlot) {
 		tag = 'input';
 	}
@@ -255,11 +255,12 @@ export const flattenObject = (obj: any, type: 'value' | 'error' | 'isDirty' = 'v
 
 export const objectToModelValue = (object: Record<string, any>): Record<string, any>[] | string => {
 	const result: Record<string, any>[] = [];
-	if (typeof object.value === 'object' && !(object.value instanceof Date)) {
+	
+	if (!Array.isArray(object.value) && typeof object.value === 'object' && !(object.value instanceof Date)) {
 		for (const key in object.value) {
 			result.push(object.value[key].value);
 		}
-	} else {
+	} else {	
 		return object.value || typeof object.value === 'boolean' ? object.value : '';
 	}
 
