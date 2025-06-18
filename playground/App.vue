@@ -52,7 +52,7 @@ const stringType = type.string.atLeastLength(2).configure({ message: 'Last name 
 /  VARIABLES
 ---------------------------------------------*/
 const { Form, Field, Error, FieldArray,
-	reset, setError, setInitalValues, setValue, setValues, handleSubmit,
+	reset, setError, setInitialValues, setValue, setValues, handleSubmit,
 	isSubmitting, values } = useForm({
 		name: 'UserForm',
 		mode: 'onChange',
@@ -62,6 +62,7 @@ const { Form, Field, Error, FieldArray,
 			radio: 'Salami',
 			foo: [
 				'NY',
+				'PRS',
 			],
 			toggle: true,
 		},

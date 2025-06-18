@@ -64,7 +64,7 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 		}
 	};
 
-	const setInitalValues = (initials: Partial<T>) => {
+	const setInitialValues = (initials: Partial<T>) => {
 		forms[uid].initialValues = mergeDeep(forms[uid].initialValues, flattenObject(forms[uid].values), initials);
 		forms[uid].key++;
 	};
@@ -216,7 +216,7 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 		values,
 		isSubmitting: isSubmitting,
 		reset,
-		setInitalValues,
+		setInitialValues,
 		setValue,
 		setValues,
 		setError,

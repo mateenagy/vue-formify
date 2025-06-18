@@ -10,7 +10,7 @@ export type UseFormReturn<T extends Record<string, any>> = {
 	FieldArray: ReturnType<typeof FieldArrayComp<T>>;
 	Error: ReturnType<typeof ErrorComp<T>>;
 	reset: ReturnType<typeof FormComponent<T>>['reset'];
-	setInitalValues: ReturnType<typeof FormComponent<T>>['setInitalValues'];
+	setInitialValues: ReturnType<typeof FormComponent<T>>['setInitialValues'];
 	setValue: ReturnType<typeof FormComponent<T>>['setValue'];
 	setValues: ReturnType<typeof FormComponent<T>>['setValues'];
 	setError: ReturnType<typeof FormComponent<T>>['setError'];
@@ -31,7 +31,7 @@ export const useForm = <T extends Record<string, any>>(opt?: FormOptions<T>): Us
 		FieldArray,
 		Error,
 		reset: FormBase.reset,
-		setInitalValues: FormBase.setInitalValues,
+		setInitialValues: FormBase.setInitialValues,
 		setValue: FormBase.setValue,
 		setValues: FormBase.setValues,
 		setError: FormBase.setError,
