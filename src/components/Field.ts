@@ -1,11 +1,11 @@
 import { normalizeChildren, resolveTag } from '@/utils/utils';
 import { computed, defineComponent, h, PropType, resolveDynamicComponent, SlotsType } from 'vue';
-import { FieldType } from '@/utils/types';
+import { FieldType, Prettify } from '@/utils/types';
 import { useInput } from '@/composable/useInput';
 
 //@ts-expect-error `name` does not exist in type. Vue don't like `FieldType` type definition, but it works fine.
 export const FieldComp = <T extends Record<string, any> = Record<string, any>>() => defineComponent<
-	FieldType<T>,
+	Prettify<FieldType<T>>,
 	any,
 	string,
 	SlotsType<{

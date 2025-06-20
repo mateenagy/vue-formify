@@ -1,5 +1,5 @@
 import { forms } from '@/utils/store';
-import { FormOptions, GetKeys, RecursivePartial } from '@/utils/types';
+import { FormOptions, GetKeys, Prettify, RecursivePartial } from '@/utils/types';
 import { createFormDataFromObject, EventEmitter, fetcher, flattenObject, getValueByPath, mergeDeep, objectToString, stringToObject, hasDirty, hasErrors, getErrorMessage } from '@/utils/utils';
 import { validateSchema } from '@/utils/validator';
 import { computed, defineComponent, h, nextTick, onMounted, PropType, provide, ref, SlotsType, watch } from 'vue';
@@ -103,7 +103,7 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 		mode: opt?.mode,
 		isSubmitted,
 	});
-	const cmp = defineComponent((props: FormType<T>, { slots, emit, attrs }) => {
+	const cmp = defineComponent((props: Prettify<FormType<T>>, { slots, emit, attrs }) => {
 		/*---------------------------------------------
 		/  METHODS
 		---------------------------------------------*/

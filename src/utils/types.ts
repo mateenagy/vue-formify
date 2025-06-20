@@ -1,5 +1,10 @@
 import { InputHTMLAttributes } from 'vue';
 
+
+export type Prettify<T> = {
+	[K in keyof T]: T[K];
+} & {};
+
 type IsPlainObject<T> =
 	T extends object
 	? T extends Date | RegExp | Map<any, any> | Set<any> | WeakMap<any, any> | WeakSet<any> | any[]
