@@ -1,10 +1,10 @@
 import { computed, getCurrentInstance, inject, nextTick, onBeforeUnmount, onMounted, Ref, ref, warn } from 'vue';
 import { forms } from '@/utils/store';
 import { createFormInput, deleteByPath, EventEmitter, getValueByPath, mergeDeep, objectToModelValue } from '@/utils/utils';
-import { FieldDefaults, FieldType, InputProps } from '@/utils/types';
+import { FieldArrayType, FieldDefaults, FieldType, InputProps } from '@/utils/types';
 import { validateSchema } from '@/utils/validator';
 
-export const useInput = <T extends Record<string, any> = InputProps>(props: FieldType<T> | InputProps<any>, isArray: boolean = false) => {
+export const useInput = <T extends Record<string, any> = InputProps>(props: FieldType<T> | FieldArrayType<T> & { trueValue: any, falseValue: any } | InputProps<any>, isArray: boolean = false) => {
 	const { uid, preserveForm, mode, isSubmitted } = inject('formData', Object.create({}));
 	const vm = getCurrentInstance();
 	const name = props.name as string;
@@ -104,7 +104,7 @@ export const useInput = <T extends Record<string, any> = InputProps>(props: Fiel
 	};
 
 	const setValue = (newValue: any) => value.value = newValue;
-	const getCheckValue = (checked: boolean): boolean => checked ? props.trueValue || true : props.falseValue || false;
+	const getCheckValue = (checked: boolean): boolean => (checked) ? props.trueValue || true : props.falseValue || false;
 	const getError = () => (fieldItem.value?.isDirty || isSubmitted.value || mode === 'onSubmit') ? fieldItem.value?.error : undefined;
 
 	const resetError = () => {
@@ -159,7 +159,7 @@ export const useInput = <T extends Record<string, any> = InputProps>(props: Fiel
 		await nextTick();
 		(value.value && !Array.isArray(value.value)) && (fieldItem.value.isDirty = true);
 		if (vm?.subTree?.el) {
-			if (props.as === 'select') {
+			if ('as' in props && props.as === 'select') {
 				const options = Array.from((vm.subTree.el as unknown as HTMLSelectElement).options);
 				options.forEach((op) => {
 					if (defaultValue.value?.includes?.(op.value)) {

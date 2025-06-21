@@ -1,12 +1,19 @@
 import { deleteByPath, getValueByPath } from '@/utils/utils';
 import { defineComponent, h, inject, nextTick, PropType, ref, SlotsType, toValue } from 'vue';
 import { forms } from '@/utils/store';
-import { FieldType } from '@/utils/types';
+import { FieldArrayType, FieldType, Prettify } from '@/utils/types';
 import { useInput } from '@/composable/useInput';
 
 //@ts-expect-error `name` does not exist in type. Vue don't like `FieldType` type definition, but it works fine.
-export const FieldArrayComp = <T extends Record<string, any> = Record<string, any>>() => defineComponent(
-	(props: FieldType<T>, { slots, emit, attrs }) => {
+export const FieldArrayComp = <T extends Record<string, any> = Record<string, any>>() => defineComponent<
+	Prettify<FieldArrayType<T>>,
+	any,
+	string,
+	SlotsType<{
+		default: { fields: { id: number }[], add: () => void, remove: (idx: number) => void, error: any }
+	}>
+>(
+	(props: FieldArrayType<T>, { slots, emit, attrs }) => {
 		/*---------------------------------------------
 		/  VARIABLES
 		---------------------------------------------*/

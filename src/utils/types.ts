@@ -92,6 +92,18 @@ export type FieldType<T extends Record<string, any>> = {
 	} & InputHTMLAttributes
 }[GetKeys<T>];
 
+export type FieldArrayType<T extends Record<string, any>> = {
+	[K in GetKeys<T>]: {
+		name: K;
+		default?: ExtractValue<T, K>;
+		error?: any;
+		ignore?: boolean;
+		modelValue?: any;
+		preserve?: boolean;
+		rule?: StandardSchemaV1;
+	} & InputHTMLAttributes
+}[GetKeys<T>];
+
 export type InputProps<T extends Record<string, any> = Record<string, any>> = {
 	name?: GetKeys<T>;
 	default?: any;
