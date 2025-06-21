@@ -123,7 +123,7 @@ const ph = ref();
 			<p>Form values</p>
 			<pre>{{ values }}</pre>
 			<Field
-				name=""
+				name="email"
 				:schema="stringType" />
 			<CustomInput name="email" />
 			<Field

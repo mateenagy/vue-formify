@@ -1,6 +1,5 @@
 import { InputHTMLAttributes } from 'vue';
 
-
 export type Prettify<T> = {
 	[K in keyof T]: T[K];
 } & {};
@@ -82,7 +81,6 @@ export type FieldType<T extends Record<string, any>> = {
 	[K in GetKeys<T>]: {
 		name: K;
 		default?: ExtractValue<T, K>;
-	} & {
 		error?: any;
 		ignore?: boolean;
 		trueValue?: any;
