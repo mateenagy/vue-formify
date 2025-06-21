@@ -1,5 +1,9 @@
 import { InputHTMLAttributes } from 'vue';
 
+export type Prettify<T> = {
+	[K in keyof T]: T[K];
+} & {};
+
 type IsPlainObject<T> =
 	T extends object
 	? T extends Date | RegExp | Map<any, any> | Set<any> | WeakMap<any, any> | WeakSet<any> | any[]
@@ -77,7 +81,6 @@ export type FieldType<T extends Record<string, any>> = {
 	[K in GetKeys<T>]: {
 		name: K;
 		default?: ExtractValue<T, K>;
-	} & {
 		error?: any;
 		ignore?: boolean;
 		trueValue?: any;
@@ -85,6 +88,18 @@ export type FieldType<T extends Record<string, any>> = {
 		falseValue?: any;
 		preserve?: boolean;
 		as?: 'input' | 'select';
+		rule?: StandardSchemaV1;
+	} & InputHTMLAttributes
+}[GetKeys<T>];
+
+export type FieldArrayType<T extends Record<string, any>> = {
+	[K in GetKeys<T>]: {
+		name: K;
+		default?: ExtractValue<T, K>;
+		error?: any;
+		ignore?: boolean;
+		modelValue?: any;
+		preserve?: boolean;
 		rule?: StandardSchemaV1;
 	} & InputHTMLAttributes
 }[GetKeys<T>];

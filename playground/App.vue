@@ -26,6 +26,7 @@ import CustomCheckbox from './CustomCheckbox.vue';
 const { progress = 20 } = defineProps<{
 	progress?: number;
 }>();
+
 const UserForm = type({
 	firstName: type.string.atLeastLength(2).configure({ message: 'First name is required' }),
 	lastName: type.string.atLeastLength(2).configure({ message: 'Last name is required' }),
@@ -122,7 +123,7 @@ const ph = ref();
 			<p>Form values</p>
 			<pre>{{ values }}</pre>
 			<Field
-				name="test"
+				name="email"
 				:schema="stringType" />
 			<CustomInput name="email" />
 			<Field
