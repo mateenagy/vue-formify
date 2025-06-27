@@ -1,5 +1,8 @@
 ---
 aside: false
 ---
+<script setup>
+import Nested from '../../../components/examples/NestedObjects.vue?raw';
+</script>
 # Nested object
-<iframe src="https://play.vuejs.org/#eNqVVM1uGjEQfpXRXgAJvElpe6ALoj9BSlQlVdPefDG7BpzYXsv2EhDi3Ttes5sNqqLkAJiZb/6/mUPy1RiyrXgySTKXW2E8OO4rA5Lp9ZQm3tFkRrVQprQeDlA5viitgiOsbKmgh6ajFQrEat/7QjXVfm84/HXc/mCewRQOVEOwspP4BOCKCTkB563Qa7QJMsOceyptcSZ2ZS6YdK0pwIrlfFmWj2dAAKGdZ2vL1JnmGH7wi+r6Ky8Rh3WEIoawEFwWQ9gwXUh+Xy2V8EPYMllxhxVOm2qzpp5Zf1AXGb242gBhXft+v0DgAKazmDST3Pr+zf3dLYl5YadqyBAqXfCV0Bwz6FHqe4MBJhkCZGkcBTYe/3iujGSe4z+ArBBbyCW2C4eDaXiGDmw9o1BtVg9nHjNDRHy0agRItuRythDWec0Uz9IoaPV1SyCo0DzMjdTzokkbNYx7FELbMojTc98/2ZtdN2N/h/fFiQAghX58Q4gThUhDnHeEum4o9d5YLRffFGxZeV/qFrj0GvAzMlYoZveg/GiMA4zsytKIfrY2lremJ+jh0HL4mKUIaMiRBnZEGqXII3xlaYddmfN7GR7z07r3Nt4bN0nTvNDkwRVciq0lmvtUG5ViNz1Smpn5JzImn9Gj82nu3LOCKKEJSuJlIN0WxOVQbDd6EoXfTGB8cWF2iMMtRfqfEkmGeIDQYiXWGL/UeKVqu0B9ZQSu1p3xApeRJu2NoAmTsny6qWXeVnzYyPMNzx//I39wuyCjyS/LcYxbTpNW55ldc1ygoL66v+U7fLdKVRaVRPQryt/clbIKOUbYN1x6TLuDq7O9rhuO1+GPu9p5rl1TVEi0vmA1niZ4b7+/UvpzumPy8XT5jtjFONCRwpm87GNUvHTSuekx6Vdp0EHPP5ALcnkZmdCRE+7QjiZtQsd/fCAq0w==" />
+<Editor class="mt-2rem" height="600px" :files="{'App.vue': Nested}" />

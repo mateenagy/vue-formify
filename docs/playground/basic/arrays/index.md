@@ -1,5 +1,9 @@
 ---
 aside: false
 ---
+<script setup>
+import Arrays from '../../../components/examples/Arrays.vue?raw';
+</script>
 # Arrays
-<iframe src="https://play.vuejs.org/#eNqNVe9v2zYQ/VcO2gDbgCWlzbYPnmI421pg/dAOzfapKlDapB02FEWQlGPD8P++R9I/ZLcIGiCAyHv37t0d77zL7o0p1p3IJlnlFlYaT074zpBienVXZ97V2bTWsjGt9bSjzom3rW1oT0vbNjSAa77EhVxuB7/XutZ+awT954T9i3lGd7SrNQUv6ybkvJV69ekzgPuAXbTaBdLAOKa3Uih+by3bHr7H9Mg0V+KhmzfSj2nNVCccQt8dZVTHQNPhKEZPjC46ANb3Hw45gCO6myZNTAnrh+8ePrwvki6kECFj6jQXS6kFFAzq2g9GIwgOAaoy1QgVwcGLxijmBU5EFZdrWijmHKoGGZ6BwMbiEf6qWLVZUgZE+jiZAVBsLtQ0JOQmVZlOJ+O5NqRZI0AQS1pntM6dagPjjpYB5MbEOIRb0bRrQfteiCuRoW35yrZodjPPbyMX7mAZRqYxSb4ZUbs8EAMweRLb4BnOheQX3GA3J24Q3sAasqGfdrvARPt9VZpLh74cni+V2NCKmfz1FfGxADQ5JP8lZv/p5x1495+/QNlFUqH8tlW4Lq955p33rabwSoFOp5773GvCf87x+iGd51Ir9BGI2ULJxRMgqbDDUBvI/BhPVZmYLrMrkV6/+NfnH9TiBPLhzG77KtBjRL/nnLR4jvP1jYaqPL+a+GAvw16HMVY2CEKND29hmobmW1JjxbnLCYr+HkcztNimgYgC0I00HYfcq7I3NJXzWxU+Zof1Mnj03rhJWS64Lr46LpRc20ILX2rTlPO29ZhUZma/FrfFb2B0vlw4dzYUjdQFbtImKvpvIc18wzb5s+T+cUK3NzdmkxYRpvogJBtj4cFjKVeI32psxegXJroxEhvjg/ESO6bOJokx2JhS7fO7eOdtJ8bH+8WjWDx95/6r24S7OvvHCjRujed1snlmVwJ7IZjfPLwXG3yfjE3LOwX0C8aPwrWqCxoT7A/sMsju4aLav2PBsfT+dW82Xmh3TCoIDch9xNcZ9vufL6R+lntb/BL9UFFUMTU0b9CTyzomwyVJ7zckiX7xGfTQs9fFTfHqVXoJvftCOPjV2UnQ/n839EaN" />
+
+<Editor height="500px" :files="{'App.vue': Arrays}" />

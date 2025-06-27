@@ -1,9 +1,12 @@
 ---
 aside: false
 ---
+<script setup>
+import CustomWithField from '../../../components/examples/CustomWithField/CustomWithField.vue?raw';
+import ColorPicker from '../../../components/examples/CustomWithField/ColorPicker.vue?raw';
+</script>
 # Custom component with `Field`
-<iframe style="margin-bottom: 1.5rem" src="https://play.vuejs.org/#eNqFVFFv2jAQ/iunvAASibux7YEFxNa10iqtrdbtLS8mMeDWsS3bSUGI/76zDSGdqhYJybn77u7z3efbJ9+0ztqGJdMkt6Xh2oFlrtEgqFzPisTZIpkXktdaGQd7aCy7VqaGA6yMqmGAoekKDXy1G3ztcJdKKHPPyydmjriM9Gy+oEcX0u00g7+WmR/UUZjBvpAApUdOwTrD5bqQBw8slbS+vi8+hmvORDWGDZWVYA/NsuZuDC0VDbPIbHZimZ8yz4ejUC5msSEAYf344bBC4Ahm80iCCmbc8Obh7jaLRPCGATKGRlZsxSVDBoOicIPRCEn6AjmJLcSG4YdjtRbUMfwCyCveQimotdhUpOEoJjCht4C/PDR1EZkhIh46twf4K4OkNQsJsENFAm1qhfL4/cq7D70ADOlPoU2XXFaIDEAMBXLOTULy8/eycU7Jju7SScB/qg2vqdlB7dIJVop9y0lEn6O1YV3oEbrfd9M55AQBp2sTf+/YIIIdwlNOen3LrdsJf1gchTXYOKftlJCyktmjrZjgrckkc0TqmiyVcjgsqhefs0n2BTNaR0prz46s5jJDS1Rf5pWb+mkYJeLYa7pNn3nlNlOYXFzoLeJQfzjYI5FkjE8CI1Z8jfWVxHcT4vxMas1RNHfacZRZkUxjRu+jQqjnm2BzpmHjk73csPLpFfuj3XpbkdwbhhJuWZF0PkfNmqE0vPvq4ZZt8dw5a1U1AtFvOH8zq0TjOUbYd5Qz0u7hAtufoeGo+z/2auuYtKdLeaIeeQj4IsG3fPnG1c90J9mnEIcdxS7GgaY1zuRlH6PjZZLelomk35RBD734mF1kHz5EJfTsGbMYVyQ9Qv/tp3cWYtwkQdS4SOI++KWQCErWb4u4cd5ZCOc3I+iSibmvDjTuv5xEWwfhUjcO/MJ8sQBwqEygJVBBS3zWr76m5PAPU9z/Uw==" />
+<Editor height="500px" :files="{'App.vue': CustomWithField, 'ColorPicker.vue': ColorPicker}" />
 
-
-# Custom component with `useInput`
-<iframe src="https://play.vuejs.org/#eNqVVN9v2jAQ/lesvAASSbqx7YEFxNZ1UvvQVuv2lheTGHDrX7IvFIT433e2SUinrtqQkJy77+6+O5+/Q/LFmGzbsGSaFK6y3ABxDBpDBFXrWZmAK5N5qbg02gI5kMax79pKciQrqyUZYGi6QgNf7QefO9ylFtre8+qJ2RMuy3s2X9CjSwV7w8gvx+w3CpTMyKFUhFQeOSUOLFfrUh09sNLK+fq++JhsqKoFe2iWksOYbKlomENKs5Ze0aacD0ehTgx3IQBh/fjhsEbgiMzmsToVzMLw5uHuNosMsLUAGZNG1WzFFavHZFCWMBiNkJ0vUORxdjgp/AAmjaDA8IuQouZbUgnqHE4TaQDFBDYMleCvCNNcRGaIiIfOjYD+LBWVLKRBU5mQ/IxaNgBadYWWoAj+U2O5pHZPJKQTTBo7LvKIPkcby7rQE/Rw6OZ6LHIEtIRzzzi2lmNveCryXseFg73wh8VpFwYbAOOmeV7VKnt0NRN8azPFIFdG5kutAcdMzeJjNsk+YUYHeeXc2ZFJrjK0xIXJ/LKlfo5Wi3hhku7SZ17DZkomFxdmhzhcGbySE5FkjFuMESu+xvpa4aqHOD9HaThe950BjgtSJtOY0fuoEPr5JtjANmzc2qsNq55esT+6nbeVyb1luHxbViadD6hdM7xU7756uGU7PHdOqetGIPoN5w/mtGg8xwj7iouItHu4wPY6DBw39qe72gFTrm3KE/XIY8CXCT6/yzdaP9OdZB9CHE4UpxgvNJV4Jy/nGB0vk/SEIZJ+cw166MX77CJ79y5uQs+eMYdxZdIj9Iek/IeGXSvTwN9ELIqFsdo41Ir45O/9V3HwD7BVpmMUl1aZuE8ZYK0ShSLDkOcfRKJ9X4IumZj7rgiNUljk0XYChELEK2dPCrbpkqsaDWcanUC8+k6T429nFgsT" />
+<!-- # Custom component with `useInput` -->
+<!-- <Editor sfc="array" height="500px" :files="{'App.vue': CustomWithUseInput, 'ColorPickerUseInput.vue': ColorPickerUseInput}" /> -->

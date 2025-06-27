@@ -8,7 +8,7 @@
     "dependencies": {
         "@primeuix/themes": "^1.1.1",
         "primevue": "^4.3.4",
-        "vue-formify": "2.0.0-0",
+        "vue-formify": "^2.0",
 		"unocss": "^66.1",
 		"unocss-preset-grid": "^1.6",
 		"@vue/repl": "^4.5",
