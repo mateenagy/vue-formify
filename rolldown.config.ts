@@ -9,6 +9,11 @@ export default defineConfig({
 		viteMinify({
 			module: true,
 		}),
+		// dts({
+		// 	vue: true,
+		// 	parallel: true,
+		// 	eager: true,
+		// }),
 		dts({
 			insertTypesEntry: true,
 			rollupTypes: true,
