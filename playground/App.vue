@@ -18,6 +18,7 @@ import SimpleForm from './SimpleForm.vue';
 import CustomMultiSelect from './CustomMultiSelect.vue';
 import ToggleButton from 'primevue/togglebutton';
 import RadioButton from 'primevue/radiobutton';
+import Checkbox from 'primevue/checkbox';
 import CustomCheckbox from './CustomCheckbox.vue';
 
 /*---------------------------------------------
@@ -32,11 +33,13 @@ const UserForm = type({
 	lastName: type.string.atLeastLength(2).configure({ message: 'Last name is required' }),
 	email: type('string.email').configure({ message: 'Email is not valid' }),
 	foo: 'string[]',
+	toppings: 'string[]',
 	date: 'Date',
 	// list: 'string',
 	radio: 'string',
 	toggle: 'boolean',
 	check: 'boolean',
+	'check-prime': 'boolean',
 	test: 'string',
 	shippingAddress: type({
 		street: type.string.atLeastLength(2).configure({ message: 'Street is required' }),
@@ -58,14 +61,15 @@ const { Form, Field, Error, FieldArray,
 		name: 'UserForm',
 		mode: 'onChange',
 		initialValues: {
-			firstName: 'John',
-			lastName: 'Doe',
+			// firstName: 'John',
+			// lastName: 'Doe',
 			radio: 'Salami',
+			toppings: [],
 			foo: [
 				'NY',
 				'PRS',
 			],
-			toggle: true,
+			// toggle: true,
 		},
 		schema: UserForm,
 	});
@@ -104,40 +108,98 @@ const ph = ref();
 <template>
 	<div class="container">
 		<h2>Simple</h2>
-		<pre>{{ values }}</pre>
-		<button
-			type="button"
-			@click="toggle = !toggle">
-			Toggle
-		</button>
+		<div
+			class="row"
+			style="display: flex;">
+			<div class="col-6">
+				<pre>{{ values }}</pre>
+			</div>
+			<div class="col-6">
+				<!-- <pre>{{ forms }}</pre>  -->
+			</div>
+		</div>
 		<!-- <Field name="date" />
 		<Field name="firstName" />
 		<button @click="submitSingle">
 			Submit
 		</button> -->
-		<h2>Basic</h2>
 		<Form
 			@submit="submit"
 			mode="onChange"
 			v-slot="{ isValid }">
 			<p>Form values</p>
-			<pre>{{ values }}</pre>
 			<Field
 				name="email"
 				:schema="stringType" />
 			<CustomInput name="email" />
+			<!-- <Field name="toppings[0]" />
+			<Field name="toppings[1]" />
+			<Field name="toppings[2]" /> -->
+			<Field
+				name="toppings[0]"
+				v-slot="{ field }"
+				class="flex">
+				{{ field }}
+				<Checkbox
+					input-id="ch"
+					v-bind="field"
+					value="Cheese" />
+				<label for="ch"> Cheese </label>
+			</Field>
+			<Field
+				name="toppings[1]"
+				v-slot="{ field }"
+				class="flex">
+				<Checkbox
+					input-id="salame"
+					v-bind="field"
+					value="Salame" />
+				<label for="salame"> Salame </label>
+			</Field>
+
+			<Field
+				name="check-prime"
+				v-slot="{ field }"
+				:default="false"
+				class="flex">
+				<Checkbox
+					binary
+					input-id="prime"
+					v-bind="field" />
+				<label for="prime"> Cheese </label>
+			</Field>
 			<Field
 				name="check"
 				v-slot="{ field }"
 				:default="false">
-				{{ field }}
 				<CustomCheckbox
 					id="toggle"
 					v-bind="field">
 					Toggle this
 				</CustomCheckbox>
 			</Field>
+			<Field
+				name="foo"
+				v-slot="{ field }">
+				<Listbox
+					multiple
+					v-bind="field"
+					:options="cities"
+					option-label="name"
+					option-value="code" />
+			</Field>
+			<Field
+				name="foo"
+				v-slot="{ field }">
+				<MultiSelect
+					v-bind="field"
+					:options="cities"
+					option-label="name"
+					option-value="code" />
+			</Field>
+			custom:
 			<CustomMultiSelect name="foo" />
+			<!-- <CustomMultiSelect name="foo" />
 			<Field
 				name="radio"
 				v-slot="{ field }">
@@ -195,120 +257,13 @@ const ph = ref();
 					:options="cities"
 					option-label="name"
 					option-value="code" />
-			</Field>
-			<Field name="email" />
-			<Field name="email" />
-			<Field
-				name="email"
-				v-slot="{ field }">
-				<input
-					v-bind="field"
-					:class="!field.isValid && 'bg-red'" />
-			</Field>
-			<div class="row">
-				<div class="col-6">
-					<InputField
-						name="firstName"
-						label="First name" />
-				</div>
-				<div class="col-6">
-					<InputField
-						name="lastName"
-						label="Last name" />
-				</div>
-				<div class="col-6">
-					<InputField
-						name="email"
-						label="Email" />
-				</div>
-				<div class="col-12">
-					<h2>Addresses</h2>
-					<FieldArray
-						name="shippingAddress"
-						label="Shipping Address"
-						v-slot="{ fields, add, remove }">
-						<fieldset
-							v-for="(field, index) in fields"
-							:key="field.id"
-							class="mb-1rem rd-10px">
-							<legend>{{ `Shipping Address ${index + 1}` }}</legend>
-							<div class="row">
-								<div class="col-6">
-									<InputField
-										:name="`shippingAddress[${index}].street`"
-										label="Street" />
-								</div>
-								<div class="col-6">
-									<Field
-										:name="`shippingAddress[${index}].city`"
-										v-slot="{ field: selectField }"
-										class="w-full">
-										<label
-											class="mb-0.5rem block ml-0.5rem">City</label>
-										<Select
-											:options="cities"
-											option-label="name"
-											option-value="code"
-											class="w-full"
-											:invalid="!selectField.isValid"
-											:placeholder="`Select a City`"
-											v-bind="selectField" />
-										<Error
-											:error-for="`shippingAddress[${index}].city`"
-											class="block color-red"
-											v-slot="{ error }">
-											<small>{{ error }}</small>
-										</Error>
-									</Field>
-								</div>
-								<div class="col-6">
-									<InputField
-										:name="`shippingAddress[${index}].state`"
-										label="State" />
-								</div>
-								<div class="col-6">
-									<InputField
-										:name="`shippingAddress[${index}].zip`"
-										label="Zip Code" />
-								</div>
-							</div>
-							<button
-								class="mt-1rem"
-								type="button"
-								@click="remove(index)">
-								Remove
-							</button>
-						</fieldset>
-						<button
-							type="button"
-							clas
-							mb-1rem
-							@click="add()">
-							Add Address
-						</button>
-						<Error
-							error-for="shippingAddress"
-							class="color-red block" />
-					</FieldArray>
-				</div>
-			</div>
+			</Field> -->
 			<button :disabled="!isValid">
 				submit
 			</button>
 			<button>
 				submit no disabled
 			</button>
-			<button
-				type="button"
-				@click="reset()">
-				Reset
-			</button>
-			<button
-				type="button"
-				@click="reset(true)">
-				Force reset
-			</button>
-			<pre>{{ forms }}</pre>
 		</Form>
 	</div>
 </template>

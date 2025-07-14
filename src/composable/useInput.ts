@@ -4,7 +4,7 @@ import { createFormInput, deleteByPath, EventEmitter, getValueByPath, mergeDeep,
 import { FieldArrayType, FieldDefaults, FieldType, InputProps } from '@/utils/types';
 import { validateSchema } from '@/utils/validator';
 
-export const useInput = <T extends Record<string, any> = InputProps>(props: FieldType<T> | FieldArrayType<T> & { trueValue: any, falseValue: any } | InputProps<any>, isArray: boolean = false) => {
+export const useInput = <T extends Record<string, any> = InputProps>(props: FieldType<T> | FieldArrayType<T> & { trueValue: any, falseValue: any } | InputProps<any>, emit, isArray: boolean = false) => {
 	const { uid, preserveForm, mode, isSubmitted } = inject('formData', Object.create({}));
 	const vm = getCurrentInstance();
 	const name = props.name as string;
@@ -86,7 +86,7 @@ export const useInput = <T extends Record<string, any> = InputProps>(props: Fiel
 
 	const getValueByInputType = (target: HTMLInputElement) => {
 		if (target.type === 'checkbox') {
-			return getCheckValue(target.checked);
+			return normalizeCheckboxValue(target);
 		}
 
 		if (target.type === 'file') {
@@ -104,7 +104,19 @@ export const useInput = <T extends Record<string, any> = InputProps>(props: Fiel
 	};
 
 	const setValue = (newValue: any) => value.value = newValue;
-	const getCheckValue = (checked: boolean): boolean => (checked) ? props.trueValue || true : props.falseValue || false;
+	const normalizeCheckboxValue = (target: HTMLInputElement) => {
+		if (['on'].includes(target.value)) {
+			return target.checked;
+		}
+		if (target.value === 'true') {
+			return true;
+		}
+		if (target.value === 'false') {
+			return false;
+		}
+
+		return target.checked ? target.value : '';
+	};
 	const getError = () => (fieldItem.value?.isDirty || isSubmitted.value || mode === 'onSubmit') ? fieldItem.value?.error : undefined;
 
 	const resetError = () => {
