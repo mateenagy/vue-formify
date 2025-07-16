@@ -1,10 +1,11 @@
 import { computed, getCurrentInstance, inject, nextTick, onBeforeUnmount, onMounted, Ref, ref, warn } from 'vue';
 import { forms } from '@/utils/store';
 import { createFormInput, deleteByPath, EventEmitter, getValueByPath, mergeDeep, objectToModelValue } from '@/utils/utils';
-import { FieldArrayType, FieldDefaults, FieldType, InputProps } from '@/utils/types';
+import { FieldArrayType, FieldDefaults, FieldType, InputProps, UseInputOption } from '@/utils/types';
 import { validateSchema } from '@/utils/validator';
 
-export const useInput = <T extends Record<string, any> = InputProps>(props: FieldType<T> | FieldArrayType<T> & { trueValue: any, falseValue: any } | InputProps<any>, isArray: boolean = false) => {
+export const useInput = <T extends Record<string, any> = InputProps>(
+	props: FieldType<T> | FieldArrayType<T> & { trueValue: any, falseValue: any } | InputProps<any>, opt: UseInputOption = { isArray: false, isComponent: false }) => {
 	const { uid, preserveForm, mode, isSubmitted } = inject('formData', Object.create({}));
 	const vm = getCurrentInstance();
 	const name = props.name as string;
@@ -26,7 +27,10 @@ export const useInput = <T extends Record<string, any> = InputProps>(props: Fiel
 			return fieldItem.value.value;
 		},
 		set(newVal) {
-			if (isArray || Array.isArray(newVal)) {
+			if (fieldItem.value?.isTouched && defaultValue.value !== value.value) {
+				fieldItem.value.isDirty = true;
+			}
+			if (opt.isArray || Array.isArray(newVal)) {
 				fieldItem.value.value = [];
 				for (let index = 0; index < newVal.length; index++) {
 					setArrayValue({ [`[${index}]`]: { value: newVal[index] } }, name);
@@ -48,7 +52,7 @@ export const useInput = <T extends Record<string, any> = InputProps>(props: Fiel
 
 	/* METRHODS */
 	const getInitialValue = () => {
-		if (isArray || Array.isArray(getValueByPath(forms[uid].initialValues, name))) {
+		if (opt.isArray || Array.isArray(getValueByPath(forms[uid].initialValues, name))) {
 			if (getValueByPath(forms[uid].initialValues, name)) {
 				const items = getValueByPath(forms[uid].initialValues, name);
 				let result = {};
@@ -86,7 +90,7 @@ export const useInput = <T extends Record<string, any> = InputProps>(props: Fiel
 
 	const getValueByInputType = (target: HTMLInputElement) => {
 		if (target.type === 'checkbox') {
-			return getCheckValue(target.checked);
+			return normalizeCheckboxValue(target);
 		}
 
 		if (target.type === 'file') {
@@ -104,7 +108,19 @@ export const useInput = <T extends Record<string, any> = InputProps>(props: Fiel
 	};
 
 	const setValue = (newValue: any) => value.value = newValue;
-	const getCheckValue = (checked: boolean): boolean => (checked) ? props.trueValue || true : props.falseValue || false;
+	const normalizeCheckboxValue = (target: HTMLInputElement) => {
+		if (['on'].includes(target.value)) {
+			return target.checked;
+		}
+		if (target.value === 'true') {
+			return true;
+		}
+		if (target.value === 'false') {
+			return false;
+		}
+
+		return target.checked ? target.value : '';
+	};
 	const getError = () => (fieldItem.value?.isDirty || isSubmitted.value || mode === 'onSubmit') ? fieldItem.value?.error : undefined;
 
 	const resetError = () => {
@@ -113,12 +129,11 @@ export const useInput = <T extends Record<string, any> = InputProps>(props: Fiel
 	};
 
 	const onInput = async (evt: any) => {
-		(typeof evt === 'object' && 'target' in evt) ? setValue(getValueByInputType(evt.target)) : setValue(evt);
+		if (!opt.isComponent) {
+			(typeof evt === 'object' && 'target' in evt) ? setValue(getValueByInputType(evt.target)) : setValue(evt);
+		}
 		fieldItem.value.error = undefined;
 		(fieldItem.value && !fieldItem.value?.isTouched) && (fieldItem.value.isTouched = true);
-		if (fieldItem.value?.isTouched && defaultValue.value !== value.value) {
-			fieldItem.value.isDirty = true;
-		}
 		resetError();
 		if (mode === 'onChange') {
 			EventEmitter.emit('validate');
@@ -195,5 +210,6 @@ export const useInput = <T extends Record<string, any> = InputProps>(props: Fiel
 		getError,
 		setError,
 		setArrayValue,
+		setValue,
 	};
 };

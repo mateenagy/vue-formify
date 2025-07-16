@@ -18,7 +18,7 @@ export const FieldArrayComp = <T extends Record<string, any> = Record<string, an
 		/  VARIABLES
 		---------------------------------------------*/
 		const fields = ref<any[]>([]);
-		const { getError, setArrayValue } = useInput(props, true);
+		const { getError, setArrayValue } = useInput(props, { isArray: true });
 		const { uid } = inject('formData', Object.create({}));
 
 		/*---------------------------------------------

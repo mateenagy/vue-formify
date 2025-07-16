@@ -4,7 +4,7 @@ import { useInput, type InputProps } from '@/main';
 import { ref } from 'vue';
 
 const props = defineProps<InputProps>();
-const { inputProps, getError } = useInput(props, true);
+const { inputProps } = useInput(props, { isArray: true });
 /*---------------------------------------------
 /  PROPS & EMITS
 ---------------------------------------------*/

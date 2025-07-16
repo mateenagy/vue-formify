@@ -87,6 +87,7 @@ export type FieldType<T extends Record<string, any>> = {
 		modelValue?: any;
 		falseValue?: any;
 		preserve?: boolean;
+		custom?: boolean;
 		as?: 'input' | 'select';
 		rule?: StandardSchemaV1;
 	} & InputHTMLAttributes
@@ -140,6 +141,11 @@ export type FormOptions<T extends Record<string, any>> = {
 	name?: string;
 	preserve?: boolean;
 	mode?: 'onChange' | 'onSubmit';
+}
+
+export type UseInputOption = {
+	isArray?: boolean,
+	isComponent?: boolean,
 }
 
 /** The Standard Schema interface. */

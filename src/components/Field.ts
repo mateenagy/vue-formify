@@ -20,7 +20,7 @@ export const FieldComp = <T extends Record<string, any> = Record<string, any>>()
 			isDirty,
 			inputProps,
 			getError,
-		} = useInput(props);
+		} = useInput(props, { isComponent: !!props.custom });
 
 		const sharedProps = computed(() => {
 			const attrs: Record<string, any> = {
@@ -108,6 +108,7 @@ export const FieldComp = <T extends Record<string, any> = Record<string, any>>()
 			name: { type: String as unknown as PropType<FieldType<T>['name']>, default: '' },
 			default: { type: [String, Array, Boolean, Number, Object] as PropType<FieldType<T>['default']>, default: undefined },
 			preserve: { type: Boolean as PropType<FieldType<T>['preserve']>, default: false },
+			custom: { type: Boolean as PropType<FieldType<T>['preserve']>, default: false },
 			modelValue: { type: [String, Array, Boolean, Number, Object] as PropType<FieldType<T>['modelValue']>, default: undefined },
 			as: { type: String as PropType<FieldType<T>['as']>, default: undefined },
 			rule: { type: [Object, Function] as PropType<FieldType<T>['rule']>, default: undefined },

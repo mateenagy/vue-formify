@@ -52,7 +52,6 @@ export default defineConfig({
 				'vue',
 			],
 			output: {
-				compact: true,
 				inlineDynamicImports: true,
 				exports: 'named',
 				globals: {

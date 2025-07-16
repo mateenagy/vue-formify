@@ -46,9 +46,7 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 
 	const setValue = (name: GetKeys<T>, value: any) => {
 		if (getValueByPath(forms[uid].values, name as unknown as string)) {
-			if (!Array.isArray(value)) {
-				getValueByPath(forms[uid].values, name as unknown as string).value = value;
-			}
+			getValueByPath(forms[uid].values, name as unknown as string).value = value;
 		} else {
 			const obj = stringToObject(name as string, { value, error: undefined });
 			forms[uid].values = mergeDeep(forms[uid].values, obj);
@@ -65,7 +63,8 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 	};
 
 	const setInitialValues = (initials: Partial<T>) => {
-		forms[uid].initialValues = mergeDeep(forms[uid].initialValues, flattenObject(forms[uid].values), initials);
+		// forms[uid].initialValues = mergeDeep(forms[uid].initialValues, initials);
+		forms[uid].initialValues = initials;
 		forms[uid].key++;
 	};
 
