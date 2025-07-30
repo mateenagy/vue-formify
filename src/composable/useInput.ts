@@ -110,19 +110,13 @@ export const useInput = <T extends Record<string, any> = InputProps>(
 	const setValue = (newValue: any) => value.value = newValue;
 	const normalizeCheckboxValue = (target: HTMLInputElement) => {
 		if (['on'].includes(target.value)) {
-			return target.checked;
-		}
-		if (target.value === 'true') {
-			return true;
-		}
-		if (target.value === 'false') {
-			return false;
+			return getCheckValue(target.checked);
 		}
 
-		return target.checked ? target.value : '';
+		return getCheckValue(target.checked);
 	};
 	const getError = () => (fieldItem.value?.isDirty || isSubmitted.value || mode === 'onSubmit') ? fieldItem.value?.error : undefined;
-
+	const getCheckValue = (checked: boolean): boolean => (checked) ? props.trueValue || true : props.falseValue || false;
 	const resetError = () => {
 		fieldItem.value?.error && (fieldItem.value.error = undefined);
 		getValueByPath(forms[uid].values, name.replace(/\[\d+\]/, ''))?.error && (getValueByPath(forms[uid].values, name.replace(/\[\d+\]/, '')).error = undefined);

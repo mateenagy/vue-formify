@@ -88,10 +88,11 @@ Fields can also be used independently of a `Form`:
 
 ### Props
 
-| Prop        | Description                                              |
+| Prop        | Description                                             |
 |-------------|---------------------------------------------------------|
 | name        | Field name                                              |
 | default     | Field default value                                     |
+| custom      | If using custom component third party library	        |
 | schema      | Schema validation                                       |
 | ignore      | Ignore field when extracting data                       |
 | trueValue   | Custom true value                                       |

@@ -32,7 +32,9 @@ const { inputProps, getError } = useInput(props);
 | Argument   | Type                                 | Description                                                      |
 |------------|--------------------------------------|------------------------------------------------------------------|
 | props      | `InputProps \| { name: string }`     | Props required for the input. The `name` property is mandatory.  |
+| Options:
 | isArray    | `boolean`                            | If `true`, sets the default input value to an empty array. Default is `false`. |
+| isCustom    | `boolean`                           | Use it if you are using third party library to prevent multiple input change. |
 
 ### Returned Variables
 
