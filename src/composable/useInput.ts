@@ -27,6 +27,9 @@ export const useInput = <T extends Record<string, any> = InputProps>(
 			return fieldItem.value.value;
 		},
 		set(newVal) {
+			if (!fieldItem.value) {
+				return;
+			}
 			if (fieldItem.value?.isTouched && defaultValue.value !== value.value) {
 				fieldItem.value.isDirty = true;
 			}
@@ -78,7 +81,9 @@ export const useInput = <T extends Record<string, any> = InputProps>(
 	const validateField = async () => {
 		if (props?.rule) {
 			const result = await validateSchema(props.rule, value.value, setError, name);
-			fieldItem.value.isValid = result;
+			if (fieldItem.value) {
+				fieldItem.value.isValid = result;
+			}
 		}
 	};
 
@@ -126,6 +131,9 @@ export const useInput = <T extends Record<string, any> = InputProps>(
 		if (!opt.isComponent) {
 			(typeof evt === 'object' && 'target' in evt) ? setValue(getValueByInputType(evt.target)) : setValue(evt);
 		}
+		if (!fieldItem.value) {
+			return;
+		}
 		fieldItem.value.error = undefined;
 		(fieldItem.value && !fieldItem.value?.isTouched) && (fieldItem.value.isTouched = true);
 		resetError();
@@ -145,8 +153,12 @@ export const useInput = <T extends Record<string, any> = InputProps>(
 	};
 
 	const setArrayValue = (value: any, key: any = name) => {
-		getValueByPath(forms[uid].values, key).value = mergeDeep(getValueByPath(forms[uid].values, key).value, value);
-		getValueByPath(forms[uid].values, key).error = undefined;
+		const field = getValueByPath(forms[uid].values, key);
+		if (!field) {
+			return;
+		}
+		field.value = mergeDeep(field.value, value);
+		field.error = undefined;
 	};
 
 	createFormInput(name, uid, JSON.parse(JSON.stringify(defaultValue)));
@@ -166,7 +178,7 @@ export const useInput = <T extends Record<string, any> = InputProps>(
 
 	onMounted(async () => {
 		await nextTick();
-		(value.value && !Array.isArray(value.value)) && (fieldItem.value.isDirty = true);
+		(value.value && !Array.isArray(value.value) && fieldItem.value) && (fieldItem.value.isDirty = true);
 		if (vm?.subTree?.el) {
 			if ('as' in props && props.as === 'select') {
 				const options = Array.from((vm.subTree.el as unknown as HTMLSelectElement).options);
