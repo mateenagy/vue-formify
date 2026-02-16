@@ -23,6 +23,8 @@ jobs:
           node-version: 20
           registry-url: 'https://registry.npmjs.org'
 
+      - run: npm i -g npm@latest
+
       - name: Install deps
         run: npm ci --include=optional
 
