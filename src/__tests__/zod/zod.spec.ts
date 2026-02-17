@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { createComponent } from '../common';
 import { z } from 'zod/v4';
 
-describe('Valibot usage', () => {
+describe('Zod usage', () => {
 	it('Simple error', async () => {
 		const wrapper = createComponent({
 			fieldName: 'email',

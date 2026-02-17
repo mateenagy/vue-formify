@@ -11,6 +11,9 @@ export default defineConfig({
 	server: {
 		port: 4444,
 	},
+	test: {
+		environment: 'happy-dom',
+	},
 	plugins: [
 		vue(),
 		UnoCSS(),

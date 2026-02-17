@@ -26,7 +26,7 @@ jobs:
       - run: npm i -g npm@10.5.0
 
       - name: Install deps
-        run: npm ci --include=optional
+        run: npm i --include=optional
 
       - name: Build
         run: npm run build:npm
