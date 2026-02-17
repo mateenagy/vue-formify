@@ -39,7 +39,6 @@
 		"build:npm": "vite build",
 		"build:packages": "bun run oxl:lint && bun run vue-tsc && bun build.ts",
 		"build:local": "vite build",
-		"publish": "bun run build && bun run vitest && np",
 		"dev": "vite",
 		"lint": "eslint 'src/**/*.{ts,js,vue}' '*.{ts,js}' --no-fix",
 		"oxl:lint": "oxlint ./src",
