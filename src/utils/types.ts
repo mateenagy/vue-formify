@@ -146,6 +146,7 @@ export type FormOptions<T extends Record<string, any>> = {
 export type UseInputOption = {
 	isArray?: boolean,
 	isComponent?: boolean,
+	isCheckbox?: boolean,
 }
 
 /** The Standard Schema interface. */

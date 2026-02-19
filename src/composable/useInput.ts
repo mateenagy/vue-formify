@@ -1,14 +1,48 @@
-import { computed, getCurrentInstance, inject, nextTick, onBeforeUnmount, onMounted, Ref, ref, warn } from 'vue';
+import { computed, getCurrentInstance, inject, nextTick, onBeforeUnmount, onMounted, warn } from 'vue';
 import { forms } from '@/utils/store';
 import { createFormInput, deleteByPath, EventEmitter, getValueByPath, mergeDeep, objectToModelValue } from '@/utils/utils';
 import { FieldArrayType, FieldDefaults, FieldType, InputProps, UseInputOption } from '@/utils/types';
-import { validateSchema } from '@/utils/validator';
+import { useFieldValidation } from './useFieldValidation';
+
+/* PURE FUNCTIONS */
+const getCheckValue = (checked: boolean, trueValue: any, falseValue: any): boolean =>
+	(checked) ? trueValue || true : falseValue || false;
+
+const normalizeCheckboxValue = (target: HTMLInputElement, trueValue: any, falseValue: any) => {
+	if (target.value !== 'on') {
+		return target.checked ? target.value : undefined;
+	}
+
+	return getCheckValue(target.checked, trueValue, falseValue);
+};
+
+const getValueByInputType = (target: HTMLInputElement, trueValue: any, falseValue: any) => {
+	if (target.type === 'checkbox') {
+		return normalizeCheckboxValue(target, trueValue, falseValue);
+	}
+
+	if (target.type === 'file') {
+		return target.multiple ? target.files : target.files?.[0];
+	}
+
+	if (target.type === 'select-multiple') {
+		const options = Array.from((target as unknown as HTMLSelectElement).options);
+		const selectedOptions = options.filter(option => option.selected).map(opt => opt.value);
+
+		return selectedOptions;
+	}
+
+	return target.value;
+};
 
 export const useInput = <T extends Record<string, any> = InputProps>(
 	props: FieldType<T> | FieldArrayType<T> & { trueValue: any, falseValue: any } | InputProps<any>, opt: UseInputOption = { isArray: false, isComponent: false }) => {
+	/* INJECTIONS & CONTEXT */
 	const { uid, preserveForm, mode, isSubmitted } = inject('formData', Object.create({}));
 	const vm = getCurrentInstance();
 	const name = props.name as string;
+
+	/* FIELD STATE */
 	const defaultValue: FieldDefaults = {
 		value: getValueByPath(forms[uid].values, name)?.value ?? undefined,
 		error: undefined,
@@ -17,7 +51,21 @@ export const useInput = <T extends Record<string, any> = InputProps>(
 		isTouched: false,
 		isValid: true,
 	};
-	/* COMPUTED */
+
+	const fieldItem = computed<FieldDefaults>(() => getValueByPath(forms[uid].values, name));
+	const isValid = computed(() => !(fieldItem.value?.error && (fieldItem.value.isDirty || isSubmitted.value || mode === 'onSubmit')));
+	const isTouched = computed(() => fieldItem.value?.isTouched);
+	const isDirty = computed(() => fieldItem.value?.isDirty);
+
+	const setArrayValue = (value: any, key: any = name) => {
+		const field = getValueByPath(forms[uid].values, key);
+		if (!field) {
+			return;
+		}
+		field.value = mergeDeep(field.value, value);
+		field.error = undefined;
+	};
+
 	const value = computed({
 		get() {
 			if (!fieldItem.value) {
@@ -42,18 +90,47 @@ export const useInput = <T extends Record<string, any> = InputProps>(
 				return fieldItem.value.value;
 			}
 
-			fieldItem.value.value = newVal || typeof newVal === 'boolean' ? newVal : '';
+			fieldItem.value.value = newVal ?? '';
 		},
 	});
-	const fieldItem = computed<FieldDefaults>(() => getValueByPath(forms[uid].values, name));
-	const isValid = computed(() => !(fieldItem.value?.error && (fieldItem.value.isDirty || isSubmitted.value || mode === 'onSubmit')));
-	const isTouched = computed(() => fieldItem.value?.isTouched);
-	const isDirty = computed(() => fieldItem.value?.isDirty);
+
 	const model = computed(() => {
 		return objectToModelValue(value);
 	});
 
-	/* METRHODS */
+	/* VALIDATION */
+	const { setError, resetError, validateField, getError } = useFieldValidation(
+		uid, name, props?.rule, fieldItem, value, isSubmitted, mode,
+	);
+
+	/* EVENT HANDLERS */
+	const setValue = (newValue: any) => value.value = newValue;
+
+	const onInput = async (evt: any) => {
+		if (!opt.isComponent) {
+			(typeof evt === 'object' && 'target' in evt) ? setValue(getValueByInputType(evt.target, props.trueValue, props.falseValue)) : setValue(evt);
+		}
+		if (!fieldItem.value) {
+			return;
+		}
+		(fieldItem.value && !fieldItem.value?.isTouched) && (fieldItem.value.isTouched = true);
+		resetError();
+		if (mode === 'onChange') {
+			EventEmitter.emit('validate');
+			validateField();
+		}
+	};
+
+	const onFocus = () => {
+		resetError();
+	};
+
+	const onBlur = async () => {
+		(fieldItem.value && !fieldItem.value?.isTouched) && (fieldItem.value.isTouched = true);
+		await validateField();
+	};
+
+	/* INITIALIZATION */
 	const getInitialValue = () => {
 		if (opt.isArray || Array.isArray(getValueByPath(forms[uid].initialValues, name))) {
 			if (getValueByPath(forms[uid].initialValues, name)) {
@@ -75,90 +152,7 @@ export const useInput = <T extends Record<string, any> = InputProps>(
 			return [];
 		}
 
-		return getValueByPath(forms[uid].values, name).value ?? props.modelValue ?? props.default ?? getValueByPath(forms[uid].initialValues, name) ?? '';
-	};
-
-	const validateField = async () => {
-		if (props?.rule) {
-			const result = await validateSchema(props.rule, value.value, setError, name);
-			if (fieldItem.value) {
-				fieldItem.value.isValid = result;
-			}
-		}
-	};
-
-	const setError = (name: string, error: any) => {
-		if (getValueByPath(forms[uid].values, name as unknown as string)) {
-			getValueByPath(forms[uid].values, name as unknown as string).error = error;
-		}
-	};
-
-	const getValueByInputType = (target: HTMLInputElement) => {
-		if (target.type === 'checkbox') {
-			return normalizeCheckboxValue(target);
-		}
-
-		if (target.type === 'file') {
-			return target.multiple ? target.files : target.files?.[0];
-		}
-
-		if (target.type === 'select-multiple') {
-			const options = Array.from((target as unknown as HTMLSelectElement).options);
-			const selectedOptions = options.filter(option => option.selected).map(opt => opt.value);
-
-			return selectedOptions;
-		}
-
-		return target.value;
-	};
-
-	const setValue = (newValue: any) => value.value = newValue;
-	const normalizeCheckboxValue = (target: HTMLInputElement) => {
-		if (['on'].includes(target.value)) {
-			return getCheckValue(target.checked);
-		}
-
-		return getCheckValue(target.checked);
-	};
-	const getError = () => (fieldItem.value?.isDirty || isSubmitted.value || mode === 'onSubmit') ? fieldItem.value?.error : undefined;
-	const getCheckValue = (checked: boolean): boolean => (checked) ? props.trueValue || true : props.falseValue || false;
-	const resetError = () => {
-		fieldItem.value?.error && (fieldItem.value.error = undefined);
-		getValueByPath(forms[uid].values, name.replace(/\[\d+\]/, ''))?.error && (getValueByPath(forms[uid].values, name.replace(/\[\d+\]/, '')).error = undefined);
-	};
-
-	const onInput = async (evt: any) => {
-		if (!opt.isComponent) {
-			(typeof evt === 'object' && 'target' in evt) ? setValue(getValueByInputType(evt.target)) : setValue(evt);
-		}
-		if (!fieldItem.value) {
-			return;
-		}
-		fieldItem.value.error = undefined;
-		(fieldItem.value && !fieldItem.value?.isTouched) && (fieldItem.value.isTouched = true);
-		resetError();
-		if (mode === 'onChange') {
-			EventEmitter.emit('validate');
-			validateField();
-		}
-	};
-
-	const onFocus = () => {
-		resetError();
-	};
-
-	const onBlur = async () => {
-		(fieldItem.value && !fieldItem.value?.isTouched) && (fieldItem.value.isTouched = true);
-		await validateField();
-	};
-
-	const setArrayValue = (value: any, key: any = name) => {
-		const field = getValueByPath(forms[uid].values, key);
-		if (!field) {
-			return;
-		}
-		field.value = mergeDeep(field.value, value);
-		field.error = undefined;
+		return getValueByPath(forms[uid].values, name).value ?? props.modelValue ?? props.default ?? getValueByPath(forms[uid].initialValues, name) ?? (opt.isCheckbox ? (props.falseValue ?? false) : '');
 	};
 
 	createFormInput(name, uid, JSON.parse(JSON.stringify(defaultValue)));
@@ -169,6 +163,7 @@ export const useInput = <T extends Record<string, any> = InputProps>(
 		fieldItem.value.value = getInitialValue();
 	}
 
+	/* LIFECYCLE */
 	onBeforeUnmount(() => {
 		if (props.preserve || preserveForm) {
 			return;
@@ -191,9 +186,10 @@ export const useInput = <T extends Record<string, any> = InputProps>(
 		}
 	});
 
-	const inputProps = ref({
-		modelValue: model,
-		value: model,
+	/* INPUT PROPS */
+	const inputProps = computed(() => ({
+		modelValue: model.value,
+		value: model.value,
 		'onUpdate:modelValue': (val: any) => {
 			value.value = val;
 			if (mode === 'onChange') {
@@ -205,7 +201,7 @@ export const useInput = <T extends Record<string, any> = InputProps>(
 		onInput,
 		onFocus,
 		onBlur,
-	}) as Ref<any>;
+	})) as any;
 
 	return {
 		value,
