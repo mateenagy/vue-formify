@@ -1,24 +1,8 @@
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script lang="ts" setup>
-import { forms } from '@/utils/store';
-import { z } from 'zod';
-import Knob from 'primevue/knob';
-import DatePicker from 'primevue/datepicker';
-import * as v from 'valibot';
 import { type } from 'arktype';
-import { computed, ref } from 'vue';
-import InputText from 'primevue/inputtext';
-import Select from 'primevue/select';
-import Listbox from 'primevue/listbox';
-import MultiSelect from 'primevue/multiselect';
+import { ref } from 'vue';
 import { useForm } from '@/main';
-import CustomInput from './CustomInput.vue';
-import InputField from './InputField.vue';
-import SimpleForm from './SimpleForm.vue';
-import CustomMultiSelect from './CustomMultiSelect.vue';
-import ToggleButton from 'primevue/togglebutton';
-import RadioButton from 'primevue/radiobutton';
-import CustomCheckbox from './CustomCheckbox.vue';
 import ObjectInput from './ObjectInput.vue';
 
 /*---------------------------------------------
@@ -35,14 +19,12 @@ const stringType = type.string.atLeastLength(2).configure({ message: 'Last name 
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
-const { Form, Field, Error, FieldArray,
-	reset, setError, setInitialValues, setValue, setValues, handleSubmit,
-	isSubmitting } = useForm({
+const { Form, Field, Error, FieldArray } = useForm({
 		name: 'UserForm',
 		mode: 'onChange',
 		initialValues: {
-			list: ['asd', 'lol'],
-			accept: true,
+			list: ['asd', 'lol', '123'],
+			accept: false,
 			customCheckbox: 'foo',
 		},
 		schema: UserForm,
@@ -69,40 +51,28 @@ const cities = ref([
 /*---------------------------------------------
 /  HOOKS
 ---------------------------------------------*/
-const objectModel = ref();
 </script>
 <template>
 	<div class="container">
-		<Form v-slot="{ values }">
+		<Form v-slot="{ values, isValid }">
 			<pre>{{ values }}</pre>
-			{{ objectModel }}
-			<ObjectInput name="asd" :default="{ min: 10, max: 100 }" />
-			<Field
-				name="firstName"
-				:rule="stringType" />
-			<Field
-				name="accept"
-				type="checkbox"
-				:rule="type.boolean" />
+			<ObjectInput name="asd" :default="{ min: 30, max: 100 }" />
+			<Field name="firstName" :rule="stringType" />
+			<Error error-for="firstName" />
+			<Field name="accept" type="checkbox" />
+			<Error error-for="accept" />
 			<Field
 				name="customCheckbox"
 				type="checkbox"
 				true-value="foo"
 				false-value="bar"
 				:rule="type.boolean" />
-			<FieldArray
-				name="list"
-				v-slot="{ add, fields, remove }">
+			<FieldArray name="list" v-slot="{ add, fields, remove }">
 				<button @click="add">
 					Add
 				</button>
-				<div
-					:key="index"
-					v-for="(field, index) in fields">
-					<Field
-						:key="index"
-						:name="`list[${index}]`"
-						:rule="stringType" />
+				<div :key="index" v-for="(field, index) in fields">
+					<Field :key="index" :name="`list[${index}]`" :rule="stringType" />
 					<button @click="remove(field.id)">
 						Remove
 					</button>
