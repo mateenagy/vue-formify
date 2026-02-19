@@ -75,8 +75,8 @@ const objectModel = ref();
 	<div class="container">
 		<Form v-slot="{ values }">
 			<pre>{{ values }}</pre>
-			{{ ObjectInput }}
-			<ObjectInput v-model="objectModel" />
+			{{ objectModel }}
+			<ObjectInput name="asd" :default="{ min: 10, max: 100 }" />
 			<Field
 				name="firstName"
 				:rule="stringType" />

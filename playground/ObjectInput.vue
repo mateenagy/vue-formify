@@ -1,47 +1,20 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { computed } from 'vue';
+import { useInput, type InputProps } from '@/main';
+import Slider from 'primevue/slider';
 
-/*---------------------------------------------
-/  PROPS & EMITS
----------------------------------------------*/
-/*---------------------------------------------
-/  VARIABLES
----------------------------------------------*/
-const firstname = ref<string>('');
-const lastname = ref<string>('');
-defineModel({
-	set: () => {
-		return {
-			firstname: firstname.value,
-			lastname: lastname.value,
-		}
-	},
-	get: () => {
-		return {
-			firstname: firstname.value,
-			lastname: lastname.value,
-		}
-	}
+const props = defineProps<InputProps>();
+const { value, setValue } = useInput(props);
+
+const minMax = computed({
+	get: () => [value.value.min, value.value.max],
+	set: (val) => setValue({min: val[0], max: val[1]}),
 })
-/*---------------------------------------------
-/  METHODS
----------------------------------------------*/
-/*---------------------------------------------
-/  COMPUTED
----------------------------------------------*/
-/*---------------------------------------------
-/  WATCHERS
----------------------------------------------*/
-/*---------------------------------------------
-/  CREATED
----------------------------------------------*/
-/*---------------------------------------------
-/  HOOKS
----------------------------------------------*/
 </script>
 <template>
 	<div>
-		<input type="text" v-model="firstname">
-		<input type="text" v-model="lastname">
+		<Slider v-model="minMax" range />
+		<!-- <input type="range" v-model.number="min" />
+		<input type="range" v-model.number="max" /> -->
 	</div>
 </template>
