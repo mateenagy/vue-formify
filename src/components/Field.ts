@@ -20,7 +20,7 @@ export const FieldComp = <T extends Record<string, any> = Record<string, any>>()
 			isDirty,
 			inputProps,
 			getError,
-		} = useInput(props, { isComponent: !!props.custom });
+		} = useInput(props, { isComponent: !!props.custom, isCheckbox: baseAttrs.type === 'checkbox' });
 
 		const sharedProps = computed(() => {
 			const attrs: Record<string, any> = {
@@ -53,11 +53,13 @@ export const FieldComp = <T extends Record<string, any> = Record<string, any>>()
 				},
 			};
 
-			if (attrs.type === 'checkbox' && value.value) {
-				attrs.checked = true;
+			if (attrs.type === 'checkbox') {
+				attrs.checked = props.trueValue !== undefined
+					? value.value === props.trueValue
+					: !!value.value;
 			}
 
-			if (baseAttrs.type !== 'file' && (props.as !== 'select' && !attrs.multiple)) {
+			if (baseAttrs.type !== 'file' && baseAttrs.type !== 'checkbox' && (props.as !== 'select' && !attrs.multiple)) {
 				attrs.value = value.value;
 			}
 
@@ -85,11 +87,13 @@ export const FieldComp = <T extends Record<string, any> = Record<string, any>>()
 
 
 			if (tag) {
+				const { value: _v, modelValue: _mv, ...inputPropsNoValue } = inputProps.value;
+				const resolvedInputProps = baseAttrs.type === 'checkbox' ? inputPropsNoValue : inputProps.value;
 				return h(tag,
 					{
 						...props,
 						...sharedProps.value,
-						...inputProps.value,
+						...resolvedInputProps,
 						isValid: isValid.value,
 						isTouched: isTouched.value,
 						isDirty: isDirty.value,
@@ -112,6 +116,9 @@ export const FieldComp = <T extends Record<string, any> = Record<string, any>>()
 			modelValue: { type: [String, Array, Boolean, Number, Object] as PropType<FieldType<T>['modelValue']>, default: undefined },
 			as: { type: String as PropType<FieldType<T>['as']>, default: undefined },
 			rule: { type: [Object, Function] as PropType<FieldType<T>['rule']>, default: undefined },
+			ignore: { type: Boolean as PropType<FieldType<T>['ignore']>, default: undefined },
+			trueValue: { type: [String, Boolean, Number, Object] as PropType<FieldType<T>['trueValue']>, default: undefined },
+			falseValue: { type: [String, Boolean, Number, Object] as PropType<FieldType<T>['falseValue']>, default: undefined },
 		},
 		emits: ['update:modelValue'],
 	},

@@ -255,16 +255,22 @@ export const flattenObject = (obj: any, type: 'value' | 'error' | 'isDirty' = 'v
 
 export const objectToModelValue = (object: Record<string, any>): Record<string, any>[] | string => {
 	const result: Record<string, any>[] = [];
-	
+
 	if (!Array.isArray(object.value) && typeof object.value === 'object' && !(object.value instanceof Date)) {
-		for (const key in object.value) {
-			result.push(object.value[key].value);
+		const firstKey = Object.keys(object.value)?.[0];
+
+		if (firstKey?.match?.(BETWEEN_BRACKETS_REGEX)) {
+			for (const key in object.value) {
+				result.push(object.value[key].value);
+			}
+
+			return result;
 		}
-	} else {	
-		return object.value || typeof object.value === 'boolean' ? object.value : '';
+
+		return object.value;
 	}
 
-	return result;
+	return object.value || typeof object.value === 'boolean' ? object.value : '';
 };
 
 export const mergeDeep = (...objects: any) => {

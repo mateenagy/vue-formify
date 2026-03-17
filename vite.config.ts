@@ -1,4 +1,5 @@
 import * as path from 'path';
+import { fileURLToPath } from 'url';
 import vue from '@vitejs/plugin-vue';
 import typescript2 from 'rollup-plugin-typescript2';
 // eslint-disable-next-line import/namespace
@@ -6,6 +7,8 @@ import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import UnoCSS from 'unocss/vite'
 import vueDevTools from 'vite-plugin-vue-devtools';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
 	server: {
@@ -39,7 +42,7 @@ export default defineConfig({
 	],
 	build: {
 		cssCodeSplit: true,
-		minify: 'esbuild',
+		minify: 'oxc',
 		target: 'esnext',
 		lib: {
 			entry: 'src/main.ts',
@@ -47,7 +50,7 @@ export default defineConfig({
 			formats: ['es', 'umd'],
 			fileName: format => `vue-formify.${format}.js`,
 		},
-		rollupOptions: {
+		rolldownOptions: {
 			input: {
 				main: path.resolve(__dirname, 'src/main.ts'),
 			},
@@ -55,7 +58,7 @@ export default defineConfig({
 				'vue',
 			],
 			output: {
-				inlineDynamicImports: true,
+				codeSplitting: false,
 				exports: 'named',
 				globals: {
 					vue: 'Vue',
