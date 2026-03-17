@@ -108,7 +108,11 @@ export const useInput = <T extends Record<string, any> = InputProps>(
 
 	const onInput = async (evt: any) => {
 		if (!opt.isComponent) {
-			(typeof evt === 'object' && 'target' in evt) ? setValue(getValueByInputType(evt.target, props.trueValue, props.falseValue)) : setValue(evt);
+			if (typeof evt === 'object' && evt !== null && 'target' in evt) {
+				setValue(getValueByInputType(evt.target, props.trueValue, props.falseValue));
+			} else if (typeof evt !== 'object' || evt === null) {
+				setValue(evt);
+			}
 		}
 		if (!fieldItem.value) {
 			return;

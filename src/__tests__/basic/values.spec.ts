@@ -2,7 +2,7 @@ import { describe, it, expect, afterEach } from 'vitest';
 import { useForm } from '@/main';
 import { forms } from '@/utils/store';
 import { mount } from '@vue/test-utils';
-import { defineComponent, h, nextTick } from 'vue';
+import { defineComponent, h, nextTick, ref } from 'vue';
 
 describe('Form value collection', () => {
 	afterEach(() => {
@@ -133,6 +133,51 @@ describe('Form value collection', () => {
 		await nextTick();
 
 		expect(cbValues).toEqual({ email: 'test@test.com' });
+		wrapper.unmount();
+	});
+
+	it('should not set value to event object when component fires onInput with custom payload', async () => {
+		// Simulates components like PrimeVue InputNumber that fire onInput({ originalEvent, value })
+		// instead of a native DOM event. The value should come from onUpdate:modelValue, not onInput.
+		let formValues: any;
+
+		const NumericInput = defineComponent({
+			props: ['modelValue', 'onInput', 'onUpdate:modelValue'],
+			setup(props) {
+				const internalValue = ref(props.modelValue);
+				const simulate = (val: number) => {
+					internalValue.value = val;
+					// Fire onInput with a component-style event object (not a native DOM event)
+					props.onInput?.({ originalEvent: new Event('input'), value: val });
+					// Fire update:modelValue with the actual value
+					props['onUpdate:modelValue']?.(val);
+				};
+
+				return { internalValue, simulate };
+			},
+			render() {
+				return h('button', { onClick: () => this.simulate(42) }, 'set');
+			},
+		});
+
+		const cmp = defineComponent(() => {
+			const { Form, Field, values } = useForm({ name: 'values-component-input' });
+			formValues = values;
+
+			return () => h(Form, {}, () => [
+				h(Field, { name: 'amount' }, {
+					default: ({ field }: any) => h(NumericInput, { ...field }),
+				}),
+			]);
+		});
+
+		const wrapper = mount(cmp);
+		await nextTick();
+
+		await wrapper.find('button').trigger('click');
+		await nextTick();
+
+		expect(formValues.value.amount).toBe(42);
 		wrapper.unmount();
 	});
 
