@@ -42,7 +42,7 @@ export default defineConfig({
 	],
 	build: {
 		cssCodeSplit: true,
-		minify: 'esbuild',
+		minify: 'oxc',
 		target: 'esnext',
 		lib: {
 			entry: 'src/main.ts',
@@ -50,7 +50,7 @@ export default defineConfig({
 			formats: ['es', 'umd'],
 			fileName: format => `vue-formify.${format}.js`,
 		},
-		rollupOptions: {
+		rolldownOptions: {
 			input: {
 				main: path.resolve(__dirname, 'src/main.ts'),
 			},
@@ -58,7 +58,7 @@ export default defineConfig({
 				'vue',
 			],
 			output: {
-				inlineDynamicImports: true,
+				codeSplitting: false,
 				exports: 'named',
 				globals: {
 					vue: 'Vue',

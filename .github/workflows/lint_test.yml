@@ -12,9 +12,9 @@ jobs:
   - uses: actions/checkout@v4
   - uses: actions/setup-node@v4
     with:
-        node-version: 20
+        node-version: 24
   - run: npm i
   - name: Run oxlint
     run: npm run oxl:lint
   - name: Run vitest
-    run: npx vitest --environment jsdom run
+    run: npx vitest run
