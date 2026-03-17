@@ -2,7 +2,7 @@ import { describe, it, expect, afterEach } from 'vitest';
 import { useForm } from '@/main';
 import { forms } from '@/utils/store';
 import { mount } from '@vue/test-utils';
-import { defineComponent, h, nextTick, ref } from 'vue';
+import { defineComponent, h, nextTick, reactive, ref } from 'vue';
 
 describe('Form value collection', () => {
 	afterEach(() => {
@@ -178,6 +178,64 @@ describe('Form value collection', () => {
 		await nextTick();
 
 		expect(formValues.value.amount).toBe(42);
+		wrapper.unmount();
+	});
+
+	it('should not corrupt value when native input events bubble from component internal elements', async () => {
+		// Simulates OTP-style components (e.g. PrimeVue InputOtp) that render multiple internal
+		// <input> elements. Their native 'input' events bubble to the component root where
+		// onInput (from v-bind="field") is attached via inheritAttrs. Without the fix, each
+		// bubbled event would overwrite the value with just the single digit from that box.
+		let formValues: any;
+
+		const OtpLikeInput = defineComponent({
+			props: ['modelValue'],
+			emits: ['update:modelValue'],
+			setup(_props, { emit }) {
+				const digits = reactive(['', '']);
+				return () => h('div', [
+					h('input', {
+						class: 'digit-0',
+						onInput: (e: Event) => {
+							digits[0] = (e.target as HTMLInputElement).value;
+							emit('update:modelValue', digits.join(''));
+						},
+					}),
+					h('input', {
+						class: 'digit-1',
+						onInput: (e: Event) => {
+							digits[1] = (e.target as HTMLInputElement).value;
+							emit('update:modelValue', digits.join(''));
+						},
+					}),
+				]);
+			},
+		});
+
+		const cmp = defineComponent(() => {
+			const { Form, Field, values } = useForm({ name: 'values-otp' });
+			formValues = values;
+
+			return () => h(Form, {}, () => [
+				h(Field, { name: 'otp' }, {
+					default: ({ field }: any) => h(OtpLikeInput, { ...field }),
+				}),
+			]);
+		});
+
+		const wrapper = mount(cmp);
+		await nextTick();
+
+		await wrapper.find('.digit-0').setValue('1');
+		await nextTick();
+		// update:modelValue emits '1'; bubbled native event on root should be ignored
+		expect(formValues.value.otp).toBe('1');
+
+		await wrapper.find('.digit-1').setValue('2');
+		await nextTick();
+		// update:modelValue emits '12'; bubbled native event on root should be ignored
+		expect(formValues.value.otp).toBe('12');
+
 		wrapper.unmount();
 	});
 

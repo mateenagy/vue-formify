@@ -109,10 +109,17 @@ export const useInput = <T extends Record<string, any> = InputProps>(
 	const onInput = async (evt: any) => {
 		if (!opt.isComponent) {
 			if (typeof evt === 'object' && evt !== null && 'target' in evt) {
-				setValue(getValueByInputType(evt.target, props.trueValue, props.falseValue));
+				// Skip native events that bubbled from internal elements of a component wrapper.
+				// When onInput is applied to a component root via inheritAttrs, internal inputs
+				// fire native events that bubble up — currentTarget is the root, target is the inner element.
+				const isBubbled = evt.currentTarget != null && evt.target !== evt.currentTarget;
+				if (!isBubbled) {
+					setValue(getValueByInputType(evt.target, props.trueValue, props.falseValue));
+				}
 			} else if (typeof evt !== 'object' || evt === null) {
 				setValue(evt);
 			}
+			// Object without 'target': component-specific event payload — skip, onUpdate:modelValue handles it.
 		}
 		if (!fieldItem.value) {
 			return;
