@@ -23,6 +23,7 @@ const stringType = type.string.atLeastLength(2).configure({ message: 'Last name 
 /*---------------------------------------------
 /  VARIABLES
 ---------------------------------------------*/
+const OtherForm = useForm({ name: 'other' });
 const { Form, Field, Error, FieldArray } = useForm({
 	name: 'UserForm',
 	mode: 'onChange',
@@ -59,6 +60,10 @@ const test = ref<number>(0);
 </script>
 <template>
 	<div class="container">
+		<OtherForm.Form v-slot="{ values: otherValues }">
+			<pre>{{ otherValues }}</pre>
+			<OtherForm.Field name="booo"></OtherForm.Field>
+		</OtherForm.Form>
 		<Form v-slot="{ values, isValid }">
 			{{ test }}
 			<InputNumber v-model="test" />

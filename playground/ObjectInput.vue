@@ -8,7 +8,7 @@ const { value, setValue } = useInput(props);
 
 const minMax = computed({
 	get: () => [value.value.min, value.value.max],
-	set: (val) => setValue({min: val[0], max: val[1]}),
+	set: (val) => setValue({ min: val[0], max: val[1] }),
 })
 </script>
 <template>

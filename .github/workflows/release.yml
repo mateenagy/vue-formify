@@ -17,22 +17,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: 24
-          registry-url: 'https://registry.npmjs.org'
-
-      - run: npm i -g npm@10.5.0
+          bun-version: "latest"
 
       - name: Install deps
-        run: npm i --include=optional
+        run: bun i
 
       - name: Build
-        run: npm run build:npm
+        run: bun run build:npm
 
       - name: Publish to npm
-        run: npm publish
+        run: bun publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
