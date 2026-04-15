@@ -95,13 +95,13 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 		values.value = flattenObject(forms[uid].values) as T;
 	}
 
-	provide('formData', {
-		uid,
-		preserveForm: opt?.preserve,
-		mode: opt?.mode,
-		isSubmitted,
-	});
 	const cmp = defineComponent((props: Prettify<FormType<T>>, { slots, emit, attrs }) => {
+		provide('formData', {
+			uid,
+			preserveForm: opt?.preserve,
+			mode: opt?.mode,
+			isSubmitted,
+		});
 		/*---------------------------------------------
 		/  METHODS
 		---------------------------------------------*/

@@ -10,11 +10,11 @@ jobs:
 
   steps:
   - uses: actions/checkout@v4
-  - uses: actions/setup-node@v4
+  - uses: oven-sh/setup-bun@v2
     with:
-        node-version: 24
-  - run: npm i
+      bun-version: "latest"
+  - run: bun i
   - name: Run oxlint
-    run: npm run oxl:lint
+    run: bun run oxl:lint
   - name: Run vitest
-    run: npx vitest run
+    run: bun run test
