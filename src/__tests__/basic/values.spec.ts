@@ -136,9 +136,10 @@ describe('Form value collection', () => {
 		wrapper.unmount();
 	});
 
-	it('should not set value to event object when component fires onInput with custom payload', async () => {
-		// Simulates components like PrimeVue InputNumber that fire onInput({ originalEvent, value })
-		// instead of a native DOM event. The value should come from onUpdate:modelValue, not onInput.
+	it('should set value from onInput payload when component fires input event without update:modelValue', async () => {
+		// Simulates PrimeVue InputNumber v4 which fires onInput({ originalEvent, value }) on every
+		// keystroke but only emits update:modelValue on blur/enter. Without reading evt.value in
+		// onInput, regular typing would never update the form value.
 		let formValues: any;
 
 		const NumericInput = defineComponent({
@@ -148,9 +149,8 @@ describe('Form value collection', () => {
 				const simulate = (val: number) => {
 					internalValue.value = val;
 					// Fire onInput with a component-style event object (not a native DOM event)
+					// Intentionally NOT firing update:modelValue to simulate PrimeVue typing behavior
 					props.onInput?.({ originalEvent: new Event('input'), value: val });
-					// Fire update:modelValue with the actual value
-					props['onUpdate:modelValue']?.(val);
 				};
 
 				return { internalValue, simulate };

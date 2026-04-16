@@ -118,8 +118,9 @@ export const useInput = <T extends Record<string, any> = InputProps>(
 				}
 			} else if (typeof evt !== 'object' || evt === null) {
 				setValue(evt);
+			} else if ('value' in evt) {
+				setValue(evt.value);
 			}
-			// Object without 'target': component-specific event payload — skip, onUpdate:modelValue handles it.
 		}
 		if (!fieldItem.value) {
 			return;
