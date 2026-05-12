@@ -1,8 +1,23 @@
 import { describe, it, expect, afterEach } from 'vitest';
 import { useForm } from '@/main';
 import { forms } from '@/utils/store';
+import { StandardSchemaV1 } from '@/utils/types';
 import { mount } from '@vue/test-utils';
 import { defineComponent, h, nextTick } from 'vue';
+
+const createMinLengthSchema = (fields: string[], min: number, message: string): StandardSchemaV1<any, any> => ({
+	'~standard': {
+		version: 1,
+		vendor: 'test',
+		validate: (value: any) => {
+			const val = value as Record<string, any>;
+			const issues = fields
+				.filter(f => !val[f] || String(val[f]).length < min)
+				.map(f => ({ message, path: [{ key: f }] }));
+			return issues.length ? { issues } : { value: val };
+		},
+	},
+});
 
 describe('Form state and lifecycle', () => {
 	afterEach(() => {
@@ -227,6 +242,125 @@ describe('Form state and lifecycle', () => {
 		await nextTick();
 
 		expect(wrapper.find('.dirty').text()).toBe('true');
+		wrapper.unmount();
+	});
+
+	it('should recalculate isValid after setValue', async () => {
+		const cmp = defineComponent(() => {
+			const { Form, Field, setValue } = useForm({ name: 'fs-setvalue-valid' });
+
+			return () => h(Form, {}, {
+				default: ({ isValid }: any) => [
+					h(Field, { name: 'email' }),
+					h('button', {
+						type: 'button',
+						onClick: () => setValue('email', 'test@test.com'),
+					}, 'Set'),
+					h('span', { class: 'valid' }, `${isValid}`),
+				],
+			});
+		});
+
+		const wrapper = mount(cmp);
+		await nextTick();
+
+		expect(wrapper.find('.valid').text()).toBe('false');
+
+		await wrapper.find('button').trigger('click');
+		await nextTick();
+
+		expect(wrapper.find('.valid').text()).toBe('true');
+		wrapper.unmount();
+	});
+
+	it('should recalculate isValid after setValues', async () => {
+		const cmp = defineComponent(() => {
+			const { Form, Field, setValues } = useForm({ name: 'fs-setvalues-valid' });
+
+			return () => h(Form, {}, {
+				default: ({ isValid }: any) => [
+					h(Field, { name: 'email' }),
+					h(Field, { name: 'name' }),
+					h('button', {
+						type: 'button',
+						onClick: () => setValues({ email: 'test@test.com', name: 'John' } as any),
+					}, 'Set'),
+					h('span', { class: 'valid' }, `${isValid}`),
+				],
+			});
+		});
+
+		const wrapper = mount(cmp);
+		await nextTick();
+
+		expect(wrapper.find('.valid').text()).toBe('false');
+
+		await wrapper.find('button').trigger('click');
+		await nextTick();
+
+		expect(wrapper.find('.valid').text()).toBe('true');
+		wrapper.unmount();
+	});
+
+	it('should keep isValid false after setValues when schema validation fails', async () => {
+		const schema = createMinLengthSchema(['firstName', 'lastName'], 2, 'Too short');
+
+		const cmp = defineComponent(() => {
+			const { Form, Field, setValues } = useForm({ name: 'fs-setvalues-schema-invalid', schema });
+
+			return () => h(Form, {}, {
+				default: ({ isValid }: any) => [
+					h(Field, { name: 'firstName' }),
+					h(Field, { name: 'lastName' }),
+					h('button', {
+						type: 'button',
+						onClick: () => setValues({ firstName: '', lastName: '' } as any),
+					}, 'Set'),
+					h('span', { class: 'valid' }, `${isValid}`),
+				],
+			});
+		});
+
+		const wrapper = mount(cmp);
+		await nextTick();
+
+		await wrapper.find('button').trigger('click');
+		await nextTick();
+		await nextTick();
+
+		expect(wrapper.find('.valid').text()).toBe('false');
+		wrapper.unmount();
+	});
+
+	it('should set isValid true after setValues when schema validation passes', async () => {
+		const schema = createMinLengthSchema(['firstName', 'lastName'], 2, 'Too short');
+
+		const cmp = defineComponent(() => {
+			const { Form, Field, setValues } = useForm({ name: 'fs-setvalues-schema-valid', schema });
+
+			return () => h(Form, {}, {
+				default: ({ isValid }: any) => [
+					h(Field, { name: 'firstName' }),
+					h(Field, { name: 'lastName' }),
+					h('button', {
+						type: 'button',
+						onClick: () => setValues({ firstName: 'John', lastName: 'Doe' } as any),
+					}, 'Set'),
+					h('span', { class: 'valid' }, `${isValid}`),
+				],
+			});
+		});
+
+		const wrapper = mount(cmp);
+		await nextTick();
+
+		expect(wrapper.find('.valid').text()).toBe('false');
+
+		await wrapper.find('button').trigger('click');
+		await nextTick();
+		await nextTick();
+
+		expect(wrapper.find('.valid').text()).toBe('true');
 		wrapper.unmount();
 	});
 
