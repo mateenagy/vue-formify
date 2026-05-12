@@ -46,10 +46,16 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 
 	const setValue = (name: GetKeys<T>, value: any) => {
 		if (getValueByPath(forms[uid].values, name as unknown as string)) {
-			getValueByPath(forms[uid].values, name as unknown as string).value = value;
+			const field = getValueByPath(forms[uid].values, name as unknown as string);
+			field.value = value;
+			field.isDirty = true;
+			field.error = undefined;
 		} else {
-			const obj = stringToObject(name as string, { value, error: undefined });
+			const obj = stringToObject(name as string, { value, error: undefined, isDirty: true });
 			forms[uid].values = mergeDeep(forms[uid].values, obj);
+		}
+		if (opt?.schema) {
+			validateSchema(opt.schema, flattenObject(forms[uid].values), setError);
 		}
 	};
 
@@ -57,8 +63,14 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 		const convertedKeys = objectToString(values);
 		for (const key in convertedKeys) {
 			if (getValueByPath(forms[uid].values, key as string) && 'value' in getValueByPath(forms[uid].values, key as string)) {
-				getValueByPath(forms[uid].values, key as string).value = convertedKeys[key];
+				const field = getValueByPath(forms[uid].values, key as string);
+				field.value = convertedKeys[key];
+				field.isDirty = true;
+				field.error = undefined;
 			}
+		}
+		if (opt?.schema) {
+			validateSchema(opt.schema, flattenObject(forms[uid].values), setError);
 		}
 	};
 
@@ -136,7 +148,14 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 		const initialValueToValue = () => {
 			const convertedKeys = objectToString(forms[uid].initialValues);
 			for (const key in convertedKeys) {
-				!forms[uid].values[key]?.value && setValue(key as GetKeys<T>, convertedKeys[key]);
+				if (!forms[uid].values[key]?.value) {
+					const field = getValueByPath(forms[uid].values, key);
+					if (field) {
+						field.value = convertedKeys[key];
+					} else {
+						forms[uid].values = mergeDeep(forms[uid].values, stringToObject(key, { value: convertedKeys[key], error: undefined }));
+					}
+				}
 			}
 		};
 		/*---------------------------------------------
