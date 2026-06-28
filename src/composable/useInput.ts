@@ -1,6 +1,6 @@
 import { computed, getCurrentInstance, inject, nextTick, onBeforeUnmount, onMounted, warn } from 'vue';
 import { forms } from '@/utils/store';
-import { createFormInput, deleteByPath, EventEmitter, getValueByPath, mergeDeep, objectToModelValue } from '@/utils/utils';
+import { cloneValue, createFormInput, deleteByPath, EventEmitter, getValueByPath, isFieldDirty, mergeDeep, objectToModelValue } from '@/utils/utils';
 import { FieldArrayType, FieldDefaults, FieldType, InputProps, UseInputOption } from '@/utils/types';
 import { useFieldValidation } from './useFieldValidation';
 
@@ -45,17 +45,17 @@ export const useInput = <T extends Record<string, any> = InputProps>(
 	/* FIELD STATE */
 	const defaultValue: FieldDefaults = {
 		value: getValueByPath(forms[uid].values, name)?.value ?? undefined,
+		initialValue: undefined,
 		error: undefined,
 		ignore: props.ignore,
-		isDirty: false,
 		isTouched: false,
 		isValid: true,
 	};
 
 	const fieldItem = computed<FieldDefaults>(() => getValueByPath(forms[uid].values, name));
-	const isValid = computed(() => !(fieldItem.value?.error && (fieldItem.value.isDirty || isSubmitted.value || mode === 'onSubmit')));
+	const isDirty = computed(() => isFieldDirty(fieldItem.value));
 	const isTouched = computed(() => fieldItem.value?.isTouched);
-	const isDirty = computed(() => fieldItem.value?.isDirty);
+	const isValid = computed(() => !(fieldItem.value?.error && (isDirty.value || isSubmitted.value || mode === 'onSubmit')));
 
 	const setArrayValue = (value: any, key: any = name) => {
 		const field = getValueByPath(forms[uid].values, key);
@@ -77,9 +77,6 @@ export const useInput = <T extends Record<string, any> = InputProps>(
 		set(newVal) {
 			if (!fieldItem.value) {
 				return;
-			}
-			if (fieldItem.value?.isTouched && defaultValue.value !== value.value) {
-				fieldItem.value.isDirty = true;
 			}
 			if (opt.isArray || Array.isArray(newVal)) {
 				fieldItem.value.value = [];
@@ -172,7 +169,9 @@ export const useInput = <T extends Record<string, any> = InputProps>(
 	if (!name) {
 		warn('`name` prop is required');
 	} else {
-		fieldItem.value.value = getInitialValue();
+		const initial = getInitialValue();
+		fieldItem.value.value = initial;
+		fieldItem.value.initialValue = cloneValue(initial);
 	}
 
 	/* LIFECYCLE */
@@ -185,7 +184,6 @@ export const useInput = <T extends Record<string, any> = InputProps>(
 
 	onMounted(async () => {
 		await nextTick();
-		(value.value && !Array.isArray(value.value) && fieldItem.value) && (fieldItem.value.isDirty = true);
 		if (vm?.subTree?.el) {
 			if ('as' in props && props.as === 'select') {
 				const options = Array.from((vm.subTree.el as unknown as HTMLSelectElement).options);

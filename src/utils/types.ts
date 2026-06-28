@@ -124,9 +124,9 @@ export type InputProps<T extends Record<string, any> = Record<string, any>> = {
 
 export type FieldDefaults = {
 	value: any,
+	initialValue: any,
 	error: any,
 	ignore: boolean | undefined,
-	isDirty: boolean,
 	isTouched: boolean,
 	isValid: boolean,
 }

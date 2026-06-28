@@ -1,6 +1,6 @@
 import { forms } from '@/utils/store';
 import { GetKeys } from '@/utils/types';
-import { getErrorMessage, getValueByPath } from '@/utils/utils';
+import { getErrorMessage, getValueByPath, isFieldDirty } from '@/utils/utils';
 import { defineComponent, inject, h, SlotsType, PropType } from 'vue';
 
 export const ErrorComp = <T extends Record<string, any> = Record<string, any>>() => defineComponent(
@@ -8,7 +8,7 @@ export const ErrorComp = <T extends Record<string, any> = Record<string, any>>()
 		const { uid, mode, isSubmitted } = inject('formData', Object.create({}));
 		
 		const getError = () => {
-			if (mode === 'onSubmit' || isSubmitted.value || getValueByPath(forms[uid].values, props.errorFor as string)?.isDirty) {
+			if (mode === 'onSubmit' || isSubmitted.value || isFieldDirty(getValueByPath(forms[uid].values, props.errorFor as string))) {
 				return getErrorMessage(forms[uid].values, props.errorFor as string);
 			}
 		};
