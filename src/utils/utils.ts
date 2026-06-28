@@ -188,21 +188,113 @@ export const deleteByPath = (object: Record<string, any>, path: string) => {
 	}
 };
 
-export function hasDirty(dirty: any): boolean {
-	if (typeof dirty === 'boolean') {
-		return dirty;
+/**
+ * Deep clone a value. Primitives are returned as-is; objects/arrays are
+ * structurally cloned so a stored snapshot can't be mutated by later writes.
+ */
+export const cloneValue = (val: any): any => {
+	if (val === null || typeof val !== 'object') {
+		return val;
 	}
 
-	if (Array.isArray(dirty)) {
-		return dirty.every(item => hasDirty(item));
+	try {
+		return JSON.parse(JSON.stringify(val));
+	} catch {
+		return val;
+	}
+};
+
+/**
+ * Structural equality. Treats `undefined`-valued keys and missing keys as
+ * equivalent so a JSON-cloned snapshot (which drops `undefined`) still matches
+ * a live field object that carries `error: undefined`.
+ */
+export const isEqual = (a: any, b: any): boolean => {
+	if (a === b) {
+		return true;
 	}
 
-	if (typeof dirty === 'object' && dirty !== null) {
-		return Object.values(dirty).every(value => hasDirty(value));
+	if (typeof a !== typeof b) {
+		return false;
+	}
+
+	if (typeof a !== 'object' || a === null || b === null) {
+		// NaN === NaN
+		return a !== a && b !== b;
+	}
+
+	if (a instanceof Date || b instanceof Date) {
+		return a instanceof Date && b instanceof Date && a.getTime() === b.getTime();
+	}
+
+	if (typeof File !== 'undefined' && (a instanceof File || b instanceof File)) {
+		return a === b;
+	}
+
+	if (typeof Blob !== 'undefined' && (a instanceof Blob || b instanceof Blob)) {
+		return a === b;
+	}
+
+	const aIsArray = Array.isArray(a);
+	const bIsArray = Array.isArray(b);
+	if (aIsArray !== bIsArray) {
+		return false;
+	}
+
+	if (aIsArray) {
+		if (a.length !== b.length) {
+			return false;
+		}
+
+		return a.every((item: any, index: number) => isEqual(item, b[index]));
+	}
+
+	const aKeys = Object.keys(a).filter(key => a[key] !== undefined);
+	const bKeys = Object.keys(b).filter(key => b[key] !== undefined);
+	if (aKeys.length !== bKeys.length) {
+		return false;
+	}
+
+	return aKeys.every(key => isEqual(a[key], b[key]));
+};
+
+/**
+ * A single field is dirty when its current value differs from the value it was
+ * initialised with.
+ */
+export const isFieldDirty = (field: any): boolean =>
+	!!field && typeof field === 'object' && 'value' in field && !isEqual(field.value, field.initialValue);
+
+/**
+ * The form is dirty when any field in it is dirty. Walks the nested store,
+ * treating nodes that carry a `value` key as leaf fields (covers scalar,
+ * object-value and array fields) and recursing through dot-path segments.
+ */
+export const isFormDirty = (values: Record<string, any>): boolean => {
+	if (!values || typeof values !== 'object') {
+		return false;
+	}
+
+	for (const key in values) {
+		const node = values[key];
+		if (!node || typeof node !== 'object') {
+			continue;
+		}
+
+		if ('value' in node) {
+			if (node.ignore) {
+				continue;
+			}
+			if (isFieldDirty(node)) {
+				return true;
+			}
+		} else if (isFormDirty(node)) {
+			return true;
+		}
 	}
 
 	return false;
-}
+};
 
 export function hasErrors(errors: any): boolean {
 	if (typeof errors === 'string' && errors) {
@@ -224,7 +316,7 @@ export const getErrorMessage = <T extends Record<string, any>>(values: Record<st
 	return getValueByPath(values, errorFor as string)?.error;
 };
 
-export const flattenObject = (obj: any, type: 'value' | 'error' | 'isDirty' = 'value'): Record<string, any> => {
+export const flattenObject = (obj: any, type: 'value' | 'error' = 'value'): Record<string, any> => {
 	const result: any = {};
 	for (const key in obj) {
 		if (obj[key] && typeof obj[key] === 'object' && 'value' in obj[key]) {

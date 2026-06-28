@@ -1,6 +1,6 @@
 import { forms } from '@/utils/store';
 import { FormOptions, GetKeys, Prettify, RecursivePartial } from '@/utils/types';
-import { createFormDataFromObject, EventEmitter, fetcher, flattenObject, getValueByPath, mergeDeep, objectToString, stringToObject, hasDirty, hasErrors, getErrorMessage } from '@/utils/utils';
+import { createFormDataFromObject, EventEmitter, fetcher, flattenObject, getValueByPath, mergeDeep, objectToString, stringToObject, isFormDirty, hasErrors, getErrorMessage } from '@/utils/utils';
 import { validateSchema } from '@/utils/validator';
 import { computed, defineComponent, h, nextTick, onMounted, PropType, provide, ref, SlotsType, watch } from 'vue';
 
@@ -48,10 +48,9 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 		if (getValueByPath(forms[uid].values, name as unknown as string)) {
 			const field = getValueByPath(forms[uid].values, name as unknown as string);
 			field.value = value;
-			field.isDirty = true;
 			field.error = undefined;
 		} else {
-			const obj = stringToObject(name as string, { value, error: undefined, isDirty: true });
+			const obj = stringToObject(name as string, { value, error: undefined });
 			forms[uid].values = mergeDeep(forms[uid].values, obj);
 		}
 		if (opt?.schema) {
@@ -65,7 +64,6 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 			if (getValueByPath(forms[uid].values, key as string) && 'value' in getValueByPath(forms[uid].values, key as string)) {
 				const field = getValueByPath(forms[uid].values, key as string);
 				field.value = convertedKeys[key];
-				field.isDirty = true;
 				field.error = undefined;
 			}
 		}
@@ -92,7 +90,7 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 		get: () => flattenObject(forms[uid]?.values) as T,
 		set: (newValue: T) => newValue,
 	});
-	const isDirty = computed(() => hasDirty(flattenObject(forms[uid]?.values, 'isDirty')));
+	const isDirty = computed(() => isFormDirty(forms[uid]?.values));
 	const isValid = computed(() => isDirty.value && !hasErrors(flattenObject(forms[uid]?.values, 'error')));
 	/*---------------------------------------------
 	/  CREATED

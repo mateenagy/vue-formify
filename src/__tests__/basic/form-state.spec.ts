@@ -28,7 +28,7 @@ describe('Form state and lifecycle', () => {
 		}
 	});
 
-	it('should report isDirty when all fields are modified', async () => {
+	it('should report isDirty when any single field is modified', async () => {
 		const cmp = defineComponent(() => {
 			const { Form, Field } = useForm({ name: 'fs-dirty' });
 
@@ -46,13 +46,70 @@ describe('Form state and lifecycle', () => {
 
 		expect(wrapper.find('.dirty').text()).toBe('false');
 
-		// Modify both fields (isDirty uses .every() so ALL fields must be dirty)
+		// Modifying a single field is enough to make the form dirty.
 		const inputs = wrapper.findAll('input');
 		await inputs[0].setValue('test@test.com');
-		await inputs[1].setValue('John');
 		await nextTick();
 
 		expect(wrapper.find('.dirty').text()).toBe('true');
+		wrapper.unmount();
+	});
+
+	it('should not be dirty on mount when fields have initial values', async () => {
+		const cmp = defineComponent(() => {
+			const { Form, Field } = useForm({
+				name: 'fs-dirty-initial',
+				initialValues: { email: 'test@test.com', name: 'John' },
+			});
+
+			return () => h(Form, {}, {
+				default: ({ isDirty }: any) => [
+					h(Field, { name: 'email' }),
+					h(Field, { name: 'name' }),
+					h('span', { class: 'dirty' }, `${isDirty}`),
+				],
+			});
+		});
+
+		const wrapper = mount(cmp);
+		await nextTick();
+		await nextTick();
+
+		// A field carrying an initial value is unchanged, so the form is pristine.
+		expect(wrapper.find('.dirty').text()).toBe('false');
+		wrapper.unmount();
+	});
+
+	it('should reset isDirty when a field returns to its initial value', async () => {
+		const cmp = defineComponent(() => {
+			const { Form, Field } = useForm({
+				name: 'fs-dirty-revert',
+				initialValues: { email: 'initial@test.com' },
+			});
+
+			return () => h(Form, {}, {
+				default: ({ isDirty }: any) => [
+					h(Field, { name: 'email' }),
+					h('span', { class: 'dirty' }, `${isDirty}`),
+				],
+			});
+		});
+
+		const wrapper = mount(cmp);
+		await nextTick();
+		await nextTick();
+
+		expect(wrapper.find('.dirty').text()).toBe('false');
+
+		const input = wrapper.find('input');
+		await input.setValue('changed@test.com');
+		await nextTick();
+		expect(wrapper.find('.dirty').text()).toBe('true');
+
+		// Typing the original value back clears the dirty state.
+		await input.setValue('initial@test.com');
+		await nextTick();
+		expect(wrapper.find('.dirty').text()).toBe('false');
 		wrapper.unmount();
 	});
 
@@ -232,12 +289,9 @@ describe('Form state and lifecycle', () => {
 
 		expect(wrapper.find('.dirty').text()).toBe('false');
 
-		// Input a value — first input sets isTouched, second sets isDirty
+		// A value differing from the initial value marks the field dirty.
 		const input = wrapper.find('input');
 		await input.setValue('a');
-		await input.trigger('input');
-		await nextTick();
-		await input.setValue('ab');
 		await input.trigger('input');
 		await nextTick();
 

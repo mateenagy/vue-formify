@@ -1,4 +1,4 @@
-import { getValueByPath } from '@/utils/utils';
+import { getValueByPath, isFieldDirty } from '@/utils/utils';
 import { forms } from '@/utils/store';
 import { FieldDefaults } from '@/utils/types';
 import { validateSchema } from '@/utils/validator';
@@ -36,7 +36,7 @@ export const useFieldValidation = (
 	};
 
 	const getError = () =>
-		(fieldItem.value?.isDirty || isSubmitted.value || mode === 'onSubmit') ? fieldItem.value?.error : undefined;
+		(isFieldDirty(fieldItem.value) || isSubmitted.value || mode === 'onSubmit') ? fieldItem.value?.error : undefined;
 
 	return { setError, resetError, validateField, getError };
 }
