@@ -49,13 +49,14 @@ export const useInput = <T extends Record<string, any> = InputProps>(
 		error: undefined,
 		ignore: props.ignore,
 		isTouched: false,
-		isValid: true,
 	};
 
 	const fieldItem = computed<FieldDefaults>(() => getValueByPath(forms[uid].values, name));
 	const isDirty = computed(() => isFieldDirty(fieldItem.value));
 	const isTouched = computed(() => fieldItem.value?.isTouched);
-	const isValid = computed(() => !(fieldItem.value?.error && (isDirty.value || isSubmitted.value || mode === 'onSubmit')));
+	// Validity is derived purely from the field's error state, independent of
+	// dirty/touched. Whether the error is *shown* is gated separately (getError).
+	const isValid = computed(() => !fieldItem.value?.error);
 
 	const setArrayValue = (value: any, key: any = name) => {
 		const field = getValueByPath(forms[uid].values, key);

@@ -28,10 +28,7 @@ export const useFieldValidation = (
 
 	const validateField = async () => {
 		if (rule) {
-			const result = await validateSchema(rule, value.value, setError, name);
-			if (fieldItem.value) {
-				fieldItem.value.isValid = result;
-			}
+			return await validateSchema(rule, value.value, setError, name);
 		}
 	};
 
