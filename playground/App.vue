@@ -16,8 +16,25 @@ const schema = type({
 /  Starts with VALID initial values, so on mount the form is
 /  pristine (not dirty) AND valid — that combination is the whole
 /  point of Batch 2.
+/
+/  Batch 3: the form-level state (isDirty/isValid/isTouched/
+/  isSubmitted/submitCount) and getFieldState come straight off the
+/  useForm() return — no <Form> slot needed.
 ---------------------------------------------*/
-const { Form, Field, Error, reset, setError } = useForm({
+const {
+	Form,
+	Field,
+	Error,
+	reset,
+	setError,
+	getFieldState,
+	isDirty,
+	isValid,
+	isTouched,
+	isSubmitted,
+	submitCount,
+	values,
+} = useForm({
 	name: 'state-demo',
 	mode: 'onChange',
 	initialValues: {
@@ -31,6 +48,10 @@ const { Form, Field, Error, reset, setError } = useForm({
 // false immediately, but the message stays hidden until the field is dirty
 // or the form is submitted (error display is gated, validity is not).
 const flagEmail = () => setError('email', 'Flagged invalid programmatically');
+
+const onSubmit = (val: unknown) => {
+	console.log('submitted', val);
+};
 </script>
 
 <template>
@@ -38,9 +59,10 @@ const flagEmail = () => setError('email', 'Flagged invalid programmatically');
 		<header>
 			<h1>vue-formify — field state demo</h1>
 			<p class="sub">
-				Live demonstration of <strong>Batch 1 (isDirty)</strong> and
-				<strong>Batch 2 (isValid)</strong>. The form starts with valid initial
-				values, so it mounts <em>pristine and valid</em>.
+				Live demonstration of <strong>Batch 1 (isDirty)</strong>,
+				<strong>Batch 2 (isValid)</strong> and
+				<strong>Batch 3 (complete state surface)</strong>. The form starts with
+				valid initial values, so it mounts <em>pristine and valid</em>.
 			</p>
 		</header>
 
@@ -61,19 +83,26 @@ const flagEmail = () => setError('email', 'Flagged invalid programmatically');
 					<li>A field error makes the form invalid — even while pristine.</li>
 				</ul>
 			</div>
+			<div class="card">
+				<h2>Batch 3 — state surface</h2>
+				<ul>
+					<li><code>isDirty/isValid/isTouched/isSubmitted/submitCount</code> on the <code>useForm()</code> return.</li>
+					<li><code>getFieldState(name)</code> reads a single field, no slot needed.</li>
+					<li>Same set is also available on the <code>&lt;Form&gt;</code> slot.</li>
+				</ul>
+			</div>
 		</div>
 
-		<Form v-slot="{ values, isDirty, isValid }">
-			<!-- FORM-LEVEL STATE -->
-			<div class="statusbar">
-				<span class="badge" :class="isDirty ? 'on' : 'off'">
-					form.isDirty: {{ isDirty }}
-				</span>
-				<span class="badge" :class="isValid ? 'valid' : 'invalid'">
-					form.isValid: {{ isValid }}
-				</span>
-			</div>
+		<!-- FORM-LEVEL STATE — straight from the useForm() return (Batch 3) -->
+		<div class="statusbar">
+			<span class="badge" :class="isDirty ? 'on' : 'off'">isDirty: {{ isDirty }}</span>
+			<span class="badge" :class="isValid ? 'valid' : 'invalid'">isValid: {{ isValid }}</span>
+			<span class="badge" :class="isTouched ? 'on' : 'off'">isTouched: {{ isTouched }}</span>
+			<span class="badge" :class="isSubmitted ? 'on' : 'off'">isSubmitted: {{ isSubmitted }}</span>
+			<span class="badge count">submitCount: {{ submitCount }}</span>
+		</div>
 
+		<Form @submit="onSubmit">
 			<!-- USERNAME -->
 			<Field name="username" v-slot="{ field }">
 				<div class="row">
@@ -119,24 +148,42 @@ const flagEmail = () => setError('email', 'Flagged invalid programmatically');
 					Flag email invalid (programmatic)
 				</button>
 			</div>
-
-			<p class="hint">
-				Try: type 2 chars in Username → <code>form.isDirty</code> becomes
-				<code>true</code> and that field's <code>isValid</code> becomes
-				<code>false</code>. Type the original value back → dirty returns to
-				<code>false</code>. Click <em>Flag email invalid</em> while you haven't
-				touched the email → <code>isValid</code> flips to <code>false</code> but
-				the message only appears after you focus the field or submit.
-			</p>
-
-			<pre>{{ values }}</pre>
 		</Form>
+
+		<!-- getFieldState INSPECTOR (Batch 3) -->
+		<section class="inspector">
+			<h3>getFieldState(name) — live snapshot</h3>
+			<div class="inspector-grid">
+				<div>
+					<h4>username</h4>
+					<pre>{{ getFieldState('username') }}</pre>
+				</div>
+				<div>
+					<h4>email</h4>
+					<pre>{{ getFieldState('email') }}</pre>
+				</div>
+			</div>
+		</section>
+
+		<p class="hint">
+			Try: type 2 chars in Username → <code>isDirty</code> becomes
+			<code>true</code> and that field's <code>isValid</code> becomes
+			<code>false</code>. Type the original value back → dirty returns to
+			<code>false</code>. Focus then blur a field → <code>isTouched</code>
+			flips. Click <em>Flag email invalid</em> while you haven't touched the
+			email → <code>isValid</code> flips to <code>false</code> but the message
+			only appears after you focus the field or submit. Hit <em>Submit</em>
+			a few times → <code>isSubmitted</code> and <code>submitCount</code>
+			update; <em>Reset</em> clears them.
+		</p>
+
+		<pre class="values">{{ values }}</pre>
 	</div>
 </template>
 
 <style scoped>
 .page {
-	max-width: 720px;
+	max-width: 760px;
 	margin: 0 auto;
 	padding: 2rem 1.25rem 4rem;
 	font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
@@ -156,7 +203,7 @@ h1 {
 
 .cards {
 	display: grid;
-	grid-template-columns: 1fr 1fr;
+	grid-template-columns: repeat(3, 1fr);
 	gap: 1rem;
 	margin-bottom: 2rem;
 }
@@ -169,14 +216,14 @@ h1 {
 }
 
 .card h2 {
-	font-size: 1rem;
+	font-size: 0.95rem;
 	margin: 0 0 0.5rem;
 }
 
 .card ul {
 	margin: 0;
 	padding-left: 1.1rem;
-	font-size: 0.85rem;
+	font-size: 0.82rem;
 	color: #3e4c59;
 	line-height: 1.5;
 }
@@ -191,6 +238,7 @@ code {
 .statusbar {
 	display: flex;
 	gap: 0.5rem;
+	flex-wrap: wrap;
 	margin-bottom: 1.5rem;
 	position: sticky;
 	top: 0;
@@ -267,6 +315,12 @@ input:focus {
 	border-color: #fecaca;
 }
 
+.badge.count {
+	background: #eef2ff;
+	color: #4338ca;
+	border-color: #c7d2fe;
+}
+
 .error {
 	color: #b91c1c;
 	font-size: 0.8rem;
@@ -299,6 +353,28 @@ button:hover {
 	filter: brightness(0.97);
 }
 
+.inspector {
+	margin: 2rem 0 1rem;
+}
+
+.inspector h3 {
+	font-size: 0.95rem;
+	margin: 0 0 0.75rem;
+}
+
+.inspector h4 {
+	font-size: 0.8rem;
+	margin: 0 0 0.35rem;
+	color: #52606d;
+	font-family: ui-monospace, monospace;
+}
+
+.inspector-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 1rem;
+}
+
 .hint {
 	font-size: 0.82rem;
 	color: #52606d;
@@ -316,5 +392,10 @@ pre {
 	border-radius: 8px;
 	font-size: 0.8rem;
 	overflow-x: auto;
+	margin: 0;
+}
+
+pre.values {
+	margin-top: 1.5rem;
 }
 </style>
