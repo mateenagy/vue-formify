@@ -128,7 +128,6 @@ export type FieldDefaults = {
 	error: any,
 	ignore: boolean | undefined,
 	isTouched: boolean,
-	isValid: boolean,
 }
 
 export type RecursivePartial<T> = {

@@ -80,7 +80,6 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 	const setError = (name: GetKeys<T>, error: any) => {
 		if (getValueByPath(forms[uid].values, name as unknown as string)) {
 			getValueByPath(forms[uid].values, name as unknown as string).error = error;
-			getValueByPath(forms[uid].values, name as unknown as string).isValid = false;
 		}
 	};
 	/*---------------------------------------------
@@ -91,7 +90,8 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 		set: (newValue: T) => newValue,
 	});
 	const isDirty = computed(() => isFormDirty(forms[uid]?.values));
-	const isValid = computed(() => isDirty.value && !hasErrors(flattenObject(forms[uid]?.values, 'error')));
+	// Validity is independent of dirtiness: a pristine form with no errors is valid.
+	const isValid = computed(() => !hasErrors(flattenObject(forms[uid]?.values, 'error')));
 	/*---------------------------------------------
 	/  CREATED
 	---------------------------------------------*/

@@ -113,14 +113,15 @@ describe('Form state and lifecycle', () => {
 		wrapper.unmount();
 	});
 
-	it('should report isValid when form is dirty with no errors', async () => {
+	it('should report isValid for a pristine form with no errors (independent of dirty)', async () => {
 		const cmp = defineComponent(() => {
 			const { Form, Field } = useForm({ name: 'fs-valid' });
 
 			return () => h(Form, {}, {
-				default: ({ isValid }: any) => [
+				default: ({ isValid, isDirty }: any) => [
 					h(Field, { name: 'email' }),
 					h('span', { class: 'valid' }, `${isValid}`),
+					h('span', { class: 'dirty' }, `${isDirty}`),
 				],
 			});
 		});
@@ -128,15 +129,47 @@ describe('Form state and lifecycle', () => {
 		const wrapper = mount(cmp);
 		await nextTick();
 
-		// Not dirty yet, so isValid is false
-		expect(wrapper.find('.valid').text()).toBe('false');
+		// Pristine and error-free: valid is true even though dirty is false.
+		expect(wrapper.find('.dirty').text()).toBe('false');
+		expect(wrapper.find('.valid').text()).toBe('true');
 
-		// Make the field dirty by entering a value
+		// Entering a value makes it dirty but it stays valid (no errors).
 		await wrapper.find('input').setValue('test@test.com');
 		await nextTick();
 
-		// Now dirty with no errors, so isValid is true
+		expect(wrapper.find('.dirty').text()).toBe('true');
 		expect(wrapper.find('.valid').text()).toBe('true');
+		wrapper.unmount();
+	});
+
+	it('should report invalid when a field has an error, regardless of dirty state', async () => {
+		const cmp = defineComponent(() => {
+			const { Form, Field, setError } = useForm({ name: 'fs-valid-error' });
+
+			return () => h(Form, {}, {
+				default: ({ isValid, isDirty }: any) => [
+					h(Field, { name: 'email' }),
+					h('button', {
+						type: 'button',
+						onClick: () => setError('email', 'Invalid email'),
+					}, 'Set Error'),
+					h('span', { class: 'valid' }, `${isValid}`),
+					h('span', { class: 'dirty' }, `${isDirty}`),
+				],
+			});
+		});
+
+		const wrapper = mount(cmp);
+		await nextTick();
+
+		expect(wrapper.find('.valid').text()).toBe('true');
+
+		// An error makes the form invalid even though it is still pristine.
+		await wrapper.find('button').trigger('click');
+		await nextTick();
+
+		expect(wrapper.find('.dirty').text()).toBe('false');
+		expect(wrapper.find('.valid').text()).toBe('false');
 		wrapper.unmount();
 	});
 
@@ -299,7 +332,7 @@ describe('Form state and lifecycle', () => {
 		wrapper.unmount();
 	});
 
-	it('should recalculate isValid after setValue', async () => {
+	it('should stay valid after setValue when no schema introduces errors', async () => {
 		const cmp = defineComponent(() => {
 			const { Form, Field, setValue } = useForm({ name: 'fs-setvalue-valid' });
 
@@ -318,7 +351,8 @@ describe('Form state and lifecycle', () => {
 		const wrapper = mount(cmp);
 		await nextTick();
 
-		expect(wrapper.find('.valid').text()).toBe('false');
+		// Valid from the start (no errors), and a programmatic setValue keeps it so.
+		expect(wrapper.find('.valid').text()).toBe('true');
 
 		await wrapper.find('button').trigger('click');
 		await nextTick();
@@ -327,7 +361,7 @@ describe('Form state and lifecycle', () => {
 		wrapper.unmount();
 	});
 
-	it('should recalculate isValid after setValues', async () => {
+	it('should stay valid after setValues when no schema introduces errors', async () => {
 		const cmp = defineComponent(() => {
 			const { Form, Field, setValues } = useForm({ name: 'fs-setvalues-valid' });
 
@@ -347,7 +381,7 @@ describe('Form state and lifecycle', () => {
 		const wrapper = mount(cmp);
 		await nextTick();
 
-		expect(wrapper.find('.valid').text()).toBe('false');
+		expect(wrapper.find('.valid').text()).toBe('true');
 
 		await wrapper.find('button').trigger('click');
 		await nextTick();
@@ -408,7 +442,8 @@ describe('Form state and lifecycle', () => {
 		const wrapper = mount(cmp);
 		await nextTick();
 
-		expect(wrapper.find('.valid').text()).toBe('false');
+		// Pristine with no validation run yet → valid.
+		expect(wrapper.find('.valid').text()).toBe('true');
 
 		await wrapper.find('button').trigger('click');
 		await nextTick();
