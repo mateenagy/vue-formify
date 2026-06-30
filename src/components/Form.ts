@@ -1,6 +1,6 @@
 import { forms } from '@/utils/store';
-import { FormOptions, GetKeys, Prettify, RecursivePartial } from '@/utils/types';
-import { createFormDataFromObject, EventEmitter, fetcher, flattenObject, getValueByPath, mergeDeep, objectToString, stringToObject, isFormDirty, hasErrors, getErrorMessage } from '@/utils/utils';
+import { FieldState, FormOptions, GetKeys, Prettify, RecursivePartial } from '@/utils/types';
+import { createFormDataFromObject, EventEmitter, fetcher, flattenObject, getValueByPath, mergeDeep, objectToString, stringToObject, isFieldDirty, isFormDirty, isFormTouched, hasErrors, getErrorMessage } from '@/utils/utils';
 import { validateSchema } from '@/utils/validator';
 import { computed, defineComponent, h, nextTick, onMounted, PropType, provide, ref, SlotsType, watch } from 'vue';
 
@@ -21,6 +21,7 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 	const isSubmitting = ref<boolean>(false);
 	const isFormReady = ref<boolean>(false);
 	const isSubmitted = ref<boolean>(false);
+	const submitCount = ref<number>(0);
 	let originalForm = Object.create({});
 
 	/*---------------------------------------------
@@ -28,6 +29,7 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 	---------------------------------------------*/
 	const reset = (force: boolean = false) => {
 		isSubmitted.value = false;
+		submitCount.value = 0;
 		if (force) {
 			forms[uid].initialValues = Object.create({});
 			forms[uid].values = Object.create({});
@@ -82,6 +84,18 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 			getValueByPath(forms[uid].values, name as unknown as string).error = error;
 		}
 	};
+
+	const getFieldState = (name: GetKeys<T>): FieldState => {
+		const field = getValueByPath(forms[uid].values, name as unknown as string);
+
+		return {
+			value: field?.value,
+			error: field?.error,
+			isDirty: isFieldDirty(field),
+			isTouched: !!field?.isTouched,
+			isValid: !field?.error,
+		};
+	};
 	/*---------------------------------------------
 	/  COMPUTED
 	---------------------------------------------*/
@@ -90,6 +104,7 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 		set: (newValue: T) => newValue,
 	});
 	const isDirty = computed(() => isFormDirty(forms[uid]?.values));
+	const isTouched = computed(() => isFormTouched(forms[uid]?.values));
 	// Validity is independent of dirtiness: a pristine form with no errors is valid.
 	const isValid = computed(() => !hasErrors(flattenObject(forms[uid]?.values, 'error')));
 	/*---------------------------------------------
@@ -121,6 +136,7 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 		const submit = async ($event: any) => {
 			$event.preventDefault();
 			isSubmitted.value = true;
+			submitCount.value++;
 			let _val = values.value;
 
 			if (opt?.schema) {
@@ -203,7 +219,16 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 		return () => {
 			return h('form',
 				{ ...props, ...attrs, ...emit, key: forms[uid].key, onSubmit: submit },
-				slots.default?.({ values: values.value, getError, isDirty: isDirty.value, isValid: isValid.value }),
+				slots.default?.({
+					values: values.value,
+					getError,
+					getFieldState,
+					isDirty: isDirty.value,
+					isValid: isValid.value,
+					isTouched: isTouched.value,
+					isSubmitted: isSubmitted.value,
+					submitCount: submitCount.value,
+				}),
 			);
 		};
 	}, {
@@ -222,14 +247,29 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 		},
 		emits: ['submit', 'value-change'],
 		slots: Object as SlotsType<{
-			default: { values: T, getError: (name: GetKeys<T>) => string, isDirty: boolean, isValid: boolean }
+			default: {
+				values: T,
+				getError: (name: GetKeys<T>) => string,
+				getFieldState: (name: GetKeys<T>) => FieldState,
+				isDirty: boolean,
+				isValid: boolean,
+				isTouched: boolean,
+				isSubmitted: boolean,
+				submitCount: number,
+			}
 		}>,
 	});
 
 	return {
 		cmp,
 		values,
-		isSubmitting: isSubmitting,
+		isSubmitting,
+		isSubmitted,
+		isDirty,
+		isValid,
+		isTouched,
+		submitCount,
+		getFieldState,
 		reset,
 		setInitialValues,
 		setValue,

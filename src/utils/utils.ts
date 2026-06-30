@@ -296,6 +296,40 @@ export const isFormDirty = (values: Record<string, any>): boolean => {
 	return false;
 };
 
+/**
+ * The form is touched when any field in it has been touched. Like isFormDirty,
+ * but the touched flag lives on the leaf inputs, so this also descends into a
+ * field's nested/array `value` to reach the touched flags of array items.
+ */
+export const isFormTouched = (values: Record<string, any>): boolean => {
+	if (!values || typeof values !== 'object') {
+		return false;
+	}
+
+	for (const key in values) {
+		const node = values[key];
+		if (!node || typeof node !== 'object') {
+			continue;
+		}
+
+		if ('value' in node) {
+			if (node.ignore) {
+				continue;
+			}
+			if (node.isTouched) {
+				return true;
+			}
+			if (node.value && typeof node.value === 'object' && isFormTouched(node.value)) {
+				return true;
+			}
+		} else if (isFormTouched(node)) {
+			return true;
+		}
+	}
+
+	return false;
+};
+
 export function hasErrors(errors: any): boolean {
 	if (typeof errors === 'string' && errors) {
 		return true;

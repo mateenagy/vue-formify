@@ -13,9 +13,15 @@ export type UseFormReturn<T extends Record<string, any>> = {
 	setValue: ReturnType<typeof FormComponent<T>>['setValue'];
 	setValues: ReturnType<typeof FormComponent<T>>['setValues'];
 	setError: ReturnType<typeof FormComponent<T>>['setError'];
+	getFieldState: ReturnType<typeof FormComponent<T>>['getFieldState'];
 	handleSubmit: ReturnType<typeof FormComponent<T>>['handleSubmit'];
 	values: ReturnType<typeof FormComponent<T>>['values'];
 	isSubmitting: ReturnType<typeof FormComponent<T>>['isSubmitting'];
+	isSubmitted: ReturnType<typeof FormComponent<T>>['isSubmitted'];
+	isDirty: ReturnType<typeof FormComponent<T>>['isDirty'];
+	isValid: ReturnType<typeof FormComponent<T>>['isValid'];
+	isTouched: ReturnType<typeof FormComponent<T>>['isTouched'];
+	submitCount: ReturnType<typeof FormComponent<T>>['submitCount'];
 };
 
 export const useForm = <T extends Record<string, any>>(opt?: FormOptions<T>): UseFormReturn<T> => {
@@ -34,8 +40,14 @@ export const useForm = <T extends Record<string, any>>(opt?: FormOptions<T>): Us
 		setValue: FormBase.setValue,
 		setValues: FormBase.setValues,
 		setError: FormBase.setError,
+		getFieldState: FormBase.getFieldState,
 		handleSubmit: FormBase.handleSubmit,
 		values: FormBase.values,
 		isSubmitting: FormBase.isSubmitting,
+		isSubmitted: FormBase.isSubmitted,
+		isDirty: FormBase.isDirty,
+		isValid: FormBase.isValid,
+		isTouched: FormBase.isTouched,
+		submitCount: FormBase.submitCount,
 	};
 };

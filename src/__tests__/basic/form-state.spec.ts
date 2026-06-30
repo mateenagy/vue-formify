@@ -486,4 +486,117 @@ describe('Form state and lifecycle', () => {
 		expect(wrapper.find('span').text()).toBe('');
 		wrapper.unmount();
 	});
+
+	it('should expose form-level isDirty and isValid from the useForm() return', async () => {
+		let formApi: any;
+		const cmp = defineComponent(() => {
+			formApi = useForm({ name: 'fs-return-state' });
+			const { Form, Field } = formApi;
+
+			return () => h(Form, {}, () => [h(Field, { name: 'email' })]);
+		});
+
+		const wrapper = mount(cmp);
+		await nextTick();
+
+		// Pristine, no errors.
+		expect(formApi.isDirty.value).toBe(false);
+		expect(formApi.isValid.value).toBe(true);
+
+		await wrapper.find('input').setValue('hello');
+		await nextTick();
+
+		expect(formApi.isDirty.value).toBe(true);
+		expect(formApi.isValid.value).toBe(true);
+		wrapper.unmount();
+	});
+
+	it('should report form-level isTouched after a field is blurred', async () => {
+		let formApi: any;
+		const cmp = defineComponent(() => {
+			formApi = useForm({ name: 'fs-touched-form' });
+			const { Form, Field } = formApi;
+
+			return () => h(Form, {}, () => [h(Field, { name: 'email' })]);
+		});
+
+		const wrapper = mount(cmp);
+		await nextTick();
+
+		expect(formApi.isTouched.value).toBe(false);
+
+		await wrapper.find('input').trigger('focus');
+		await wrapper.find('input').trigger('blur');
+		await nextTick();
+
+		expect(formApi.isTouched.value).toBe(true);
+		wrapper.unmount();
+	});
+
+	it('should track isSubmitted and submitCount across submits and reset', async () => {
+		let formApi: any;
+		const cmp = defineComponent(() => {
+			formApi = useForm({ name: 'fs-submitcount' });
+			const { Form, Field } = formApi;
+
+			return () => h(Form, { onSubmit: () => {} }, () => [h(Field, { name: 'email' })]);
+		});
+
+		const wrapper = mount(cmp);
+		await nextTick();
+
+		expect(formApi.isSubmitted.value).toBe(false);
+		expect(formApi.submitCount.value).toBe(0);
+
+		await wrapper.find('form').trigger('submit');
+		await nextTick();
+		expect(formApi.isSubmitted.value).toBe(true);
+		expect(formApi.submitCount.value).toBe(1);
+
+		await wrapper.find('form').trigger('submit');
+		await nextTick();
+		expect(formApi.submitCount.value).toBe(2);
+
+		formApi.reset();
+		await nextTick();
+		expect(formApi.isSubmitted.value).toBe(false);
+		expect(formApi.submitCount.value).toBe(0);
+		wrapper.unmount();
+	});
+
+	it('should return a per-field snapshot via getFieldState', async () => {
+		let formApi: any;
+		const cmp = defineComponent(() => {
+			formApi = useForm({ name: 'fs-getfieldstate', initialValues: { email: 'a@b.co' } });
+			const { Form, Field } = formApi;
+
+			return () => h(Form, {}, () => [h(Field, { name: 'email' })]);
+		});
+
+		const wrapper = mount(cmp);
+		await nextTick();
+		await nextTick();
+
+		let state = formApi.getFieldState('email');
+		expect(state.value).toBe('a@b.co');
+		expect(state.isDirty).toBe(false);
+		expect(state.isTouched).toBe(false);
+		expect(state.isValid).toBe(true);
+		expect(state.error).toBeUndefined();
+
+		await wrapper.find('input').setValue('changed@b.co');
+		await nextTick();
+
+		state = formApi.getFieldState('email');
+		expect(state.value).toBe('changed@b.co');
+		expect(state.isDirty).toBe(true);
+
+		formApi.setError('email', 'Bad email');
+		await nextTick();
+
+		state = formApi.getFieldState('email');
+		expect(state.isValid).toBe(false);
+		expect(state.error).toBe('Bad email');
+		wrapper.unmount();
+	});
 });

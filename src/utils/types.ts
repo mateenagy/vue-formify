@@ -130,6 +130,14 @@ export type FieldDefaults = {
 	isTouched: boolean,
 }
 
+export type FieldState = {
+	value: any,
+	error: any,
+	isDirty: boolean,
+	isTouched: boolean,
+	isValid: boolean,
+}
+
 export type RecursivePartial<T> = {
 	[P in keyof T]?: T[P] extends Record<string, any> ? RecursivePartial<T[P]> : T[P];
 };
