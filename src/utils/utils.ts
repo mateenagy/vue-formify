@@ -480,10 +480,15 @@ export const fetcher = async (promise?: void | Promise<any>) => {
 /* Custom event handler */
 type EventHandler = (data?: any) => void;
 
+/**
+ * A small event bus. One instance is created per form (provided through the
+ * form context) so events never cross form boundaries and listeners are
+ * garbage-collected with the form rather than accumulating on a global.
+ */
 export class EventEmitter {
-	private static eventListeners: Record<string, EventHandler[]> = {};
+	private eventListeners: Record<string, EventHandler[]> = {};
 
-	static on(eventName: string, handler: EventHandler): void {
+	on(eventName: string, handler: EventHandler): void {
 		if (!this.eventListeners[eventName]) {
 			this.eventListeners[eventName] = [];
 		}
@@ -491,7 +496,7 @@ export class EventEmitter {
 		this.eventListeners[eventName].push(handler);
 	}
 
-	static off(eventName: string, handler: EventHandler): void {
+	off(eventName: string, handler: EventHandler): void {
 		const listeners = this.eventListeners[eventName];
 
 		if (listeners) {
@@ -499,7 +504,7 @@ export class EventEmitter {
 		}
 	}
 
-	static emit(eventName: string, data?: any): void {
+	emit(eventName: string, data?: any): void {
 		const listeners = this.eventListeners[eventName];
 
 		if (listeners) {
