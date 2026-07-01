@@ -14,6 +14,8 @@ export type UseFormReturn<T extends Record<string, any>> = {
 	setValues: ReturnType<typeof FormComponent<T>>['setValues'];
 	setError: ReturnType<typeof FormComponent<T>>['setError'];
 	getFieldState: ReturnType<typeof FormComponent<T>>['getFieldState'];
+	validate: ReturnType<typeof FormComponent<T>>['validate'];
+	clearErrors: ReturnType<typeof FormComponent<T>>['clearErrors'];
 	handleSubmit: ReturnType<typeof FormComponent<T>>['handleSubmit'];
 	values: ReturnType<typeof FormComponent<T>>['values'];
 	isSubmitting: ReturnType<typeof FormComponent<T>>['isSubmitting'];
@@ -41,6 +43,8 @@ export const useForm = <T extends Record<string, any>>(opt?: FormOptions<T>): Us
 		setValues: FormBase.setValues,
 		setError: FormBase.setError,
 		getFieldState: FormBase.getFieldState,
+		validate: FormBase.validate,
+		clearErrors: FormBase.clearErrors,
 		handleSubmit: FormBase.handleSubmit,
 		values: FormBase.values,
 		isSubmitting: FormBase.isSubmitting,

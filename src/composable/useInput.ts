@@ -38,7 +38,7 @@ const getValueByInputType = (target: HTMLInputElement, trueValue: any, falseValu
 export const useInput = <T extends Record<string, any> = InputProps>(
 	props: FieldType<T> | FieldArrayType<T> & { trueValue: any, falseValue: any } | InputProps<any>, opt: UseInputOption = { isArray: false, isComponent: false }) => {
 	/* INJECTIONS & CONTEXT */
-	const { uid, preserveForm, mode, isSubmitted, emitter } = inject('formData', Object.create({}));
+	const { uid, preserveForm, mode, isSubmitted } = inject('formData', Object.create({}));
 	const vm = getCurrentInstance();
 	const name = props.name as string;
 
@@ -126,7 +126,8 @@ export const useInput = <T extends Record<string, any> = InputProps>(
 		(fieldItem.value && !fieldItem.value?.isTouched) && (fieldItem.value.isTouched = true);
 		resetError();
 		if (mode === 'onChange') {
-			emitter?.emit('validate');
+			// Form-level schema validation is driven by the Form's values watcher;
+			// here we only run this field's own rule to avoid a duplicate pass.
 			validateField();
 		}
 	};
@@ -204,7 +205,6 @@ export const useInput = <T extends Record<string, any> = InputProps>(
 		'onUpdate:modelValue': (val: any) => {
 			value.value = val;
 			if (mode === 'onChange') {
-				emitter?.emit('validate');
 				validateField();
 			}
 		},

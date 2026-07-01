@@ -1,6 +1,6 @@
 import { forms } from '@/utils/store';
 import { FieldState, FormOptions, GetKeys, Prettify, RecursivePartial } from '@/utils/types';
-import { createFormDataFromObject, EventEmitter, fetcher, flattenObject, getValueByPath, mergeDeep, objectToString, stringToObject, isFieldDirty, isFormDirty, isFormTouched, hasErrors, getErrorMessage } from '@/utils/utils';
+import { createFormDataFromObject, clearStoreErrors, EventEmitter, fetcher, flattenObject, getValueByPath, mergeDeep, objectToString, stringToObject, isFieldDirty, isFormDirty, isFormTouched, hasErrors, getErrorMessage } from '@/utils/utils';
 import { validateSchema } from '@/utils/validator';
 import { computed, defineComponent, getCurrentInstance, h, nextTick, onBeforeUnmount, onMounted, onUnmounted, PropType, provide, ref, SlotsType, watch } from 'vue';
 
@@ -102,6 +102,32 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 			isTouched: !!field?.isTouched,
 			isValid: !field?.error,
 		};
+	};
+
+	// Imperatively run the form's schema against the current values, surfacing
+	// any errors (marks the form submitted so gated messages become visible).
+	// Returns whether the form is valid; forms without a schema are always valid.
+	const validate = async (): Promise<boolean> => {
+		isSubmitted.value = true;
+		if (opt?.schema) {
+			return await validateSchema(opt.schema, flattenObject(forms[uid].values), setError);
+		}
+
+		return true;
+	};
+
+	// Clear a single field's error (by name) or every field's error.
+	const clearErrors = (name?: GetKeys<T>) => {
+		if (name) {
+			const field = getValueByPath(forms[uid].values, name as unknown as string);
+			if (field) {
+				field.error = undefined;
+			}
+
+			return;
+		}
+
+		clearStoreErrors(forms[uid].values);
 	};
 	/*---------------------------------------------
 	/  COMPUTED
@@ -308,6 +334,8 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 		setValue,
 		setValues,
 		setError,
+		validate,
+		clearErrors,
 		handleSubmit,
 	};
 };

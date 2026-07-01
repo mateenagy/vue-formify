@@ -297,6 +297,32 @@ export const isFormDirty = (values: Record<string, any>): boolean => {
 };
 
 /**
+ * Clear the `error` on every field in the store (scalar, object-value and
+ * array fields), descending into nested/array values like isFormTouched.
+ */
+export const clearStoreErrors = (values: Record<string, any>): void => {
+	if (!values || typeof values !== 'object') {
+		return;
+	}
+
+	for (const key in values) {
+		const node = values[key];
+		if (!node || typeof node !== 'object') {
+			continue;
+		}
+
+		if ('value' in node) {
+			node.error = undefined;
+			if (node.value && typeof node.value === 'object') {
+				clearStoreErrors(node.value);
+			}
+		} else {
+			clearStoreErrors(node);
+		}
+	}
+};
+
+/**
  * The form is touched when any field in it has been touched. Like isFormDirty,
  * but the touched flag lives on the leaf inputs, so this also descends into a
  * field's nested/array `value` to reach the touched flags of array items.
