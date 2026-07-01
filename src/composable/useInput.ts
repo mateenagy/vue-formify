@@ -1,6 +1,6 @@
 import { computed, getCurrentInstance, inject, nextTick, onBeforeUnmount, onMounted, warn } from 'vue';
 import { forms } from '@/utils/store';
-import { cloneValue, createFormInput, deleteByPath, EventEmitter, getValueByPath, isFieldDirty, mergeDeep, objectToModelValue } from '@/utils/utils';
+import { cloneValue, createFormInput, deleteByPath, getValueByPath, isFieldDirty, mergeDeep, objectToModelValue } from '@/utils/utils';
 import { FieldArrayType, FieldDefaults, FieldType, InputProps, UseInputOption } from '@/utils/types';
 import { useFieldValidation } from './useFieldValidation';
 
@@ -38,7 +38,7 @@ const getValueByInputType = (target: HTMLInputElement, trueValue: any, falseValu
 export const useInput = <T extends Record<string, any> = InputProps>(
 	props: FieldType<T> | FieldArrayType<T> & { trueValue: any, falseValue: any } | InputProps<any>, opt: UseInputOption = { isArray: false, isComponent: false }) => {
 	/* INJECTIONS & CONTEXT */
-	const { uid, preserveForm, mode, isSubmitted } = inject('formData', Object.create({}));
+	const { uid, preserveForm, mode, isSubmitted, emitter } = inject('formData', Object.create({}));
 	const vm = getCurrentInstance();
 	const name = props.name as string;
 
@@ -126,7 +126,7 @@ export const useInput = <T extends Record<string, any> = InputProps>(
 		(fieldItem.value && !fieldItem.value?.isTouched) && (fieldItem.value.isTouched = true);
 		resetError();
 		if (mode === 'onChange') {
-			EventEmitter.emit('validate');
+			emitter?.emit('validate');
 			validateField();
 		}
 	};
@@ -204,7 +204,7 @@ export const useInput = <T extends Record<string, any> = InputProps>(
 		'onUpdate:modelValue': (val: any) => {
 			value.value = val;
 			if (mode === 'onChange') {
-				EventEmitter.emit('validate');
+				emitter?.emit('validate');
 				validateField();
 			}
 		},

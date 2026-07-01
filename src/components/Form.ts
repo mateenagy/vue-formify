@@ -2,7 +2,7 @@ import { forms } from '@/utils/store';
 import { FieldState, FormOptions, GetKeys, Prettify, RecursivePartial } from '@/utils/types';
 import { createFormDataFromObject, EventEmitter, fetcher, flattenObject, getValueByPath, mergeDeep, objectToString, stringToObject, isFieldDirty, isFormDirty, isFormTouched, hasErrors, getErrorMessage } from '@/utils/utils';
 import { validateSchema } from '@/utils/validator';
-import { computed, defineComponent, h, nextTick, onMounted, PropType, provide, ref, SlotsType, watch } from 'vue';
+import { computed, defineComponent, getCurrentInstance, h, nextTick, onBeforeUnmount, onMounted, onUnmounted, PropType, provide, ref, SlotsType, watch } from 'vue';
 
 type FormType<T extends Record<string, any>> = {
 	enctype?: 'application/x-www-form-urlencoded' | 'multipart/form-data';
@@ -13,15 +13,22 @@ type FormType<T extends Record<string, any>> = {
 	onSubmit?: (value?: any, $event?: SubmitEvent) => void | Promise<any>;
 }
 
+// Monotonic counter for auto-generated form ids — collision-free and
+// deterministic, unlike the previous Math.random()/Date.now() scheme.
+let formIdCounter = 0;
+
 export const FormComponent = <T extends Record<string, any> = Record<string, any>>(opt?: FormOptions<T>) => {
 	/*---------------------------------------------
 	/  VARIABLES
 	---------------------------------------------*/
-	const uid: number | string = opt?.name || Math.floor(Math.random() * Date.now());
+	const uid: number | string = opt?.name || `form-${++formIdCounter}`;
 	const isSubmitting = ref<boolean>(false);
 	const isFormReady = ref<boolean>(false);
 	const isSubmitted = ref<boolean>(false);
 	const submitCount = ref<number>(0);
+	// One event bus per form instance — keeps validate/value-change events from
+	// bleeding into other mounted forms (the old global static EventEmitter did).
+	const emitter = new EventEmitter();
 	let originalForm = Object.create({});
 
 	/*---------------------------------------------
@@ -120,12 +127,22 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 		values.value = flattenObject(forms[uid].values) as T;
 	}
 
+	// Free the store entry when the owning component unmounts so forms don't
+	// accumulate for the life of the app. Skipped when `preserve` is set, and
+	// tied to the owner (not the <Form> element) so it survives v-if toggles.
+	if (getCurrentInstance() && !opt?.preserve) {
+		onUnmounted(() => {
+			delete forms[uid];
+		});
+	}
+
 	const cmp = defineComponent((props: Prettify<FormType<T>>, { slots, emit, attrs }) => {
 		provide('formData', {
 			uid,
 			preserveForm: opt?.preserve,
 			mode: opt?.mode,
 			isSubmitted,
+			emitter,
 		});
 		/*---------------------------------------------
 		/  METHODS
@@ -178,10 +195,10 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 		watch(values, (curr, prev) => {
 			values.value = curr;
 			if (isFormReady.value && JSON.stringify(curr) !== JSON.stringify(prev) && props.onValueChange) {
-				EventEmitter.emit('value-change', uid);
+				emitter.emit('value-change', uid);
 			}
 			if (opt?.mode === 'onChange' && isDirty.value) {
-				EventEmitter.emit('validate');
+				emitter.emit('validate');
 			}
 		}, { deep: true });
 		/*---------------------------------------------
@@ -193,27 +210,43 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 		/*---------------------------------------------
 		/  HOOKS
 		---------------------------------------------*/
+		let onValueChangeHandler: ((id: string) => void) | undefined;
+		let onValidateHandler: (() => Promise<boolean | undefined>) | undefined;
+
 		onMounted(async () => {
 			initialValueToValue();
 			originalForm = JSON.stringify(forms[uid].values);
 
 			if (props?.onValueChange && forms[uid]) {
-				EventEmitter.on('value-change', (id: string) => {
+				onValueChangeHandler = (id: string) => {
 					if (id === uid) {
 						emit('value-change', values.value);
 					}
-				});
+				};
+				emitter.on('value-change', onValueChangeHandler);
 			}
 
 			if (opt?.mode === 'onChange') {
-				EventEmitter.on('validate', async () => {
+				onValidateHandler = async () => {
 					if (opt?.schema) {
 						return await validateSchema(opt.schema, flattenObject(forms[uid].values), setError);
 					}
-				});
+				};
+				emitter.on('validate', onValidateHandler);
 			}
 			await nextTick();
 			isFormReady.value = true;
+		});
+
+		// Remove this <Form>'s listeners on unmount so they don't fire after the
+		// component is gone or pile up across v-if remounts.
+		onBeforeUnmount(() => {
+			if (onValueChangeHandler) {
+				emitter.off('value-change', onValueChangeHandler);
+			}
+			if (onValidateHandler) {
+				emitter.off('validate', onValidateHandler);
+			}
 		});
 
 		return () => {

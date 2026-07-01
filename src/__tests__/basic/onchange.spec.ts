@@ -2,7 +2,6 @@ import { describe, it, expect, afterEach } from 'vitest';
 import { useForm } from '@/main';
 import { forms } from '@/utils/store';
 import { StandardSchemaV1 } from '@/utils/types';
-import { EventEmitter } from '@/utils/utils';
 import { mount } from '@vue/test-utils';
 import { defineComponent, h, nextTick } from 'vue';
 
@@ -39,7 +38,6 @@ const createFieldRule = (min: number, message: string): StandardSchemaV1 => ({
 
 describe('onChange validation mode', () => {
 	afterEach(() => {
-		(EventEmitter as any).eventListeners = {};
 		for (const key of Object.keys(forms)) {
 			if (key.startsWith('oc-')) {
 				delete forms[key];
