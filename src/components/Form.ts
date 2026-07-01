@@ -1,6 +1,6 @@
 import { forms } from '@/utils/store';
 import { FieldState, FormOptions, GetKeys, Prettify, RecursivePartial } from '@/utils/types';
-import { createFormDataFromObject, EventEmitter, fetcher, flattenObject, getValueByPath, mergeDeep, objectToString, stringToObject, isFieldDirty, isFormDirty, isFormTouched, hasErrors, getErrorMessage } from '@/utils/utils';
+import { createFormDataFromObject, clearStoreErrors, EventEmitter, fetcher, flattenObject, getValueByPath, mergeDeep, objectToString, stringToObject, isFieldDirty, isFormDirty, isFormTouched, hasErrors, getErrorMessage } from '@/utils/utils';
 import { validateSchema } from '@/utils/validator';
 import { computed, defineComponent, getCurrentInstance, h, nextTick, onBeforeUnmount, onMounted, onUnmounted, PropType, provide, ref, SlotsType, watch } from 'vue';
 
@@ -103,13 +103,36 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 			isValid: !field?.error,
 		};
 	};
+
+	// Imperatively run the form's schema against the current values, surfacing
+	// any errors (marks the form submitted so gated messages become visible).
+	// Returns whether the form is valid; forms without a schema are always valid.
+	const validate = async (): Promise<boolean> => {
+		isSubmitted.value = true;
+		if (opt?.schema) {
+			return await validateSchema(opt.schema, flattenObject(forms[uid].values), setError);
+		}
+
+		return true;
+	};
+
+	// Clear a single field's error (by name) or every field's error.
+	const clearErrors = (name?: GetKeys<T>) => {
+		if (name) {
+			const field = getValueByPath(forms[uid].values, name as unknown as string);
+			if (field) {
+				field.error = undefined;
+			}
+
+			return;
+		}
+
+		clearStoreErrors(forms[uid].values);
+	};
 	/*---------------------------------------------
 	/  COMPUTED
 	---------------------------------------------*/
-	const values = computed({
-		get: () => flattenObject(forms[uid]?.values) as T,
-		set: (newValue: T) => newValue,
-	});
+	const values = computed(() => flattenObject(forms[uid]?.values) as T);
 	const isDirty = computed(() => isFormDirty(forms[uid]?.values));
 	const isTouched = computed(() => isFormTouched(forms[uid]?.values));
 	// Validity is independent of dirtiness: a pristine form with no errors is valid.
@@ -123,8 +146,6 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 			initialValues: opt?.initialValues || Object.create({}),
 			key: 0,
 		};
-	} else {
-		values.value = flattenObject(forms[uid].values) as T;
 	}
 
 	// Free the store entry when the owning component unmounts so forms don't
@@ -193,7 +214,6 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 		/  WATCHERS
 		---------------------------------------------*/
 		watch(values, (curr, prev) => {
-			values.value = curr;
 			if (isFormReady.value && JSON.stringify(curr) !== JSON.stringify(prev) && props.onValueChange) {
 				emitter.emit('value-change', uid);
 			}
@@ -308,6 +328,8 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 		setValue,
 		setValues,
 		setError,
+		validate,
+		clearErrors,
 		handleSubmit,
 	};
 };
