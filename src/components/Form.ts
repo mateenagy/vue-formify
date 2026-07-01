@@ -132,10 +132,7 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 	/*---------------------------------------------
 	/  COMPUTED
 	---------------------------------------------*/
-	const values = computed({
-		get: () => flattenObject(forms[uid]?.values) as T,
-		set: (newValue: T) => newValue,
-	});
+	const values = computed(() => flattenObject(forms[uid]?.values) as T);
 	const isDirty = computed(() => isFormDirty(forms[uid]?.values));
 	const isTouched = computed(() => isFormTouched(forms[uid]?.values));
 	// Validity is independent of dirtiness: a pristine form with no errors is valid.
@@ -149,8 +146,6 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 			initialValues: opt?.initialValues || Object.create({}),
 			key: 0,
 		};
-	} else {
-		values.value = flattenObject(forms[uid].values) as T;
 	}
 
 	// Free the store entry when the owning component unmounts so forms don't
@@ -219,7 +214,6 @@ export const FormComponent = <T extends Record<string, any> = Record<string, any
 		/  WATCHERS
 		---------------------------------------------*/
 		watch(values, (curr, prev) => {
-			values.value = curr;
 			if (isFormReady.value && JSON.stringify(curr) !== JSON.stringify(prev) && props.onValueChange) {
 				emitter.emit('value-change', uid);
 			}
