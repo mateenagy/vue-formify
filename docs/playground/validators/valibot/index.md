@@ -1,5 +1,11 @@
 ---
 aside: false
 ---
+
+<script setup>
+import App from './App.vue?raw'
+</script>
+
 # Valibot
-<iframe src="https://play.vuejs.org/#eNqlVV9v0zAQ/ypWXtqiNFkp8FCyqYA2iWna0MZjJOQk19abYxvbyTpV/e6c7TbNxhgTPLSJ73738/3PJvqkVNI2EM2izJSaKUsM2EYRTsXyOI+syaOTXLBaSW3JhjQGzqSuyZYstKzJAE3HCxSwxcPgY4d7Q6ghbYDkUUs5K6TNo1zkopTCOCLHEpMzBryKyanWUsdkRUXF4aYpamZjgmYNGLzpeH/rcJMLQky5gprOSJvI4hZKG6SELJg29oegNTidYgqGbWKsZmI5HCFdUjNxAWJpV8NJTAbX8LNhGiq0Qx8Go1EcaDj9f5ate2xHmJB9wMYHhaH0YxwOK2rpiByfEB8D5aDt8Pzm6nJ3I2bVQ2LSiAoWTAAma5DnFi/aXZCloWxYJDxYqBWnFvBESFaxlpQYj8FCohuWIoH29XSBZr6Q8+AZIsJLpw723QGPnBbAT85cml1+sjQIeghfTuKUyHeoRx51brheGTtftOQoTvvWvgsIuH/XU08pDtgs7Xv2vJsXWMbXeNmV+5+d7DO81seisVaK7sLCCoK/sdKspvqB1HY8xUKELsnSgP4TtdLQEe0MN5tuerZZioB9yVNX89AcO5Is7fVMZuwDdy/z3SAPVtYqM0vTshLJramAs1YnAmwqVJ0WUlpsVKrm75Np8gEZjU1LYw4KNy0JStxuyEXST2xo+Zqux/essqsZmR4dqTXitg5qFBUBUUou9YwYymspghp7fudnFOOGQsIFW6J7UuAa80au32vFcJ6ulGU4gXk0C3RORzmX9+deZnUDu8FHmxWUd8/I3TCWOBlPxXdMXbDii7P6TXlr1k6WR980GNAtdkens1QvwfPl0enNJazxvVPWsmo4ol9QXoORvHFxBdhn3A4Yag/nI/zqa4hr5Ls5XVsQZp8I56hfUx6PC7qBLy+k6+DuNHnn7bAKmPnQI+May/w490HxmKT3oQhOv9hZPfT8bXKUTCahuXryBAza9WLuPjN/Zw/I+SSZJEeBmOF+XftudZxdkNtf1eVYtg==" />
+
+<Playground :files="{ 'App.vue': App }" libs="valibot" />

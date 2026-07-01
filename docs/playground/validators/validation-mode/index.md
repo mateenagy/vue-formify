@@ -1,6 +1,11 @@
 ---
 aside: false
 ---
+
+<script setup>
+import App from './App.vue?raw'
+</script>
+
 # Validation Mode
 
 Vue Formify provides two validation modes for forms:
@@ -9,4 +14,5 @@ Vue Formify provides two validation modes for forms:
 - `onChange`: Validation runs on every input event, providing immediate feedback as the user types or changes form values.
 
 Choose the mode that best fits your user experience needs.
-<iframe src="https://play.vuejs.org/#eNq1VdtOGzEQ/RVrX5KoyS6Xtg/pgmgRSEUIKuijpcrZnSQG32p7Q1CUf+/YTjYLpRRV6kOi3Zkzx2cunl1ln43JFw1k46x0leXGEwe+MUQwNTuimXc0O6aKS6OtJyvSODjXVpI1mVotSQ9DR1M08Olj71MH5x8NbEE0Y/Y+GGhGFVWVVi5AAs+QnHMQ9ZCcWavtkMyZqgXcNhPJ/ZAsmGjAIc3R9tz+iipCpK5hTHpanSJ+Br1hMLpqDpKN48kJRsiUW+d/KCYRHuy585arWc78JTCHf2rm5/2DQY6apnzWWIwkEpxjs3DADfxsuIUaeVBkj6wH8SSCxfkPtOsBVesBFnFbIhfLgMl3q9Lv18yzATk6JjFJJsD6/sXt9dVGBXYiQoakUTVMuQIsb49S3xtsDyiL1GpsLL54kEYwD/hGSFnzBakwP4fNRxmeIYGNMxASL2PzT5IyRKSH1p3i2xd8FWwC4vg89CHUqyySoYOIA0CCE/l2DaNZKyPM1yhosVqguehGx7khEP7DHD6n2GHLoqvsZZmX2Ly3qGzb/88iuwxv1ThpvNeqPXDiFcHfyFgumX0k0o8OsRFpSsoiof9EbSy0RJvA1aq9b+uyQMC25UXoeRqODUlZdGamdP5RhIeTzeXvzb03blwUVa3yO1eD4AubK/CFMrKYaO1xUJk5+ZAf5h+R0fmicm7nyCVXOVrCPqEq7xY2jbxky9EDr/18TA739swScesAdYaphKi00HZMHBNSq+TGmd/ozIa41dLNRHla4eqLQWHepeF4n66N53gDaTZOdMHHhNAPF9HmbQObRYAxc6juX7CHy1jhzXhuvufmkk9OQ9Rvzju3DDaafbPgwC5wOlqfZ3YGkY9mZ7dXsMTn1okLsRGIfsV5A06LJuSVYF9wO2CqHVzM8GvsIa6R7+5s6UG5bSGC0LilIp5muPhPXynXTu5h/j7GYRew8mlGRhLb/LT2yfGUpPNxSaJfnawO+uQg38v399Nwdew5OIzr5rz9MP2VfYNE5v38YK94B06Gz9kmsfUvEi1pjw==" />
+
+<Playground :files="{ 'App.vue': App }" libs="arktype" />
