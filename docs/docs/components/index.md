@@ -1,5 +1,5 @@
 # Components
 
-VueFormify is **not** a UI library, but beacuse it's works as **Higher-order components** it contains some basic component.
+VueFormify is **not** a UI library, but because it works through **higher-order components** it ships with a few basic components.
 
-This part of the documentation will help to understand how to use them.
+This part of the documentation will help you understand how to use them.

@@ -1,5 +1,11 @@
 ---
 aside: false
 ---
+
+<script setup>
+import App from './App.vue?raw'
+</script>
+
 # ArkType
-<iframe src="https://play.vuejs.org/#eNqtVVFv2jAQ/itWXgANklK2PbC0YqtaaVXVTu0eLU0mOcCt7Xi2Q0GI/76zDSHtuq6a9gBK7r77fHff+bJJPmudLmtIxkluC8O1IxZcrYlgan5CE2dpckoVl7oyjmxIbeGiMpJsycxUknQwdDBDA5+tO59aOLfWsAfRhJkHb6AJVVQVlbIe4nn65IKDKPvk3JjK9MmCqVLAXT2V3PXJkokaLNKc7M/tbqgixBYLkGwcDokWQmbcWPdDMQnRnlpnuJqnzF0Bs/in5m7RHfZSPH7G57XBSCLBWjbHiM4t/Ky5gRJ5MJ8O2fb6kVdg8H+n3fao2vawX/tu2FAx1tluQLdbMsd65OSUhCKZAOO6l3c317sssOkB0ie1KmHGFWAnO5S6Tm9/QJ5FVVFDfHEgtWAO8I2QvORLUmB9FnXGNBxDAhPk9oXnQedJzAwR8aFxx/jmBV8Fm4I4vfA6+H7lWTS0EEFr4p3IdxCMJk0afpQGPhdTCTRn7egwIgT8vx+55xQHbJ61M3s5zSsU7y1ZNvL/c5JthrfmOK2dq1Rz4NQpgr+BNlwysybSDUYoRJySPIvoP1FrAw3RLnCzaa7WNs8QsJc885rH4diR5FlrZnLr1sI/THb3vLNwTttxlhWlSu9tCYIvTarAZUrLbFpVDgeV6cmHdJR+REbrssLagyOVXKVo8auDqrTd2Djykq0Gj7x0izEZHR3pFeK2Hmo1UxFRVKIyY2KZkJWKbpz5XZ5JHxdYvJmYXqVwy4UgP+9Sc7xPN9pxvIE0GUc672NCVI+XweZMDbtFgDELKB5esPvLWODNeG5+4PqKT8981G/Oe7vyNpp8M2DBLHE6Gp9jZg6Bjybnd9ewwufGKauyFoh+xXkLthK1ryvCvuB2wFJbuFDh16AhrpHv9nzlQNl9I3yiYUsFPE1wx5+90q5DuqP0fYhDFbDzcUYGEmV+2vvoeErS+o7EpF+drBZ6cpwepcNhHK6WPQWLce2a99+gv7LvkMg8TI+Psndgpf9y7Qrb/gJGHGLn" />
+
+<Playground :files="{ 'App.vue': App }" libs="arktype" />

@@ -41,3 +41,16 @@ iframe {
 		display: none;
 	}
 }
+
+/* Interactive playground embedded on the home page */
+.home-playground {
+	max-width: 1152px;
+	margin: 1rem auto 4rem;
+	padding: 0 24px;
+}
+
+.home-playground h2 {
+	border-top: none;
+	margin-top: 0;
+	padding-top: 0;
+}

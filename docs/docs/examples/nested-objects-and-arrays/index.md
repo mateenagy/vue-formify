@@ -1,3 +1,8 @@
+<script setup>
+import NestedApp from '../../../playground/basic/nested-object/App.vue?raw'
+import ArraysApp from '../../../playground/basic/arrays/App.vue?raw'
+</script>
+
 # Nested Objects and Arrays
 
 ## Objects
@@ -106,3 +111,13 @@ const sendForm = handleSubmit((data) => {
 </template>
 ```
 :::
+
+## Try it live
+
+Nested objects — submit the form and watch the collected shape:
+
+<Playground :files="{ 'App.vue': NestedApp }" />
+
+Arrays — add and remove items with `FieldArray`:
+
+<Playground :files="{ 'App.vue': ArraysApp }" />

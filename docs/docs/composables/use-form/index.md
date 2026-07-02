@@ -14,7 +14,7 @@ Defining `initialValues` in the `useForm` options or using the `:initial-values`
 ::: code-group
 ```vue
 <script lang="ts" setup>
-import { useForm } from './composable/useForm';
+import { useForm } from 'vue-formify';
 
 type FormData = {
 	username: string;
@@ -88,18 +88,26 @@ const submit = handleSubmit((data) => {
 
 #### Methods
 
-| Function        | Parameter                                | Description                                                                 |
-|-----------------|------------------------------------------|-----------------------------------------------------------------------------|
-| handleSubmit    | `(cb: (data: T) => void) => void`        | Handles form submission and provides typed data to the callback.            |
-| setError        | `{ name: T, message: string }`           | Sets an error message for a specific field (typed with autocomplete).       |
-| setValue        | `{ name: T, value: any }`                | Sets the value for a specific field (typed with autocomplete).              |
-| setValues       | `Record<T, any>`                         | Sets multiple field values at once (typed with autocomplete).               |
-| setInitialValues| `Record<T, any>`                         | Sets the initial values for the form.                                       |
-| reset           | `void`                                   | Resets the form to its initial values.                                      |
+| Function        | Parameter                                     | Description                                                                                  |
+|-----------------|-----------------------------------------------|----------------------------------------------------------------------------------------------|
+| handleSubmit    | `(cb: (data: T) => void \| Promise<any>)`     | Wraps a submit handler and provides the typed form data to the callback.                     |
+| setError        | `(name: GetKeys<T>, error: any)`              | Sets an error message for a specific field (typed with autocomplete).                        |
+| setValue        | `(name: GetKeys<T>, value: any)`              | Sets the value for a specific field (typed with autocomplete).                               |
+| setValues       | `(values: Partial<T>)`                        | Sets multiple field values at once (typed with autocomplete).                                |
+| setInitialValues| `(values: Partial<T>)`                        | Sets the initial values for the form.                                                        |
+| getFieldState   | `(name: GetKeys<T>) => FieldState`            | Returns `{ value, error, isDirty, isTouched, isValid }` for a single field.                  |
+| validate        | `() => Promise<boolean>`                      | Runs the schema against the current values, surfaces errors, and returns whether it is valid.|
+| clearErrors     | `(name?: GetKeys<T>)`                         | Clears the error for a single field, or every field's error when called with no argument.    |
+| reset           | `(force?: boolean)`                           | Resets the form to its initial values. Pass `true` to clear values and initial values.       |
 
 #### Variables
 
-| Name          | Description                |
-|---------------|----------------------------|
-| isSubmitting  | Indicates submit state     |
-| values        | Current form data values   |
+| Name          | Description                                            |
+|---------------|--------------------------------------------------------|
+| values        | Current form data values.                              |
+| isSubmitting  | `true` while the submit handler is running.            |
+| isSubmitted   | `true` once the form has been submitted at least once. |
+| submitCount   | Number of submit attempts.                             |
+| isDirty       | `true` when any field differs from its initial value.  |
+| isTouched     | `true` when any field has been touched.                |
+| isValid       | `true` when the form currently has no errors.          |

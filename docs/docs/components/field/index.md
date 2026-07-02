@@ -65,22 +65,12 @@ You can use custom inputs by leveraging the `Field` slot and binding the `field`
 ```vue
 <template>
 	<Form @submit="sendForm">
-		<Field name="favourite_fruit" v-slot="{ field, error }">
+		<Field name="email" v-slot="{ field, error }">
 			<label>Email</label>
 			<input type="email" v-bind="field" />
 			<small>{{ error }}</small>
 		</Field>
 	</Form>
-</template>
-```
-
-### Using `Field` Outside `Form`
-
-Fields can also be used independently of a `Form`:
-
-```vue
-<template>
-	<Field name="search" />
 </template>
 ```
 
@@ -92,8 +82,8 @@ Fields can also be used independently of a `Form`:
 |-------------|---------------------------------------------------------|
 | name        | Field name                                              |
 | default     | Field default value                                     |
-| custom      | If using custom component third party library	        |
-| schema      | Schema validation                                       |
+| custom      | Set to `true` when wrapping a third-party component     |
+| rule        | Field-level schema validation (StandardSchema)          |
 | ignore      | Ignore field when extracting data                       |
 | trueValue   | Custom true value                                       |
 | falseValue  | Custom false value                                      |
@@ -104,5 +94,5 @@ Fields can also be used independently of a `Form`:
 
 | Slot    | Parameter                                                                                                    | Description                                 |
 |---------|-------------------------------------------------------------------------------------------------------------|---------------------------------------------|
-| default | `{ field: { value, modelValue, updateModelValue, isValid, error } }`                                        | Provides field data and validation errors   |
+| default | `{ field: { value, modelValue, error, isValid, isDirty, isTouched, ...handlers } }`                         | Provides field data, state and validation errors. Bind it with `v-bind="field"`. |
 

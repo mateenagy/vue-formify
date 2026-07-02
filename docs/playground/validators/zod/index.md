@@ -1,5 +1,11 @@
 ---
 aside: false
 ---
+
+<script setup>
+import App from './App.vue?raw'
+</script>
+
 # Zod
-<iframe src="https://play.vuejs.org/#eNqdVV1P2zAU/StWXtpuaQLr4KELqBsCaQjBBHu0NLmJ2xr8Ndsphar/fdd2mgbGGNsDNLn33ONzv5x18lnrbFnTZJwUtjRMO2SpqzXiRM6PcOIsTo6xZEIr49Aa1ZaeKSPQBs2MEqgHocMZGNjsofepxb1DxKLHCMHJo6pwgiWWpZLWk3iGFJ0xyqsUnRqjTIoWRFac3tRTwVyKloTX1MIpR9sT+2ssEbLlggoyRo+Zmt7S0kUrQjNmrPshiaDeZ51hct4fZILJ/n6Ketf0Z80MrQAHZ/YGaYzi5J+DNv5nM4BUt+nYIBmEdjPo9yviyAAdHaOgkHBqXP/85uqyOQfqFSApqmVFZ0xSKEUPY9cbDJoDijw2BMoPL44KzYmj8IZQUbElKkG+hRaBDEeAwIRO+byK0KJJVAaI+NC6Y3z7Aq+cTCk/PvNF9OUo8mjoIEKzkHcC367aOGll+CkYei1GcTDn3ejQY0T9fz8tzyl22CLvKntZ5gV07S0q2+7+t8guw1s1TmvnlGwPnDqJ4G+oDRPEPCDhhiNoRJySIo/oP1FrQ1uiJnC9bndjU+QA2LY89z2Pw9GQFHlnZgrrHrh/mDQr2ls4p+04z8tKZre2opwtTSapy6UW+VQpB4NK9OQgG2WHwGhdXlq7c/g1ycDitx7LrFvYOPKCrIb3rHKLMRrt7ekV4DYeajWREVEqrswYWcKFktENM9/oTFK4e4BwxuYgT0m4oEKQn3ehGezTlXYMNhAn40jnfYRzdX8ebM7UtNlziFnQ8u4Fu1/GEjbjufmO6Qs2PfFRvzlv7crbcPLNUEvNEqaj9Tli5jTw4eT05pKu4Ll1ClXVHNCvOK+pVbz2eUXYF7gdINUOLmT4NfQQrpHv9nTlqLTbQnih4ZoKeJzA9XzySrl2ckfZxxAHXYDKxxkZCmjz09pHx1OSzicgin51sjroyYdsL9vfj8PVsWfUQlwn5/AB+SszoCaj7MNBdniQv6dW+G9Ok9HmF3QxQ7c=" />
+
+<Playground :files="{ 'App.vue': App }" libs="zod" />
