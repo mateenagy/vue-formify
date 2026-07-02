@@ -130,8 +130,12 @@ export default defineConfig({
 							link: '/playground/basic/arrays/index.md',
 						},
 						{
-							text: 'Custom component',
-							link: '/playground/basic/custom-component/index.md',
+							text: 'Custom component / Field',
+							link: '/playground/basic/custom-component/field/index.md',
+						},
+						{
+							text: 'Custom component / useInput',
+							link: '/playground/basic/custom-component/useinput/index.md',
 						},
 						{
 							text: 'Shared form data',

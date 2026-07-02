@@ -38,7 +38,15 @@ const props = withDefaults(defineProps<{
 	reverse: false,
 });
 
-/** Bump these to move every example onto a new release at once. */
+/**
+ * Bump this to move every example onto a new release at once.
+ *
+ * NOTE: the docs prose already targets the 3.0.0 API (e.g. `validate`,
+ * `clearErrors`, `getFieldState`, `submitCount`). Flip this to '3.0.0' the
+ * moment 3.0.0 is published to npm — jsDelivr can only resolve a version that
+ * already exists, so setting it early 404s every playground. Until then the
+ * REPL runs 2.1.6 (current `latest`), which supports every API the examples use.
+ */
 const VUE_FORMIFY_VERSION = '2.1.6';
 
 const LIB_PRESETS: Record<LibName, { url: string; version: string }> = {
@@ -46,6 +54,57 @@ const LIB_PRESETS: Record<LibName, { url: string; version: string }> = {
 	valibot: { url: 'https://cdn.jsdelivr.net/npm/valibot@1.1.0/dist/index.min.js', version: '1.1.0' },
 	arktype: { url: 'https://cdn.jsdelivr.net/npm/arktype@2.1.20/+esm', version: '2.1.20' },
 };
+
+/**
+ * Stylesheets injected into the preview iframe's `<head>`.
+ *
+ * CSS frameworks are plain stylesheets, not ES modules, so they can't ride the
+ * import map like the validator libs above. Injecting them here (via
+ * `previewOptions.headHTML`) styles every example from one place — no
+ * `@import` line duplicated across each `App.vue`.
+ */
+const PREVIEW_STYLESHEETS = [
+	'https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css',
+];
+
+/**
+ * Cosmetic tweaks for the preview iframe, layered on top of the frameworks
+ * above. The examples echo live form state with `<pre>{{ values }}</pre>`
+ * (Vue already renders the object as indented JSON) — this turns that raw
+ * monospace dump into a labelled, dark JSON card.
+ */
+const PREVIEW_STYLES = `
+pre {
+	position: relative;
+	padding: 2.4rem 1.1rem 1.1rem;
+	background: #0f172a;
+	color: #e2e8f0;
+	border-radius: 10px;
+	font-size: 0.8125rem;
+	line-height: 1.6;
+	overflow: auto;
+	box-shadow: 0 1px 3px rgba(15, 23, 42, 0.18);
+}
+pre::before {
+	content: 'Form values';
+	position: absolute;
+	inset: 0 0 auto 0;
+	padding: 0.5rem 1.1rem;
+	font-family: system-ui, -apple-system, sans-serif;
+	font-size: 0.68rem;
+	font-weight: 600;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	color: #7c8db0;
+	background: rgba(148, 163, 184, 0.08);
+	border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+}
+`;
+
+const previewHeadHTML = [
+	...PREVIEW_STYLESHEETS.map((href) => `<link rel="stylesheet" href="${href}">`),
+	`<style>${PREVIEW_STYLES}</style>`,
+].join('\n');
 
 const TSCONFIG = {
 	compilerOptions: {
@@ -151,6 +210,7 @@ watch(theme, () => store.value?.reloadLanguageTools?.());
 				:preview-theme="true"
 				:layout="layout"
 				:layout-reverse="reverse"
+				:preview-options="{ headHTML: previewHeadHTML }"
 				:ssr="false"
 				:show-compile-output="false"
 				:show-import-map="false"
