@@ -63,7 +63,8 @@ const { Form, Field, handleSubmit } = useForm({
 | -------------- | --------------------------------------------------- |
 | enctype        | Specifies how the form data should be encoded.      |
 | initialValues  | Sets initial values for form elements.              |
-| name           | Defines the name of the form.                       |
+
+> **Note:** `name`, `preserve`, `mode`, and `schema` are configured through the `useForm` options, not as props on `<Form>`.
 
 ### Events
 
@@ -74,6 +75,6 @@ const { Form, Field, handleSubmit } = useForm({
 
 ### Slots
 
-| Slot    | Parameter            | Description                                 |
-| ------- | -------------------- | ------------------------------------------- |
-| default | `{ values, errors }` | Provides access to form data and errors.     |
+| Slot    | Parameter                                                                                     | Description                                       |
+| ------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| default | `{ values, getError, getFieldState, isDirty, isValid, isTouched, isSubmitted, submitCount }`  | Provides access to form data and reactive state.  |

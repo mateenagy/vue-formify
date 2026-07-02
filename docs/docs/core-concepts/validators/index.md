@@ -41,9 +41,9 @@ const submit = handleSubmit((data) => {
 ```
 :::
 ## Validation modes
-You can choose between two modes to trigger validations. The deafult mode is `onSubmit` which runs the validation after the the form was submitted.
+You can choose between two modes to trigger validations. The default mode is `onSubmit`, which runs the validation after the form is submitted.
 
-The other mode is `onChange` which run validation every time when the input changes.
+The other mode is `onChange`, which runs validation every time an input changes.
 ::: code-group
 ```vue:line-numbers {6}
 <script setup lang="ts">
@@ -133,8 +133,8 @@ import { useForm } from 'vue-formify';
 
 const { Form, Field, handleSubmit } = useForm({
 	schema: type({
-		first_name: 'string >= 1';
-		last_name: 'string >= 1';
+		first_name: 'string >= 1',
+		last_name: 'string >= 1',
 	})
 });
 

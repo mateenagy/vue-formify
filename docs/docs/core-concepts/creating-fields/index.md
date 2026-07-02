@@ -43,7 +43,7 @@ const { Form, Field } = useForm<LoginForm>(); // [!code highlight]
 </script>
 <template>
 	<Form>
-		<Field name="username" v-slot={ field }>
+		<Field name="username" v-slot="{ field }">
 			<label>Username</label>
 			<input v-bind="field" />
 		</Field>

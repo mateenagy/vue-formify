@@ -6,7 +6,7 @@ To use `useInput`, define your component and pass the necessary props. The compo
 ::: code-group
 ```vue
 <script setup lang="ts">
-import { useInput, type InputProps } from '@/main';
+import { useInput, type InputProps } from 'vue-formify';
 
 const props = defineProps<InputProps>();
 const { inputProps, getError } = useInput(props);
@@ -32,20 +32,31 @@ const { inputProps, getError } = useInput(props);
 | Argument   | Type                                 | Description                                                      |
 |------------|--------------------------------------|------------------------------------------------------------------|
 | props      | `InputProps \| { name: string }`     | Props required for the input. The `name` property is mandatory.  |
-| Options:
-| isArray    | `boolean`                            | If `true`, sets the default input value to an empty array. Default is `false`. |
-| isCustom    | `boolean`                           | Use it if you are using third party library to prevent multiple input change. |
+| options    | `UseInputOption`                     | Optional configuration (see below).                              |
+
+`options` fields:
+
+| Option       | Type      | Description                                                                                   |
+|--------------|-----------|-----------------------------------------------------------------------------------------------|
+| isArray      | `boolean` | If `true`, sets the default input value to an empty array. Default is `false`.                |
+| isComponent  | `boolean` | Set to `true` for third-party components to avoid a duplicate value update on input.          |
+| isCheckbox   | `boolean` | Set to `true` when the input is a checkbox so the default value falls back to `falseValue`.   |
 
 ### Returned Variables
 
-| Variable     | Description                        |
-|--------------|------------------------------------|
-| inputProps   | Data required for input fields     |
-| isValid      | Indicates if the field is valid    |
+| Variable     | Description                                 |
+|--------------|---------------------------------------------|
+| value        | The current field value (writable computed) |
+| inputProps   | Bindings required for the input element     |
+| isValid      | Indicates if the field is valid             |
+| isDirty      | `true` when the value differs from initial  |
+| isTouched    | `true` once the field has been touched      |
 
 ### Returned Methods
 
-| Function   | Parameter      | Description                        |
-|------------|---------------|------------------------------------|
-| getError   | `() => void`   | Returns the error message for the field |
+| Function   | Parameter                     | Description                                  |
+|------------|-------------------------------|----------------------------------------------|
+| getError   | `() => string`                | Returns the error message for the field.     |
+| setValue   | `(value: any) => void`        | Sets the field value.                        |
+| setError   | `(error: any) => void`        | Sets an error message on the field.          |
 

@@ -1,6 +1,6 @@
 # Third Party UI Components
 
-You can easily integrate third-party UI library components with your forms. The process is the same as using custom components: wrap the third-party component with the `createInput` composable, and it will work seamlessly with your form logic.
+You can easily integrate third-party UI library components with your forms. The process is the same as using custom components: either bind the `Field` slot props to the component, or build a wrapper with the `useInput` composable, and it will work seamlessly with your form logic.
 
 ## PrimeVue example
 
@@ -25,7 +25,7 @@ const { Field } = useForm();
 ```vue
 <script lang="ts" setup>
 import InputText from 'primevue/inputtext';
-import { useInput, type InputProps } from '@/main';
+import { useInput, type InputProps } from 'vue-formify';
 
 const props = defineProps<InputProps>();
 const { inputProps, getError } = useInput(props);

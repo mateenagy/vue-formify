@@ -58,6 +58,6 @@ The `<Error>` component does not render anything if there is no error for the sp
 
 ### Slots
 
-| Slot   | Parameter         | Description           |
-|--------|------------------|-----------------------|
-| error  | `{ error: string }` | Customize error output |
+| Slot    | Parameter           | Description             |
+|---------|---------------------|-------------------------|
+| default | `{ error: string }` | Customize error output. |

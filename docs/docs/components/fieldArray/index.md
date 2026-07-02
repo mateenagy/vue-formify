@@ -42,9 +42,10 @@ When using `v-for` on `fields`, always use `field.id` for the `:key` attribute a
 | Prop      | Description                                      |
 |-----------|--------------------------------------------------|
 | name      | Field name                                       |
-| schema    | Schema validation                                |
-| ignore    | Ignore field when extracting data                |
+| default   | Field default value                              |
+| rule      | Field-level schema validation (StandardSchema)   |
 | preserve  | Preserve field value when the field is unmounted |
+| as        | Wrapper element to render (default `input`)      |
 
 ### Slots
 
