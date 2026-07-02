@@ -1,3 +1,8 @@
+<script setup>
+import SharedApp from '../../../playground/basic/shared/App.vue?raw'
+import SideBar from '../../../playground/basic/shared/SideBar.vue?raw'
+</script>
+
 # Sharing Data Between Forms
 
 When building multi-step forms or splitting a large form across different views (such as in a checkout process), you often need to share form data between components. This is typically handled with some form of state management.
@@ -63,3 +68,9 @@ If you fill in the inputs and toggle between the forms, the values remain the sa
 :::tip Importance of `name` and `preserve`
 Use the same `name` and set `preserve` to `true` to share values between forms. The `name` uniquely identifies the form, and `preserve` ensures values are not cleared when the component is unmounted.
 :::
+
+## Try it live
+
+Both the main form and the sidebar form share the `filter` store. Change a value in one, open the other, and the values stay in sync:
+
+<Playground :files="{ 'App.vue': SharedApp, 'SideBar.vue': SideBar }" />

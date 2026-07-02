@@ -65,22 +65,12 @@ You can use custom inputs by leveraging the `Field` slot and binding the `field`
 ```vue
 <template>
 	<Form @submit="sendForm">
-		<Field name="favourite_fruit" v-slot="{ field, error }">
+		<Field name="email" v-slot="{ field, error }">
 			<label>Email</label>
 			<input type="email" v-bind="field" />
 			<small>{{ error }}</small>
 		</Field>
 	</Form>
-</template>
-```
-
-### Using `Field` Outside `Form`
-
-Fields can also be used independently of a `Form`:
-
-```vue
-<template>
-	<Field name="search" />
 </template>
 ```
 

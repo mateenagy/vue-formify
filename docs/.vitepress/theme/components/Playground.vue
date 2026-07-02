@@ -39,7 +39,7 @@ const props = withDefaults(defineProps<{
 });
 
 /** Bump these to move every example onto a new release at once. */
-const VUE_FORMIFY_VERSION = '2.0.11';
+const VUE_FORMIFY_VERSION = '2.1.6';
 
 const LIB_PRESETS: Record<LibName, { url: string; version: string }> = {
 	zod: { url: 'https://cdn.jsdelivr.net/npm/zod@3.25.65/+esm', version: '3.25.65' },

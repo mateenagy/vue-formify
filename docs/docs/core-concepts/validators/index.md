@@ -40,6 +40,35 @@ const submit = handleSubmit((data) => {
 </template>
 ```
 :::
+## Field-level validation
+Instead of (or in addition to) a form-wide `schema`, you can validate a single field by passing a StandardSchema to its `rule` prop. This is handy for one-off fields, reusable field components, or when you don't want to maintain a schema for the whole form.
+
+The `rule` schema validates that field's value directly, and runs on blur and on submit — and on every change when `mode` is `'onChange'`.
+::: code-group
+```vue
+<script setup lang="ts">
+import { useForm } from 'vue-formify';
+import * as z from 'zod';
+
+const { Form, Field, Error, handleSubmit } = useForm();
+
+const submit = handleSubmit((data) => {
+	console.log(data);
+});
+</script>
+<template>
+	<Form @submit="submit">
+		<Field name="email" :rule="z.string().email('Invalid email address')" /> <!-- [!code highlight] -->
+		<Error error-for="email" />
+		<button>Submit</button>
+	</Form>
+</template>
+```
+:::
+
+::: tip
+`FieldArray` accepts a `rule` prop as well, so you can validate a whole array — for example, enforcing a minimum number of items.
+:::
 ## Validation modes
 You can choose between two modes to trigger validations. The default mode is `onSubmit`, which runs the validation after the form is submitted.
 
@@ -61,9 +90,40 @@ const { Form, Field, Error, handleSubmit } = useForm({
 ```
 :::
 ## Form types
-Using a schema enables full type inference for form values, field names, and default values.
+You don't have to declare a separate type when you use a schema — VueFormify infers the whole form shape from it. Pass the `schema` and skip the `useForm<T>()` generic:
+::: code-group
+```vue
+<script setup lang="ts">
+import { useForm } from 'vue-formify';
+import * as z from 'zod';
 
-Thanks to this, VueFormify’s components like `Field`, `Error`, and `FieldArray` automatically know the correct types and structure of your form. This means better TypeScript support, fewer bugs, and a smoother developer experience.
+// No `useForm<T>()` generic needed — the type is inferred from the schema. // [!code highlight]
+const { Form, Field, Error, handleSubmit } = useForm({
+	schema: z.object({
+		email: z.string().email(),
+		password: z.string().min(8),
+	}),
+});
+
+const submit = handleSubmit((data) => {
+	// `data` is fully typed: { email: string; password: string }
+	console.log(data?.email);
+});
+</script>
+<template>
+	<Form @submit="submit">
+		<!-- `name` and `error-for` autocomplete to the schema's keys -->
+		<Field name="email" />
+		<Error error-for="email" />
+		<Field name="password" type="password" />
+		<Error error-for="password" />
+		<button>Submit</button>
+	</Form>
+</template>
+```
+:::
+
+Because the type flows from the schema, components like `Field`, `Error`, and `FieldArray` know your form's structure automatically: `name`/`error-for` autocomplete, `handleSubmit` hands you typed data, and mismatches are caught at compile time.
 
 ## Schema Validators
 ### Zod

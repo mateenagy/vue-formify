@@ -11,11 +11,11 @@ import { useForm } from 'vue-formify';
 
 const { Form, Field, Error, setError, handleSubmit } = useForm();
 
-const sendForm = (data) => {
-	if (!data.email.length) {
+const sendForm = handleSubmit((data) => {
+	if (!data?.email?.length) {
 		setError('email', 'Email required!');
 	}
-};
+});
 </script>
 
 <template>
@@ -28,8 +28,8 @@ const sendForm = (data) => {
 ```
 :::
 
-:::warning
-**Important:** If you are not using the `useForm` composable, you should use a template ref on `<Form>` to set and display errors with the `<Error>` component.
+:::tip
+`<Error>` must be rendered inside the `<Form>` it belongs to, and both must come from the **same** `useForm()` call. When you use a validator schema, matching errors are displayed automatically — you only need `setError` for manual or server-side errors.
 :::
 
 You can also customize the rendered output using a slot:

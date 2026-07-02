@@ -23,10 +23,10 @@ const submit = handleSubmit((data) => {
 <template>
   <div class="container">
     <Form @submit="submit">
-      <label>Firstname</label>
+      <label>Email</label>
       <Field name="user.email" class="form-control" />
-      <label>Lastname</label>
-      <Field name="user.password" class="form-control" />
+      <label>Password</label>
+      <Field name="user.password" type="password" class="form-control" />
       <label>Facebook link</label>
       <Field name="user.socials.facebook" class="form-control" />
       <label>Instagram link</label>

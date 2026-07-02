@@ -16,7 +16,7 @@ npm i vue-formify
 pnpm i vue-formify
 ```
 ```sh [yarn]
-yarn i vue-formify
+yarn add vue-formify
 ```
 :::
 ## Create your first form

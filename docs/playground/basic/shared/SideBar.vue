@@ -45,11 +45,10 @@ const { Form, Field, handleSubmit, values } = useForm<UserData>({
 <style>
 .sidebar {
   padding: 1rem;
-  position: absolute;
+  position: fixed;
+  inset: 0;
   z-index: 99;
-  right: 0;
-  height: 100%;
-  width: 400px;
+  overflow: auto;
   background-color: #fff;
   box-shadow: 0 0 34px 3px #878787;
 }
