@@ -380,22 +380,23 @@ export const flattenObject = (obj: any, type: 'value' | 'error' = 'value'): Reco
 	const result: any = {};
 	for (const key in obj) {
 		if (obj[key] && typeof obj[key] === 'object' && 'value' in obj[key]) {
-			if (typeof obj[key].value === 'object') {
-				Array.isArray(obj[key].value) && (result[key] = []);
-				if (Object.keys(obj[key].value)?.[0]?.match?.(BETWEEN_BRACKETS_REGEX)) {
-					for (const arrayKey in obj[key].value) {
-						(!result[key] && !obj[key].ignore) && (result[key] = []);
-						if (type in obj[key].value[arrayKey]) {
-							obj[key].value[arrayKey][type] && result[key].push(obj[key].value[arrayKey][type]);
+			const { value, ignore } = obj[key];
+			if (typeof value === 'object' && value != null) {
+				Array.isArray(value) && (result[key] = []);
+				if (Object.keys(value)[0]?.match?.(BETWEEN_BRACKETS_REGEX)) {
+					for (const arrayKey in value) {
+						(!result[key] && !ignore) && (result[key] = []);
+						if (type in value[arrayKey]) {
+							value[arrayKey][type] && result[key].push(value[arrayKey][type]);
 						} else {
-							!obj[key].ignore && result[key].push(flattenObject(obj[key].value[arrayKey], type));
+							!ignore && result[key].push(flattenObject(value[arrayKey], type));
 						}
 					}
 				} else {
-					!obj[key].ignore && (result[key] = obj[key][type]);
+					!ignore && (result[key] = obj[key][type]);
 				}
 			} else {
-				!obj[key].ignore && (result[key] = obj[key][type]);
+				!ignore && (result[key] = obj[key][type]);
 			}
 		} else if (typeof obj[key] === 'object') {
 			result[key] = flattenObject(obj[key], type);
