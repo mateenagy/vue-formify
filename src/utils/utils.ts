@@ -1,6 +1,8 @@
 import { forms } from './store';
 import { GetKeys, StandardSchemaV1 } from './types';
 
+const isObject = (value: unknown): boolean => typeof value === 'object' && value != null;
+
 export const BETWEEN_BRACKETS_REGEX = /^\[(.+?)\]$/gm;
 export const REMOVE_BRACKETS_REGEX = /(^.*\[|\].*$)/g;
 export const ARRAY_INDEX_FROM_STRING_REGEX = /\[(\d*)\]/gm;
@@ -82,7 +84,7 @@ export const objectToString = (obj: Record<string, any>, parentKey: string = '')
 	for (const key in obj) {
 		const newKey = parentKey ? `${parentKey}.${key}` : key;
 
-		if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
+		if (isObject(obj[key]) && !Array.isArray(obj[key])) {
 			const nestedResult = objectToString(obj[key], newKey);
 			result = { ...result, ...nestedResult };
 		} else {
@@ -193,7 +195,7 @@ export const deleteByPath = (object: Record<string, any>, path: string) => {
  * structurally cloned so a stored snapshot can't be mutated by later writes.
  */
 export const cloneValue = (val: any): any => {
-	if (val === null || typeof val !== 'object') {
+	if (!isObject(val)) {
 		return val;
 	}
 
@@ -218,7 +220,7 @@ export const isEqual = (a: any, b: any): boolean => {
 		return false;
 	}
 
-	if (typeof a !== 'object' || a === null || b === null) {
+	if (!isObject(a) || b === null) {
 		// NaN === NaN
 		return a !== a && b !== b;
 	}
@@ -263,7 +265,7 @@ export const isEqual = (a: any, b: any): boolean => {
  * initialised with.
  */
 export const isFieldDirty = (field: any): boolean =>
-	!!field && typeof field === 'object' && 'value' in field && !isEqual(field.value, field.initialValue);
+	!!field && isObject(field) && 'value' in field && !isEqual(field.value, field.initialValue);
 
 /**
  * The form is dirty when any field in it is dirty. Walks the nested store,
@@ -277,7 +279,7 @@ export const isFormDirty = (values: Record<string, any>): boolean => {
 
 	for (const key in values) {
 		const node = values[key];
-		if (!node || typeof node !== 'object') {
+		if (!isObject(node)) {
 			continue;
 		}
 
@@ -301,19 +303,19 @@ export const isFormDirty = (values: Record<string, any>): boolean => {
  * array fields), descending into nested/array values like isFormTouched.
  */
 export const clearStoreErrors = (values: Record<string, any>): void => {
-	if (!values || typeof values !== 'object') {
+	if (!isObject(values)) {
 		return;
 	}
 
 	for (const key in values) {
 		const node = values[key];
-		if (!node || typeof node !== 'object') {
+		if (!isObject(node)) {
 			continue;
 		}
 
 		if ('value' in node) {
 			node.error = undefined;
-			if (node.value && typeof node.value === 'object') {
+			if (isObject(node.value)) {
 				clearStoreErrors(node.value);
 			}
 		} else {
@@ -328,13 +330,13 @@ export const clearStoreErrors = (values: Record<string, any>): void => {
  * field's nested/array `value` to reach the touched flags of array items.
  */
 export const isFormTouched = (values: Record<string, any>): boolean => {
-	if (!values || typeof values !== 'object') {
+	if (!isObject(values)) {
 		return false;
 	}
 
 	for (const key in values) {
 		const node = values[key];
-		if (!node || typeof node !== 'object') {
+		if (!isObject(node)) {
 			continue;
 		}
 
@@ -365,7 +367,7 @@ export function hasErrors(errors: any): boolean {
 		return errors.some(err => hasErrors(err));
 	}
 
-	if (typeof errors === 'object' && errors !== null) {
+	if (isObject(errors)) {
 		return Object.values(errors).some(value => hasErrors(value));
 	}
 
@@ -379,25 +381,26 @@ export const getErrorMessage = <T extends Record<string, any>>(values: Record<st
 export const flattenObject = (obj: any, type: 'value' | 'error' = 'value'): Record<string, any> => {
 	const result: any = {};
 	for (const key in obj) {
-		if (obj[key] && typeof obj[key] === 'object' && 'value' in obj[key]) {
-			if (typeof obj[key].value === 'object') {
-				Array.isArray(obj[key].value) && (result[key] = []);
-				if (Object.keys(obj[key].value)?.[0]?.match?.(BETWEEN_BRACKETS_REGEX)) {
-					for (const arrayKey in obj[key].value) {
-						(!result[key] && !obj[key].ignore) && (result[key] = []);
-						if (type in obj[key].value[arrayKey]) {
-							obj[key].value[arrayKey][type] && result[key].push(obj[key].value[arrayKey][type]);
+		if (isObject(obj[key]) && 'value' in obj[key]) {
+			const { value, ignore } = obj[key];
+			if (isObject(value)) {
+				Array.isArray(value) && (result[key] = []);
+				if (Object.keys(value)[0]?.match?.(BETWEEN_BRACKETS_REGEX)) {
+					for (const arrayKey in value) {
+						(!result[key] && !ignore) && (result[key] = []);
+						if (type in value[arrayKey]) {
+							value[arrayKey][type] && result[key].push(value[arrayKey][type]);
 						} else {
-							!obj[key].ignore && result[key].push(flattenObject(obj[key].value[arrayKey], type));
+							!ignore && result[key].push(flattenObject(value[arrayKey], type));
 						}
 					}
 				} else {
-					!obj[key].ignore && (result[key] = obj[key][type]);
+					!ignore && (result[key] = obj[key][type]);
 				}
 			} else {
-				!obj[key].ignore && (result[key] = obj[key][type]);
+				!ignore && (result[key] = obj[key][type]);
 			}
-		} else if (typeof obj[key] === 'object') {
+		} else if (isObject(obj[key])) {
 			result[key] = flattenObject(obj[key], type);
 		}
 	}
@@ -408,7 +411,7 @@ export const flattenObject = (obj: any, type: 'value' | 'error' = 'value'): Reco
 export const objectToModelValue = (object: Record<string, any>): Record<string, any>[] | string => {
 	const result: Record<string, any>[] = [];
 
-	if (!Array.isArray(object.value) && typeof object.value === 'object' && !(object.value instanceof Date)) {
+	if (!Array.isArray(object.value) && isObject(object.value) && !(object.value instanceof Date)) {
 		const firstKey = Object.keys(object.value)?.[0];
 
 		if (firstKey?.match?.(BETWEEN_BRACKETS_REGEX)) {
@@ -426,8 +429,6 @@ export const objectToModelValue = (object: Record<string, any>): Record<string, 
 };
 
 export const mergeDeep = (...objects: any) => {
-	const isObject = (obj: object) => obj && typeof obj === 'object';
-
 	return objects.reduce((prev: Record<string, any>, obj: Record<string, any>) => {
 		Object.keys(obj).forEach((key) => {
 			const pVal = prev[key];
@@ -452,7 +453,7 @@ export const createFormDataFromObject = (obj: Record<string, any>, parentKey = '
 	Object.keys(obj).reduce((acc, key) => {
 		const newKey = parentKey ? `${parentKey}.${key}` : key;
 
-		if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key]) && !(obj[key] instanceof Date) && !(obj[key] instanceof File) && !(obj[key] instanceof Blob)) {
+		if (isObject(obj[key]) && !Array.isArray(obj[key]) && !(obj[key] instanceof Date) && !(obj[key] instanceof File) && !(obj[key] instanceof Blob)) {
 			const nested = createFormDataFromObject(obj[key], newKey);
 			acc += nested;
 		} else {

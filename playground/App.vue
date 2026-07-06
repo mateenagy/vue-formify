@@ -2,6 +2,12 @@
 import { type } from 'arktype';
 import { useForm } from '@/main';
 
+type DemoUser = {
+	id: number | null;  
+	username: string;
+	email: string;
+};
+
 /*---------------------------------------------
 /  SCHEMA
 /  Validation runs live because mode is 'onChange'.
@@ -34,10 +40,13 @@ const {
 	isSubmitted,
 	submitCount,
 	values,
-} = useForm({
+} = useForm<Partial<DemoUser>>({
 	name: 'state-demo',
 	mode: 'onChange',
 	initialValues: {
+		// some field that should not be touched
+		// and which will be filled in on the server after sending
+		id: null,
 		username: 'alice',
 		email: 'alice@example.com',
 	},
