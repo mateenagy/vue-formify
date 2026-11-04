@@ -3,6 +3,15 @@ import { Component, computed, defineComponent, h, PropType, resolveDynamicCompon
 import { FieldType, Prettify } from '@/utils/types';
 import { useInput } from '@/composable/useInput';
 
+/** Calls a listener from `attrs`: one function, or an array when several are bound to the same event. */
+const callListener = (listener: unknown, ...args: unknown[]) => {
+	if (Array.isArray(listener)) {
+		listener.forEach(fn => callListener(fn, ...args));
+	} else if (typeof listener === 'function') {
+		listener(...args);
+	}
+};
+
 //@ts-expect-error `name` does not exist in type. Vue don't like `FieldType` type definition, but it works fine.
 export const FieldComp = <T extends Record<string, any> = Record<string, any>>() => defineComponent<
 	Prettify<FieldType<T>>,
@@ -40,29 +49,30 @@ export const FieldComp = <T extends Record<string, any> = Record<string, any>>()
 				...baseAttrs,
 				name: props.name,
 				error: getError(),
+				// Field's own handler first, then the user's (`<Field @input="…">`), with the event.
 				onInput: (evt: any) => {
-					inputProps.value.onInput?.(evt);
-					if (typeof baseAttrs.onInput === 'function') {
-						baseAttrs.onInput();
-					}
+					const result = inputProps.value.onInput?.(evt);
+					callListener(baseAttrs.onInput, evt);
+
+					return result;
 				},
 				onChange: (evt: any) => {
-					inputProps.value.onInput?.(evt);
-					if (typeof baseAttrs.onChange === 'function') {
-						baseAttrs.onChange();
-					}
+					const result = inputProps.value.onInput?.(evt);
+					callListener(baseAttrs.onChange, evt);
+
+					return result;
 				},
-				onFocus: () => {
-					inputProps.value.onFocus?.();
-					if (typeof baseAttrs.onFocus === 'function') {
-						baseAttrs.onFocus();
-					}
+				onFocus: (evt: any) => {
+					const result = inputProps.value.onFocus?.();
+					callListener(baseAttrs.onFocus, evt);
+
+					return result;
 				},
-				onBlur: async () => {
-					inputProps.value.onBlur?.();
-					if (typeof baseAttrs.onBlur === 'function') {
-						baseAttrs.onBlur();
-					}
+				onBlur: (evt: any) => {
+					const result = inputProps.value.onBlur?.();
+					callListener(baseAttrs.onBlur, evt);
+
+					return result;
 				},
 			};
 
@@ -100,8 +110,11 @@ export const FieldComp = <T extends Record<string, any> = Record<string, any>>()
 
 
 			if (tag) {
-				const { value: _v, modelValue: _mv, ...inputPropsNoValue } = inputProps.value;
-				const resolvedInputProps = baseAttrs.type === 'checkbox' ? inputPropsNoValue : inputProps.value;
+				// The handlers come from `sharedProps`, which call Field's own and the user's. Spreading
+				// `inputProps` with its handlers after it would replace them and drop the user's.
+				const { onInput: _i, onFocus: _f, onBlur: _b, ...bindings } = inputProps.value;
+				const { value: _v, modelValue: _mv, ...bindingsNoValue } = bindings;
+				const resolvedInputProps = baseAttrs.type === 'checkbox' ? bindingsNoValue : bindings;
 
 				if (typeof tag === 'string') {
 					// An element, native or custom: only what belongs on the DOM. Field's own props and the
