@@ -1,8 +1,28 @@
-import { InputHTMLAttributes } from 'vue';
+import { Component, InputHTMLAttributes } from 'vue';
 
 export type Prettify<T> = {
 	[K in keyof T]: T[K];
 } & {};
+
+/**
+ * A tag `Field` can render: an element that has a `name` and a `value`.
+ * That is `input`, `select` and `textarea`, plus any custom element (web component) registered in
+ * `HTMLElementTagNameMap`, which Lit and most web component libraries do for their tags:
+ *
+ * ```ts
+ * declare global {
+ *   interface HTMLElementTagNameMap {
+ *     'my-input': MyInput;
+ *   }
+ * }
+ * ```
+ */
+export type FieldTag = Exclude<{
+	[K in keyof HTMLElementTagNameMap]: HTMLElementTagNameMap[K] extends { name: string; value: unknown } ? K : never
+}[keyof HTMLElementTagNameMap], 'button' | 'output'>;
+
+/** What `Field` renders: a field element's tag or a component. */
+export type FieldAs = FieldTag | Component;
 
 type IsPlainObject<T> =
 	T extends object
@@ -88,7 +108,7 @@ export type FieldType<T extends Record<string, any>> = {
 		falseValue?: any;
 		preserve?: boolean;
 		custom?: boolean;
-		as?: 'input' | 'select';
+		as?: FieldAs;
 		rule?: StandardSchemaV1;
 	} & InputHTMLAttributes
 }[GetKeys<T>];
@@ -114,7 +134,7 @@ export type InputProps<T extends Record<string, any> = Record<string, any>> = {
 	modelValue?: any;
 	falseValue?: any;
 	preserve?: boolean;
-	as?: 'input' | 'select';
+	as?: FieldAs;
 	rule?: StandardSchemaV1;
 	onInput?: (evt: any) => void;
 	onChange?: (evt: any) => void;

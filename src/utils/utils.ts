@@ -27,7 +27,7 @@ export const resolveTag = (props: Record<string, any>, isSlot: boolean) => {
 };
 
 export const normalizeChildren = (
-	tag: string | undefined | null,
+	tag: unknown,
 	slots: any,
 	slotProps: () => Record<string, unknown>,
 ) => {

@@ -1,7 +1,7 @@
 import { useForm } from '@/composable/useForm';
 import { useInput } from '@/composable/useInput';
 import { FormType } from './index';
-import { InputProps } from '@/utils/types';
+import { FieldAs, FieldTag, InputProps } from '@/utils/types';
 
 export {
 	useInput,
@@ -11,4 +11,6 @@ export {
 export type {
 	InputProps,
 	FormType,
+	FieldAs,
+	FieldTag,
 };
