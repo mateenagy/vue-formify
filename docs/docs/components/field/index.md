@@ -74,6 +74,30 @@ You can use custom inputs by leveraging the `Field` slot and binding the `field`
 </template>
 ```
 
+### Web Components
+
+`as` also renders custom elements, such as components built with Lit. The element needs a `name` and a `value` property and should fire `input` (or `change`) events, like a native input. `Field` sets `value`, `name` and `error` on it and reads `event.target.value`:
+
+```vue
+<template>
+	<Form @submit="sendForm">
+		<Field name="email" as="my-input" type="email" label="E-mail" />
+	</Form>
+</template>
+```
+
+For type checking, the tag must be registered in `HTMLElementTagNameMap`. Lit components and most web component libraries do this already; for one that doesn't, add the declaration yourself:
+
+```ts
+declare global {
+	interface HTMLElementTagNameMap {
+		'my-input': MyInput;
+	}
+}
+```
+
+When you write the tag directly in a template instead, for example `<my-input v-bind="field" />` in the `Field` slot, tell Vue it is a custom element with `compilerOptions.isCustomElement` in the Vue plugin options.
+
 ## API Reference
 
 ### Props
@@ -88,7 +112,7 @@ You can use custom inputs by leveraging the `Field` slot and binding the `field`
 | trueValue   | Custom true value                                       |
 | falseValue  | Custom false value                                      |
 | preserve    | Preserve value when field is unmounted                  |
-| as          | Render as `input` (default) or `select`                 |
+| as          | What to render: `input` (default), `select`, `textarea`, a custom element's tag, or a component |
 
 ### Slots
 

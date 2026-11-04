@@ -1,5 +1,5 @@
 import { normalizeChildren, resolveTag } from '@/utils/utils';
-import { computed, defineComponent, h, PropType, resolveDynamicComponent, SlotsType } from 'vue';
+import { Component, computed, defineComponent, h, PropType, resolveDynamicComponent, SlotsType } from 'vue';
 import { FieldType, Prettify } from '@/utils/types';
 import { useInput } from '@/composable/useInput';
 
@@ -95,14 +95,23 @@ export const FieldComp = <T extends Record<string, any> = Record<string, any>>()
 		};
 
 		return () => {
-			const tag = resolveDynamicComponent(resolveTag(props, !!slots.default)) as string;
+			const tag = resolveDynamicComponent(resolveTag(props, !!slots.default));
 			const children = normalizeChildren(tag, slots, slotProps);
 
 
 			if (tag) {
 				const { value: _v, modelValue: _mv, ...inputPropsNoValue } = inputProps.value;
 				const resolvedInputProps = baseAttrs.type === 'checkbox' ? inputPropsNoValue : inputProps.value;
-				return h(tag,
+
+				if (typeof tag === 'string') {
+					// An element, native or custom: only what belongs on the DOM. Field's own props and the
+					// component-only bindings would otherwise land on it as attributes (`istouched="false"`, …).
+					const { modelValue: _m, 'onUpdate:modelValue': _u, isTouched: _t, ...domInputProps } = resolvedInputProps;
+
+					return h(tag, { ...sharedProps.value, ...domInputProps }, children);
+				}
+
+				return h(tag as Component,
 					{
 						...props,
 						...sharedProps.value,
@@ -127,7 +136,7 @@ export const FieldComp = <T extends Record<string, any> = Record<string, any>>()
 			preserve: { type: Boolean as PropType<FieldType<T>['preserve']>, default: false },
 			custom: { type: Boolean as PropType<FieldType<T>['preserve']>, default: false },
 			modelValue: { type: [String, Array, Boolean, Number, Object] as PropType<FieldType<T>['modelValue']>, default: undefined },
-			as: { type: String as PropType<FieldType<T>['as']>, default: undefined },
+			as: { type: [String, Object, Function] as PropType<FieldType<T>['as']>, default: undefined },
 			rule: { type: [Object, Function] as PropType<FieldType<T>['rule']>, default: undefined },
 			ignore: { type: Boolean as PropType<FieldType<T>['ignore']>, default: undefined },
 			trueValue: { type: [String, Boolean, Number, Object] as PropType<FieldType<T>['trueValue']>, default: undefined },
